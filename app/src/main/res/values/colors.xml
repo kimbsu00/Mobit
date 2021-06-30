@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="splash_background">#093687</color>
+    <color name="main_background">#061222</color>
+    <color name="main_bottom_nav">#08275d</color>
+    <color name="upbit_light_gray">#d3d4d6</color>
+    <color name="coin_list_gray">#848b95</color>
+    <color name="coin_list_blue">#135fc1</color>
+    <color name="coin_list_red">#bd4e3a</color>
+    <color name="asset_background">#0d182a</color>
+    <color name="transaction_background">#152131</color>
+    <color name="transaction_red">#bd4e3a</color>
+    <color name="transaction_blue">#135fc1</color>
+    <color name="transaction_recyclerview_background_blue">#081d3a</color>
+    <color name="transaction_recyclerview_background_red">#241a23</color>
+    <color name="popup_buy_red">#c34c34</color>
+    <color name="popup_sell_blue">#1262c5</color>
+    <color name="chart_light_gray">#061222</color>
+    <color name="chart_blue">#1262c5</color>
+    <color name="chart_red">#c84a31</color>
+</resources>

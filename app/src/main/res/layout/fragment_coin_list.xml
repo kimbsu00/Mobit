@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background"
+    android:orientation="vertical"
+    tools:context=".FragmentCoinList">
+
+    <TextView
+        android:id="@+id/coinListTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:padding="10dp"
+        android:text="@string/coin_list_title"
+        android:textColor="@color/upbit_light_gray"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/coin_list_searchview_border"
+        android:theme="@style/SearchViewStyle"
+        app:iconifiedByDefault="false"
+        app:queryHint="@string/coin_list_search_default"
+        app:searchIcon="@drawable/ic_baseline_search_24" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/coin_list_linearlayout_border"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/krwBtn"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:background="@drawable/coin_list_button_border"
+                android:button="@drawable/coin_list_button_border"
+                android:checked="true"
+                android:gravity="center"
+                android:text="@string/coin_list_KRW"
+                android:textColor="@color/coin_list_button_selector_color"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/favoriteBtn"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:background="@drawable/coin_list_button_border"
+                android:button="@drawable/coin_list_button_border"
+                android:checked="false"
+                android:gravity="center"
+                android:text="@string/coin_list_favorite"
+                android:textColor="@color/coin_list_button_selector_color"
+                android:textSize="14sp" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/coin_list_linearlayout_border"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/coinName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="30dp"
+            android:text="@string/coin_name"
+            android:textColor="@color/coin_list_gray"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/coinPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="@string/coin_price"
+            android:textColor="@color/coin_list_gray"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/coinDiff"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="@string/coin_diff"
+            android:textColor="@color/coin_list_gray"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/coinTransactionPayment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="@string/coin_transaction_payment"
+            android:textColor="@color/coin_list_gray"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

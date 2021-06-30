@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/coin_list_recyclerview_item_background"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:orientation="vertical"
+        android:paddingLeft="20dp">
+
+        <TextView
+            android:id="@+id/korCoinName"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:gravity="left|center_vertical"
+            android:text="도지코인"
+            android:textColor="@color/upbit_light_gray"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/engCoinName"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:gravity="left|center_vertical"
+            android:text="DOGE/KRW"
+            android:textColor="@color/coin_list_gray"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/realTimePrice"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="2"
+        android:gravity="right"
+        android:paddingRight="10dp"
+        android:text="592"
+        android:textColor="@color/coin_list_blue"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/changeRate"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="2"
+        android:gravity="right"
+        android:paddingRight="20dp"
+        android:text="-7.21%"
+        android:textColor="@color/coin_list_blue"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/totalTradePrice"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="2"
+        android:autoSizeMaxTextSize="14sp"
+        android:autoSizeMinTextSize="6sp"
+        android:autoSizeStepGranularity="1sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="right"
+        android:maxLines="1"
+        android:text="12,217,996백만"
+        android:textColor="@color/upbit_light_gray" />
+</LinearLayout>

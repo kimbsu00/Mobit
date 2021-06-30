@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background"
+    android:orientation="vertical"
+    tools:context=".FragmentAsset">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/asset_background"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/assetTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:padding="10dp"
+            android:text="@string/asset_title"
+            android:textColor="@color/upbit_light_gray"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/asset_linearlayout_border"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/krwTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/asset_KRW"
+                    android:textColor="@color/upbit_light_gray"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/krwView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="0"
+                    android:textColor="@color/upbit_light_gray"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/totalTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/asset_total"
+                    android:textColor="@color/upbit_light_gray"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/totalView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="0"
+                    android:textColor="@color/upbit_light_gray"
+                    android:textSize="20sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/totalBuyTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:text="@string/asset_total_buy"
+                android:textColor="@color/upbit_light_gray"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/totalBuyView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_weight="2"
+                android:gravity="right|center_vertical"
+                android:paddingRight="20dp"
+                android:text="0"
+                android:textColor="@color/upbit_light_gray"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/gainAndLossTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:text="@string/asset_gain_and_loss"
+                android:textColor="@color/upbit_light_gray"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/gainAndLossView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right|center_vertical"
+                android:paddingRight="20dp"
+                android:text="@string/asset_no_data"
+                android:textColor="@color/upbit_light_gray"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:id="@+id/totalEvaluationTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:text="@string/asset_total_evaluation"
+                android:textColor="@color/upbit_light_gray"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/totalEvaluationView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_weight="2"
+                android:gravity="right|center_vertical"
+                android:paddingRight="20dp"
+                android:text="@string/asset_no_data"
+                android:textColor="@color/upbit_light_gray"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/yieldTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:text="@string/asset_yield"
+                android:textColor="@color/upbit_light_gray"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/yieldView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right|center_vertical"
+                android:paddingRight="20dp"
+                android:text="@string/asset_no_data"
+                android:textColor="@color/upbit_light_gray"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/noAssetView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/asset_no_coin"
+        android:textColor="@color/coin_list_gray"
+        android:textSize="20sp"
+        android:visibility="visible" />
+
+</LinearLayout>

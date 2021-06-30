@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/showChart"
+        android:title="@string/showChart" />
+    <item
+        android:id="@+id/doTrade"
+        android:title="@string/doTrade" />
+</menu>

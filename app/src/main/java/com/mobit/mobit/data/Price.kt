@@ -35,5 +35,6 @@ data class Price(
     var highestWeekPrice: Double,
     var highestWeekDate: String,
     var lowestWeekPrice: Double,
-    var lowestWeekDate: String
+    var lowestWeekDate: String,
+    var realTimePriceDiff: Double
 ) : Serializable

@@ -108,7 +108,8 @@ class UpbitAPICaller {
                 highestWeekPrice,
                 highestWeekDate,
                 lowestWeekPrice,
-                lowestWeekDate
+                lowestWeekDate,
+                0.0
             )
             ret.add(price)
         }

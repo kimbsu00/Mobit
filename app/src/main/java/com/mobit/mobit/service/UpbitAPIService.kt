@@ -14,6 +14,7 @@ class UpbitAPIService : Service() {
 
     lateinit var selectedCoin: String
     var favoriteCoinInfo: ArrayList<CoinInfo> = ArrayList()
+    var coinInfo: ArrayList<CoinInfo> = ArrayList()
 
     val upbitAPICaller: UpbitAPICaller = UpbitAPICaller()
 
@@ -162,22 +163,29 @@ class UpbitAPIService : Service() {
                     intent.putExtra("mode", "CoinInfo")
                     val prices = upbitAPICaller.getTicker(codes)
                     if (prices.isNotEmpty()) {
-                        val coinInfo = ArrayList<CoinInfo>()
+                        val _coinInfo = ArrayList<CoinInfo>()
                         for (i in prices.indices) {
-                            coinInfo.add(CoinInfo(codes[i], getCoinName(codes[i]), prices[i]))
+                            if (coinInfo.isNotEmpty()) {
+                                prices[i].realTimePriceDiff =
+                                    prices[i].realTimePrice - coinInfo[i].price.realTimePrice
+                            }
+                            _coinInfo.add(CoinInfo(codes[i], getCoinName(codes[i]), prices[i]))
                         }
-                        intent.putExtra("coinInfo", coinInfo)
+                        intent.putExtra("coinInfo", _coinInfo)
                         intent.putExtra("isSuccess", true)
 
                         val favoriteCoinInfo2 = ArrayList<CoinInfo>()
                         for (favorite in favoriteCoinInfo) {
-                            for (coin in coinInfo) {
+                            for (coin in _coinInfo) {
                                 if (favorite.code == coin.code) {
                                     favoriteCoinInfo2.add(coin)
                                     break
                                 }
                             }
                         }
+
+                        coinInfo.clear()
+                        coinInfo.addAll(_coinInfo)
                         intent.putExtra("favoriteCoinInfo", favoriteCoinInfo2)
                     } else {
                         intent.putExtra("isSuccess", false)

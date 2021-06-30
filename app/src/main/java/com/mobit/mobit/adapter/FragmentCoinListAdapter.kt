@@ -1,6 +1,7 @@
 package com.mobit.mobit.adapter
 
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -88,6 +89,18 @@ class FragmentCoinListAdapter(
         } else {
             holder.realTimePrice.setTextColor(Color.parseColor("#FFFFFF"))
             holder.changeRate.setTextColor(Color.parseColor("#FFFFFF"))
+        }
+
+        Log.i(
+            "FragmentCoinListAdapter",
+            "realTimePriceDiff: ${filteredItems[position].price.realTimePriceDiff}"
+        )
+        if (filteredItems[position].price.realTimePriceDiff > 0) {
+            holder.realTimePrice.setBackgroundResource(R.drawable.coin_list_realtimeprice_border_red)
+        } else if (filteredItems[position].price.realTimePriceDiff < 0) {
+            holder.realTimePrice.setBackgroundResource(R.drawable.coin_list_realtimeprice_border_blue)
+        } else {
+            holder.realTimePrice.setBackgroundResource(0)
         }
     }
 

@@ -176,13 +176,13 @@
         </RadioGroup>
     </LinearLayout>
 
-    <com.github.mikephil.charting.charts.CandleStickChart
+    <com.github.mikephil.charting.charts.CombinedChart
         android:id="@+id/priceChart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2" />
 
-    <com.github.mikephil.charting.charts.BarChart
+    <com.github.mikephil.charting.charts.CombinedChart
         android:id="@+id/transactionChart"
         android:layout_width="match_parent"
         android:layout_height="0dp"

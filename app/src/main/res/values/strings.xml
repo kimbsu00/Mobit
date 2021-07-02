@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mobit</string>
+    <string name="app_name">모비트</string>
 
     <!--    about MainActivity's bottom navigation bar menu-->
     <string name="menu_coinlist">코인목록</string>

@@ -48,5 +48,25 @@ data class CoinInfo(
         val BSV_NAME = "비트코인에스브이"
         val BTT_CODE = "KRW-BTT"        // 비트토렌트
         val BTT_NAME = "비트토렌트"
+        val QTUM_CODE = "KRW-QTUM"      // 퀀텀
+        val QTUM_NAME = "퀀텀"
+        val HBAR_CODE = "KRW-HBAR"      // 헤데라해시그래프
+        val HBAR_NAME = "헤데라해시그래프"
+        val CRO_CODE = "KRW-CRO"        // 크립토닷컴체인
+        val CRO_NAME = "크립토닷컴체인"
+        val XTZ_CODE = "KRW-XTZ"        // 테조스
+        val XTZ_NAME = "테조스"
+        val TFUEL_CODE = "KRW-TFUEL"    // 쎄타퓨엘
+        val TFUEL_NAME = "쎄타퓨엘"
+        val WAVES_CODE = "KRW-WAVES"    // 웨이브
+        val WAVES_NAME = "웨이브"
+        val CHZ_CODE = "KRW-CHZ"        // 칠리즈
+        val CHZ_NAME = "칠리즈"
+        val XEM_CODE = "KRW-XEM"        // 넴
+        val XEM_NAME = "넴"
+        val STX_CODE = "KRW-STX"        // 스택스
+        val STX_NAME = "스택스"
+        val ZIL_CODE = "KRW-ZIL"        // 질리카
+        val ZIL_NAME = "질리카"
     }
 }

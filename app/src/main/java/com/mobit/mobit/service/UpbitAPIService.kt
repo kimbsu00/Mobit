@@ -44,7 +44,17 @@ class UpbitAPIService : Service() {
         CoinInfo.IOTA_CODE,
         CoinInfo.ATOM_CODE,
         CoinInfo.BSV_CODE,
-        CoinInfo.BTT_CODE
+        CoinInfo.BTT_CODE,
+        CoinInfo.QTUM_CODE,
+        CoinInfo.HBAR_CODE,
+        CoinInfo.CRO_CODE,
+        CoinInfo.XTZ_CODE,
+        CoinInfo.TFUEL_CODE,
+        CoinInfo.WAVES_CODE,
+        CoinInfo.CHZ_CODE,
+        CoinInfo.XEM_CODE,
+        CoinInfo.STX_CODE,
+        CoinInfo.ZIL_CODE
     )
 
     var receiver = object : BroadcastReceiver() {
@@ -230,6 +240,16 @@ class UpbitAPIService : Service() {
                 CoinInfo.ATOM_CODE -> CoinInfo.ATOM_NAME
                 CoinInfo.BSV_CODE -> CoinInfo.BSV_NAME
                 CoinInfo.BTT_CODE -> CoinInfo.BTT_NAME
+                CoinInfo.QTUM_CODE -> CoinInfo.QTUM_NAME
+                CoinInfo.HBAR_CODE -> CoinInfo.HBAR_NAME
+                CoinInfo.CRO_CODE -> CoinInfo.CRO_NAME
+                CoinInfo.XTZ_CODE -> CoinInfo.XTZ_NAME
+                CoinInfo.TFUEL_CODE -> CoinInfo.TFUEL_NAME
+                CoinInfo.WAVES_CODE -> CoinInfo.WAVES_NAME
+                CoinInfo.CHZ_CODE -> CoinInfo.CHZ_NAME
+                CoinInfo.XEM_CODE -> CoinInfo.XEM_NAME
+                CoinInfo.STX_CODE -> CoinInfo.STX_NAME
+                CoinInfo.ZIL_CODE -> CoinInfo.ZIL_NAME
                 else -> CoinInfo.BTC_NAME
             }
         }

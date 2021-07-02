@@ -51,6 +51,16 @@ class FragmentCoinInfo : Fragment() {
             CoinInfo.ATOM_CODE -> getString(R.string.ATOM)
             CoinInfo.BSV_CODE -> getString(R.string.BSV)
             CoinInfo.BTT_CODE -> getString(R.string.BTT)
+            CoinInfo.QTUM_CODE -> getString(R.string.QTUM)
+            CoinInfo.HBAR_CODE -> getString(R.string.HBAR)
+            CoinInfo.CRO_CODE -> getString(R.string.CRO)
+            CoinInfo.XTZ_CODE -> getString(R.string.XTZ)
+            CoinInfo.TFUEL_CODE -> getString(R.string.TFUEL)
+            CoinInfo.WAVES_CODE -> getString(R.string.WAVES)
+            CoinInfo.CHZ_CODE -> getString(R.string.CHZ)
+            CoinInfo.XEM_CODE -> getString(R.string.XEM)
+            CoinInfo.STX_CODE -> getString(R.string.STX)
+            CoinInfo.ZIL_CODE -> getString(R.string.ZIL)
             else -> ""
         }
     }

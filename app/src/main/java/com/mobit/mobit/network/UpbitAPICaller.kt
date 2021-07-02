@@ -17,7 +17,6 @@ Upbit open API를 사용해서 데이터를 얻어오는 작업을 구현할 클
 class UpbitAPICaller {
 
     companion object {
-        val TICK_URL = "https://api.upbit.com/v1/trades/ticks"
         val TICKER_URL = "https://api.upbit.com/v1/ticker"
         val ORDERBOOK_URL = "https://api.upbit.com/v1/orderbook"
         val CANDLE_MINUTE_URL = "https://api.upbit.com/v1/candles/minutes"

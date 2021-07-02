@@ -63,8 +63,8 @@ class FragmentSell : Fragment() {
             binding.orderCount.clearFocus()
             when (it.resultCode) {
                 Activity.RESULT_OK -> {
-                    val code = it.data!!.getStringExtra("code")
-                    val name = it.data!!.getStringExtra("name")
+                    val code = it.data!!.getStringExtra("code")!!
+                    val name = it.data!!.getStringExtra("name")!!
                     val price: Double = orderPrice * orderCount
                     val fee: Double = price * 0.0005
                     val time: String = getNowTime()

@@ -85,12 +85,12 @@ class UpbitAPIService : Service() {
             val mode = intent.getStringExtra("mode")
             when (mode) {
                 "INITIAL_SETTING" -> {
-                    selectedCoin = intent.getStringExtra("selectedCoin")
+                    selectedCoin = intent.getStringExtra("selectedCoin")!!
                     favoriteCoinInfo.clear()
                     favoriteCoinInfo.addAll(intent.getSerializableExtra("favoriteCoinInfo") as ArrayList<CoinInfo>)
                 }
                 "SELECTED_COIN_SETTING" -> {
-                    selectedCoin = intent.getStringExtra("selectedCoin")
+                    selectedCoin = intent.getStringExtra("selectedCoin")!!
                 }
                 "FAVORITE_COININFO_SETTING" -> {
                     favoriteCoinInfo.clear()

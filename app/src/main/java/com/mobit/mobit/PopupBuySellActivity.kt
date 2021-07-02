@@ -27,8 +27,8 @@ class PopupBuySellActivity : Activity() {
         // 1-> 매수
         // 2-> 매도
         val type: Int = intent.getIntExtra("type", 1)
-        val code: String = intent.getStringExtra("code")
-        val name: String = intent.getStringExtra("name")
+        val code: String = intent.getStringExtra("code")!!
+        val name: String = intent.getStringExtra("name")!!
         val unitPrice: Double = intent.getDoubleExtra("unitPrice", 0.0)
         val count: Double = intent.getDoubleExtra("count", 0.0)
         val totalPrice: Double = unitPrice * count

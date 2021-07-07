@@ -12,7 +12,7 @@
 가상화폐 거래소 업비트에서 거래되는 가상화폐로 진행하는 가상화폐 모의투자 앱입니다.
 
 ---
-[![google-play-badge-eng](https://user-images.githubusercontent.com/58127442/124698554-0c1d5e00-df24-11eb-83f0-e0b27031d981.png)](https://play.google.com/store/apps/details?id=com.mobit.mobit)
+[![google-play-badge-eng](https://user-images.githubusercontent.com/58127442/124698984-e93f7980-df24-11eb-9841-642c895e306f.png)](https://play.google.com/store/apps/details?id=com.mobit.mobit)
 
 ---
 ## 개발로그

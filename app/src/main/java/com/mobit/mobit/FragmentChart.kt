@@ -5,6 +5,7 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
@@ -490,7 +491,7 @@ class FragmentChart : Fragment() {
         otherChart.viewPortHandler.refresh(otherMatrix, otherChart, true)
     }
 
-    inner class UpbitCandleHandler : Handler() {
+    inner class UpbitCandleHandler : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
 

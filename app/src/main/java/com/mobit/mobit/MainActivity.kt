@@ -70,8 +70,14 @@ class MainActivity : AppCompatActivity() {
                                 intent.getSerializableExtra("coinInfo") as ArrayList<CoinInfo>
                             val favoriteCoinInfo =
                                 intent.getSerializableExtra("favoriteCoinInfo") as ArrayList<CoinInfo>
-                            myViewModel.setCoinInfo(coinInfo)
-                            myViewModel.setFavoriteCoinInfo(favoriteCoinInfo)
+                            if (coinInfo.isNotEmpty()) {
+                                myViewModel.setCoinInfo(coinInfo)
+                                Log.e("MainActivity", "coinInfo is empty")
+                            }
+                            if (favoriteCoinInfo.isNotEmpty()) {
+                                myViewModel.setFavoriteCoinInfo(favoriteCoinInfo)
+                                Log.e("MainActivity", "favoriteCoinInfo is empty")
+                            }
                         }
                     }
                     "orderBook" -> {
@@ -79,7 +85,10 @@ class MainActivity : AppCompatActivity() {
                         if (isSuccess) {
                             val orderBook =
                                 intent.getSerializableExtra("orderBook") as ArrayList<OrderBook>
-                            myViewModel.setOrderBook(orderBook)
+                            if (orderBook.isNotEmpty()) {
+                                myViewModel.setOrderBook(orderBook)
+                                Log.e("MainActivity", "orderBook is empty")
+                            }
                         }
                     }
                 }

@@ -499,293 +499,340 @@ class FragmentChart : Fragment() {
             if (!bundle.isEmpty) {
                 val flag = bundle.getInt("unitFlag")
                 val candles = bundle.getSerializable("candles") as ArrayList<Candle>
-                val priceEntries = ArrayList<CandleEntry>()
-                val transactionEntries = ArrayList<BarEntry>()
-                val barColor = ArrayList<Int>()
-                val average5Entries = ArrayList<Entry>()
-                val average10Entries = ArrayList<Entry>()
-                val average20Entries = ArrayList<Entry>()
-                val average60Entries = ArrayList<Entry>()
-                val average120Entries = ArrayList<Entry>()
-                var count: Int = 0
-                var average5: Float = 0.0f
-                var average10: Float = 0.0f
-                var average20: Float = 0.0f
-                var average60: Float = 0.0f
-                var average120: Float = 0.0f
-                val tranAverage5Entries = ArrayList<Entry>()
-                val tranAverage10Entries = ArrayList<Entry>()
-                val tranAverage20Entries = ArrayList<Entry>()
-                var tranAverage5: Float = 0.0f
-                var tranAverage10: Float = 0.0f
-                var tranAverage20: Float = 0.0f
-                for (candle in candles) {
-                    // 캔들 차트(가격 차트) entry 생성
-                    priceEntries.add(
-                        CandleEntry(
-                            candle.createdAt.toFloat(),
-                            candle.shadowHigh,
-                            candle.shadowLow,
-                            candle.open,
-                            candle.close
+                if (candles.isNotEmpty()) {
+                    val priceEntries = ArrayList<CandleEntry>()
+                    val transactionEntries = ArrayList<BarEntry>()
+                    val barColor = ArrayList<Int>()
+                    val average5Entries = ArrayList<Entry>()
+                    val average10Entries = ArrayList<Entry>()
+                    val average20Entries = ArrayList<Entry>()
+                    val average60Entries = ArrayList<Entry>()
+                    val average120Entries = ArrayList<Entry>()
+                    var count: Int = 0
+                    var average5: Float = 0.0f
+                    var average10: Float = 0.0f
+                    var average20: Float = 0.0f
+                    var average60: Float = 0.0f
+                    var average120: Float = 0.0f
+                    val tranAverage5Entries = ArrayList<Entry>()
+                    val tranAverage10Entries = ArrayList<Entry>()
+                    val tranAverage20Entries = ArrayList<Entry>()
+                    var tranAverage5: Float = 0.0f
+                    var tranAverage10: Float = 0.0f
+                    var tranAverage20: Float = 0.0f
+                    for (candle in candles) {
+                        // 캔들 차트(가격 차트) entry 생성
+                        priceEntries.add(
+                            CandleEntry(
+                                candle.createdAt.toFloat(),
+                                candle.shadowHigh,
+                                candle.shadowLow,
+                                candle.open,
+                                candle.close
+                            )
                         )
-                    )
-                    // 막대 차트(거래량 차트) entry 생성
-                    transactionEntries.add(
-                        BarEntry(
-                            candle.createdAt.toFloat(),
-                            candle.totalTradeVolume
+                        // 막대 차트(거래량 차트) entry 생성
+                        transactionEntries.add(
+                            BarEntry(
+                                candle.createdAt.toFloat(),
+                                candle.totalTradeVolume
+                            )
                         )
-                    )
-                    if (candle.close >= candle.open) {
-                        barColor.add(Color.rgb(200, 74, 49))
-                    } else {
-                        barColor.add(Color.rgb(18, 98, 197))
+                        if (candle.close >= candle.open) {
+                            barColor.add(Color.rgb(200, 74, 49))
+                        } else {
+                            barColor.add(Color.rgb(18, 98, 197))
+                        }
+
+                        count++
+                        average5 += candle.close
+                        average10 += candle.close
+                        average20 += candle.close
+                        average60 += candle.close
+                        average120 += candle.close
+                        tranAverage5 += candle.totalTradeVolume
+                        tranAverage10 += candle.totalTradeVolume
+                        tranAverage20 += candle.totalTradeVolume
+                        val now = candles.indexOf(candle)
+                        if (count >= 120) {
+                            average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
+                            average10Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    average10 / 10.0f
+                                )
+                            )
+                            average20Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    average20 / 20.0f
+                                )
+                            )
+                            average60Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    average60 / 60.0f
+                                )
+                            )
+                            average120Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    average120 / 120.0f
+                                )
+                            )
+                            average5 -= candles[now - 4].close
+                            average10 -= candles[now - 9].close
+                            average20 -= candles[now - 19].close
+                            average60 -= candles[now - 59].close
+                            average120 -= candles[now - 119].close
+
+                            tranAverage5Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    tranAverage5 / 5.0f
+                                )
+                            )
+                            tranAverage10Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    tranAverage10 / 10.0f
+                                )
+                            )
+                            tranAverage20Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    tranAverage20 / 20.0f
+                                )
+                            )
+                            tranAverage5 -= candles[now - 4].totalTradeVolume
+                            tranAverage10 -= candles[now - 9].totalTradeVolume
+                            tranAverage20 -= candles[now - 19].totalTradeVolume
+                        } else if (count >= 60) {
+                            average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
+                            average10Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    average10 / 10.0f
+                                )
+                            )
+                            average20Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    average20 / 20.0f
+                                )
+                            )
+                            average60Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    average60 / 60.0f
+                                )
+                            )
+                            average5 -= candles[now - 4].close
+                            average10 -= candles[now - 9].close
+                            average20 -= candles[now - 19].close
+                            average60 -= candles[now - 59].close
+
+                            tranAverage5Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    tranAverage5 / 5.0f
+                                )
+                            )
+                            tranAverage10Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    tranAverage10 / 10.0f
+                                )
+                            )
+                            tranAverage20Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    tranAverage20 / 20.0f
+                                )
+                            )
+                            tranAverage5 -= candles[now - 4].totalTradeVolume
+                            tranAverage10 -= candles[now - 9].totalTradeVolume
+                            tranAverage20 -= candles[now - 19].totalTradeVolume
+                        } else if (count >= 20) {
+                            average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
+                            average10Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    average10 / 10.0f
+                                )
+                            )
+                            average20Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    average20 / 20.0f
+                                )
+                            )
+                            average5 -= candles[now - 4].close
+                            average10 -= candles[now - 9].close
+                            average20 -= candles[now - 19].close
+
+                            tranAverage5Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    tranAverage5 / 5.0f
+                                )
+                            )
+                            tranAverage10Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    tranAverage10 / 10.0f
+                                )
+                            )
+                            tranAverage20Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    tranAverage20 / 20.0f
+                                )
+                            )
+                            tranAverage5 -= candles[now - 4].totalTradeVolume
+                            tranAverage10 -= candles[now - 9].totalTradeVolume
+                            tranAverage20 -= candles[now - 19].totalTradeVolume
+                        } else if (count >= 10) {
+                            average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
+                            average10Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    average10 / 10.0f
+                                )
+                            )
+                            average5 -= candles[now - 4].close
+                            average10 -= candles[now - 9].close
+
+                            tranAverage5Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    tranAverage5 / 5.0f
+                                )
+                            )
+                            tranAverage10Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    tranAverage10 / 10.0f
+                                )
+                            )
+                            tranAverage5 -= candles[now - 4].totalTradeVolume
+                            tranAverage10 -= candles[now - 9].totalTradeVolume
+                        } else if (count >= 5) {
+                            average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
+                            average5 -= candles[now - 4].close
+
+                            tranAverage5Entries.add(
+                                Entry(
+                                    candle.createdAt.toFloat(),
+                                    tranAverage5 / 5.0f
+                                )
+                            )
+                            tranAverage5 -= candles[now - 4].totalTradeVolume
+                        }
                     }
 
-                    count++
-                    average5 += candle.close
-                    average10 += candle.close
-                    average20 += candle.close
-                    average60 += candle.close
-                    average120 += candle.close
-                    tranAverage5 += candle.totalTradeVolume
-                    tranAverage10 += candle.totalTradeVolume
-                    tranAverage20 += candle.totalTradeVolume
-                    val now = candles.indexOf(candle)
-                    if (count >= 120) {
-                        average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
-                        average10Entries.add(Entry(candle.createdAt.toFloat(), average10 / 10.0f))
-                        average20Entries.add(Entry(candle.createdAt.toFloat(), average20 / 20.0f))
-                        average60Entries.add(Entry(candle.createdAt.toFloat(), average60 / 60.0f))
-                        average120Entries.add(
-                            Entry(
-                                candle.createdAt.toFloat(),
-                                average120 / 120.0f
-                            )
-                        )
-                        average5 -= candles[now - 4].close
-                        average10 -= candles[now - 9].close
-                        average20 -= candles[now - 19].close
-                        average60 -= candles[now - 59].close
-                        average120 -= candles[now - 119].close
+                    val priceDataSet = CandleDataSet(priceEntries, "").apply {
+                        axisDependency = YAxis.AxisDependency.LEFT
+                        // 심지 부분 설정
+                        shadowColor = Color.LTGRAY
+                        shadowWidth = 0.7F
+                        // 음봉
+                        decreasingColor = Color.rgb(18, 98, 197)
+                        decreasingPaintStyle = Paint.Style.FILL
+                        // 양봉
+                        increasingColor = Color.rgb(200, 74, 49)
+                        increasingPaintStyle = Paint.Style.FILL
 
-                        tranAverage5Entries.add(
-                            Entry(
-                                candle.createdAt.toFloat(),
-                                tranAverage5 / 5.0f
-                            )
-                        )
-                        tranAverage10Entries.add(
-                            Entry(
-                                candle.createdAt.toFloat(),
-                                tranAverage10 / 10.0f
-                            )
-                        )
-                        tranAverage20Entries.add(
-                            Entry(
-                                candle.createdAt.toFloat(),
-                                tranAverage20 / 20.0f
-                            )
-                        )
-                        tranAverage5 -= candles[now - 4].totalTradeVolume
-                        tranAverage10 -= candles[now - 9].totalTradeVolume
-                        tranAverage20 -= candles[now - 19].totalTradeVolume
-                    } else if (count >= 60) {
-                        average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
-                        average10Entries.add(Entry(candle.createdAt.toFloat(), average10 / 10.0f))
-                        average20Entries.add(Entry(candle.createdAt.toFloat(), average20 / 20.0f))
-                        average60Entries.add(Entry(candle.createdAt.toFloat(), average60 / 60.0f))
-                        average5 -= candles[now - 4].close
-                        average10 -= candles[now - 9].close
-                        average20 -= candles[now - 19].close
-                        average60 -= candles[now - 59].close
-
-                        tranAverage5Entries.add(
-                            Entry(
-                                candle.createdAt.toFloat(),
-                                tranAverage5 / 5.0f
-                            )
-                        )
-                        tranAverage10Entries.add(
-                            Entry(
-                                candle.createdAt.toFloat(),
-                                tranAverage10 / 10.0f
-                            )
-                        )
-                        tranAverage20Entries.add(
-                            Entry(
-                                candle.createdAt.toFloat(),
-                                tranAverage20 / 20.0f
-                            )
-                        )
-                        tranAverage5 -= candles[now - 4].totalTradeVolume
-                        tranAverage10 -= candles[now - 9].totalTradeVolume
-                        tranAverage20 -= candles[now - 19].totalTradeVolume
-                    } else if (count >= 20) {
-                        average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
-                        average10Entries.add(Entry(candle.createdAt.toFloat(), average10 / 10.0f))
-                        average20Entries.add(Entry(candle.createdAt.toFloat(), average20 / 20.0f))
-                        average5 -= candles[now - 4].close
-                        average10 -= candles[now - 9].close
-                        average20 -= candles[now - 19].close
-
-                        tranAverage5Entries.add(
-                            Entry(
-                                candle.createdAt.toFloat(),
-                                tranAverage5 / 5.0f
-                            )
-                        )
-                        tranAverage10Entries.add(
-                            Entry(
-                                candle.createdAt.toFloat(),
-                                tranAverage10 / 10.0f
-                            )
-                        )
-                        tranAverage20Entries.add(
-                            Entry(
-                                candle.createdAt.toFloat(),
-                                tranAverage20 / 20.0f
-                            )
-                        )
-                        tranAverage5 -= candles[now - 4].totalTradeVolume
-                        tranAverage10 -= candles[now - 9].totalTradeVolume
-                        tranAverage20 -= candles[now - 19].totalTradeVolume
-                    } else if (count >= 10) {
-                        average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
-                        average10Entries.add(Entry(candle.createdAt.toFloat(), average10 / 10.0f))
-                        average5 -= candles[now - 4].close
-                        average10 -= candles[now - 9].close
-
-                        tranAverage5Entries.add(
-                            Entry(
-                                candle.createdAt.toFloat(),
-                                tranAverage5 / 5.0f
-                            )
-                        )
-                        tranAverage10Entries.add(
-                            Entry(
-                                candle.createdAt.toFloat(),
-                                tranAverage10 / 10.0f
-                            )
-                        )
-                        tranAverage5 -= candles[now - 4].totalTradeVolume
-                        tranAverage10 -= candles[now - 9].totalTradeVolume
-                    } else if (count >= 5) {
-                        average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
-                        average5 -= candles[now - 4].close
-
-                        tranAverage5Entries.add(
-                            Entry(
-                                candle.createdAt.toFloat(),
-                                tranAverage5 / 5.0f
-                            )
-                        )
-                        tranAverage5 -= candles[now - 4].totalTradeVolume
+                        neutralColor = Color.rgb(6, 18, 34)
+                        setDrawValues(false)
+                        // 터치시 노란 선 제거
+                        highLightColor = Color.TRANSPARENT
                     }
-                }
-
-                val priceDataSet = CandleDataSet(priceEntries, "").apply {
-                    axisDependency = YAxis.AxisDependency.LEFT
-                    // 심지 부분 설정
-                    shadowColor = Color.LTGRAY
-                    shadowWidth = 0.7F
-                    // 음봉
-                    decreasingColor = Color.rgb(18, 98, 197)
-                    decreasingPaintStyle = Paint.Style.FILL
-                    // 양봉
-                    increasingColor = Color.rgb(200, 74, 49)
-                    increasingPaintStyle = Paint.Style.FILL
-
-                    neutralColor = Color.rgb(6, 18, 34)
-                    setDrawValues(false)
-                    // 터치시 노란 선 제거
-                    highLightColor = Color.TRANSPARENT
-                }
-                val transactionDataSet = BarDataSet(transactionEntries, "").apply {
-                    colors = barColor
-                    setDrawValues(false)
-                    highLightColor = Color.TRANSPARENT
-                }
-                val average5DataSet = LineDataSet(average5Entries, "").apply {
-                    setDrawCircles(false)
-                    color = Color.rgb(219, 17, 179)
-                    highLightColor = Color.TRANSPARENT
-                    valueTextSize = 0f
-                    lineWidth = 1.0f
-                }
-                val average10DataSet = LineDataSet(average10Entries, "").apply {
-                    setDrawCircles(false)
-                    color = Color.rgb(11, 41, 175)
-                    highLightColor = Color.TRANSPARENT
-                    valueTextSize = 0f
-                    lineWidth = 1.0f
-                }
-                val average20DataSet = LineDataSet(average20Entries, "").apply {
-                    setDrawCircles(false)
-                    color = Color.rgb(234, 153, 1)
-                    highLightColor = Color.TRANSPARENT
-                    valueTextSize = 0f
-                    lineWidth = 1.0f
-                }
-                val average60DataSet = LineDataSet(average60Entries, "").apply {
-                    setDrawCircles(false)
-                    color = Color.rgb(253, 52, 0)
-                    highLightColor = Color.TRANSPARENT
-                    valueTextSize = 0f
-                    lineWidth = 1.0f
-                }
-                val average120DataSet = LineDataSet(average120Entries, "").apply {
-                    setDrawCircles(false)
-                    color = Color.rgb(170, 170, 170)
-                    highLightColor = Color.TRANSPARENT
-                    valueTextSize = 0f
-                    lineWidth = 1.0f
-                }
-                val tranAverage5DataSet = LineDataSet(tranAverage5Entries, "").apply {
-                    setDrawCircles(false)
-                    color = Color.rgb(219, 17, 179)
-                    highLightColor = Color.TRANSPARENT
-                    valueTextSize = 0f
-                    lineWidth = 1.0f
-                }
-                val tranAverage10DataSet = LineDataSet(tranAverage10Entries, "").apply {
-                    setDrawCircles(false)
-                    color = Color.rgb(11, 41, 175)
-                    highLightColor = Color.TRANSPARENT
-                    valueTextSize = 0f
-                    lineWidth = 1.0f
-                }
-                val tranAverage20DataSet = LineDataSet(tranAverage20Entries, "").apply {
-                    setDrawCircles(false)
-                    color = Color.rgb(234, 153, 1)
-                    highLightColor = Color.TRANSPARENT
-                    valueTextSize = 0f
-                    lineWidth = 1.0f
-                }
-                binding.priceChart.apply {
-                    val combinedData = CombinedData()
-                    combinedData.setData(CandleData(priceDataSet))
-                    val lineData = LineData()
-                    lineData.addDataSet(average5DataSet)
-                    lineData.addDataSet(average10DataSet)
-                    lineData.addDataSet(average20DataSet)
-                    lineData.addDataSet(average60DataSet)
-                    lineData.addDataSet(average120DataSet)
-                    combinedData.setData(lineData)
-                    this.data = combinedData
-                    invalidate()
-                }
-                binding.transactionChart.apply {
-                    val combinedData = CombinedData()
-                    combinedData.setData(BarData(transactionDataSet))
-                    val lineData = LineData()
-                    lineData.addDataSet(tranAverage5DataSet)
-                    lineData.addDataSet(tranAverage10DataSet)
-                    lineData.addDataSet(tranAverage20DataSet)
-                    combinedData.setData(lineData)
-                    this.data = combinedData
-                    invalidate()
+                    val transactionDataSet = BarDataSet(transactionEntries, "").apply {
+                        colors = barColor
+                        setDrawValues(false)
+                        highLightColor = Color.TRANSPARENT
+                    }
+                    val average5DataSet = LineDataSet(average5Entries, "").apply {
+                        setDrawCircles(false)
+                        color = Color.rgb(219, 17, 179)
+                        highLightColor = Color.TRANSPARENT
+                        valueTextSize = 0f
+                        lineWidth = 1.0f
+                    }
+                    val average10DataSet = LineDataSet(average10Entries, "").apply {
+                        setDrawCircles(false)
+                        color = Color.rgb(11, 41, 175)
+                        highLightColor = Color.TRANSPARENT
+                        valueTextSize = 0f
+                        lineWidth = 1.0f
+                    }
+                    val average20DataSet = LineDataSet(average20Entries, "").apply {
+                        setDrawCircles(false)
+                        color = Color.rgb(234, 153, 1)
+                        highLightColor = Color.TRANSPARENT
+                        valueTextSize = 0f
+                        lineWidth = 1.0f
+                    }
+                    val average60DataSet = LineDataSet(average60Entries, "").apply {
+                        setDrawCircles(false)
+                        color = Color.rgb(253, 52, 0)
+                        highLightColor = Color.TRANSPARENT
+                        valueTextSize = 0f
+                        lineWidth = 1.0f
+                    }
+                    val average120DataSet = LineDataSet(average120Entries, "").apply {
+                        setDrawCircles(false)
+                        color = Color.rgb(170, 170, 170)
+                        highLightColor = Color.TRANSPARENT
+                        valueTextSize = 0f
+                        lineWidth = 1.0f
+                    }
+                    val tranAverage5DataSet = LineDataSet(tranAverage5Entries, "").apply {
+                        setDrawCircles(false)
+                        color = Color.rgb(219, 17, 179)
+                        highLightColor = Color.TRANSPARENT
+                        valueTextSize = 0f
+                        lineWidth = 1.0f
+                    }
+                    val tranAverage10DataSet = LineDataSet(tranAverage10Entries, "").apply {
+                        setDrawCircles(false)
+                        color = Color.rgb(11, 41, 175)
+                        highLightColor = Color.TRANSPARENT
+                        valueTextSize = 0f
+                        lineWidth = 1.0f
+                    }
+                    val tranAverage20DataSet = LineDataSet(tranAverage20Entries, "").apply {
+                        setDrawCircles(false)
+                        color = Color.rgb(234, 153, 1)
+                        highLightColor = Color.TRANSPARENT
+                        valueTextSize = 0f
+                        lineWidth = 1.0f
+                    }
+                    binding.priceChart.apply {
+                        val combinedData = CombinedData()
+                        combinedData.setData(CandleData(priceDataSet))
+                        val lineData = LineData()
+                        lineData.addDataSet(average5DataSet)
+                        lineData.addDataSet(average10DataSet)
+                        lineData.addDataSet(average20DataSet)
+                        lineData.addDataSet(average60DataSet)
+                        lineData.addDataSet(average120DataSet)
+                        combinedData.setData(lineData)
+                        this.data = combinedData
+                        invalidate()
+                    }
+                    binding.transactionChart.apply {
+                        val combinedData = CombinedData()
+                        combinedData.setData(BarData(transactionDataSet))
+                        val lineData = LineData()
+                        lineData.addDataSet(tranAverage5DataSet)
+                        lineData.addDataSet(tranAverage10DataSet)
+                        lineData.addDataSet(tranAverage20DataSet)
+                        combinedData.setData(lineData)
+                        this.data = combinedData
+                        invalidate()
+                    }
                 }
             }
         }

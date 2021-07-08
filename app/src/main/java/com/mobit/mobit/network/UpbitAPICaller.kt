@@ -38,7 +38,8 @@ class UpbitAPICaller {
             if (responseCode == 200) {
                 br = BufferedReader(InputStreamReader(con.inputStream))
             } else {
-                br = BufferedReader(InputStreamReader(con.errorStream))
+                Log.e("UpbitAPICaller", "responseCode is $responseCode")
+                return ret
             }
             var inputLine: String?
             val response = StringBuffer()
@@ -48,7 +49,7 @@ class UpbitAPICaller {
             br.close()
             ret += response.toString()
         } catch (e: Exception) {
-            Log.e("connect Error", e.toString())
+            Log.e("UpbitAPICaller", e.toString())
             return ret
         }
 

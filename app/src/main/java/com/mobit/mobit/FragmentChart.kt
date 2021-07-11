@@ -1,5 +1,7 @@
 package com.mobit.mobit
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
@@ -14,6 +16,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -28,11 +32,15 @@ import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.mobit.mobit.data.Candle
 import com.mobit.mobit.data.CoinInfo
+import com.mobit.mobit.data.MainIndicator
 import com.mobit.mobit.data.MyViewModel
 import com.mobit.mobit.databinding.FragmentChartBinding
 import com.mobit.mobit.network.UpbitAPICaller
 import java.text.DecimalFormat
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sqrt
 
 /*
 코인 차트 기능이 구현될 Fragment 입니다.
@@ -55,6 +63,8 @@ class FragmentChart : Fragment() {
         const val UNIT_MONTH: Int = 9
     }
 
+    lateinit var getContent: ActivityResultLauncher<Intent>
+
     // UI 변수 시작
     lateinit var binding: FragmentChartBinding
     var minuteBtnFlag: Boolean = true
@@ -63,6 +73,7 @@ class FragmentChart : Fragment() {
     // 차트 관련 변수 시작
     var unitFlag: Int = UNIT_MIN_1
     var unitMinFlag: Int = UNIT_MIN_1
+    val priceChartLegendList: ArrayList<LegendEntry> = ArrayList()
     // 차트 관련 변수 끝
 
     val upbitAPICaller: UpbitAPICaller = UpbitAPICaller()
@@ -81,6 +92,29 @@ class FragmentChart : Fragment() {
 
         upbitCandleThread = UpbitCandleThread()
         upbitCandleThread.start()
+
+        getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            when (it.resultCode) {
+                Activity.RESULT_OK -> {
+                    val mainIndicatorType: Int =
+                        it.data!!.getIntExtra("mainIndicatorType", -1)
+                    val mainIndicator: MainIndicator =
+                        it.data!!.getSerializableExtra("mainIndicator") as MainIndicator
+                    if (mainIndicatorType != -1) {
+                        myViewModel.setMainIndicatorType(mainIndicatorType)
+                        myViewModel.setMainIndicator(mainIndicator)
+
+                        val thread: Thread = object : Thread() {
+                            override fun run() {
+                                myViewModel.myDBHelper!!.setMainIndicatorType(mainIndicatorType)
+                                myViewModel.myDBHelper!!.setMainIndicator(mainIndicator)
+                            }
+                        }
+                        thread.start()
+                    }
+                }
+            }
+        }
 
         initChart()
         init()
@@ -137,38 +171,8 @@ class FragmentChart : Fragment() {
                 axisLineColor = Color.rgb(50, 59, 76)
                 gridColor = Color.rgb(50, 59, 76)
             }
-            priceChart.legend.isEnabled = true
-            val average5Legend = LegendEntry()
-            average5Legend.label = "5"
-            average5Legend.formColor = Color.rgb(219, 17, 179)
-            val average10Legend = LegendEntry()
-            average10Legend.label = "10"
-            average10Legend.formColor = Color.rgb(11, 41, 175)
-            val average20Legend = LegendEntry()
-            average20Legend.label = "20"
-            average20Legend.formColor = Color.rgb(234, 153, 1)
-            val average60Legend = LegendEntry()
-            average60Legend.label = "60"
-            average60Legend.formColor = Color.rgb(253, 52, 0)
-            val average120Legend = LegendEntry()
-            average120Legend.label = "120"
-            average120Legend.formColor = Color.rgb(170, 170, 170)
-            priceChart.legend.apply {
-                setCustom(
-                    listOf(
-                        average5Legend,
-                        average10Legend,
-                        average20Legend,
-                        average60Legend,
-                        average120Legend
-                    )
-                )
-                textColor = Color.WHITE
-                verticalAlignment = Legend.LegendVerticalAlignment.TOP
-                horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
-                orientation = Legend.LegendOrientation.HORIZONTAL
-                setDrawInside(true)
-            }
+            transactionChart.legend.isEnabled = true
+            setChartLegend(myViewModel.mainIndicatorType.value!!)
 
             transactionChart.description.isEnabled = false
             transactionChart.setMaxVisibleValueCount(200)
@@ -194,6 +198,15 @@ class FragmentChart : Fragment() {
                 gridColor = Color.rgb(50, 59, 76)
             }
             transactionChart.legend.isEnabled = true
+            val average5Legend = LegendEntry()
+            average5Legend.label = "5"
+            average5Legend.formColor = Color.rgb(219, 17, 179)
+            val average10Legend = LegendEntry()
+            average10Legend.label = "10"
+            average10Legend.formColor = Color.rgb(11, 41, 175)
+            val average20Legend = LegendEntry()
+            average20Legend.label = "20"
+            average20Legend.formColor = Color.rgb(234, 153, 1)
             transactionChart.legend.apply {
                 setCustom(
                     listOf(
@@ -388,6 +401,13 @@ class FragmentChart : Fragment() {
                     }
                 }
             })
+
+            mainIndicatorSettingBtn.setOnClickListener {
+                val intent: Intent = Intent(context, MainIndicatorSettingActivity::class.java)
+                intent.putExtra("mainIndicatorType", myViewModel.mainIndicatorType.value!!)
+                intent.putExtra("mainIndicator", myViewModel.mainIndicator.value!!)
+                getContent.launch(intent)
+            }
         }
     }
 
@@ -491,6 +511,684 @@ class FragmentChart : Fragment() {
         otherChart.viewPortHandler.refresh(otherMatrix, otherChart, true)
     }
 
+    fun setChartLegend(mainIndicatorType: Int) {
+        val legendList: List<LegendEntry> = when (mainIndicatorType) {
+            MainIndicator.MOVING_AVERAGE -> {
+                binding.priceChart.legend.isEnabled = true
+                val movingAverageLegend = LegendEntry()
+                movingAverageLegend.label = "단순 MA"
+                movingAverageLegend.form = Legend.LegendForm.NONE
+                val averageN1Legend = LegendEntry()
+                averageN1Legend.label = myViewModel.mainIndicator.value!!.MA_N1.toString()
+                averageN1Legend.formColor = Color.rgb(219, 17, 179)
+                val averageN2Legend = LegendEntry()
+                averageN2Legend.label = myViewModel.mainIndicator.value!!.MA_N2.toString()
+                averageN2Legend.formColor = Color.rgb(11, 41, 175)
+                val averageN3Legend = LegendEntry()
+                averageN3Legend.label = myViewModel.mainIndicator.value!!.MA_N3.toString()
+                averageN3Legend.formColor = Color.rgb(234, 153, 1)
+                val averageN4Legend = LegendEntry()
+                averageN4Legend.label = myViewModel.mainIndicator.value!!.MA_N4.toString()
+                averageN4Legend.formColor = Color.rgb(253, 52, 0)
+                val averageN5Legend = LegendEntry()
+                averageN5Legend.label = myViewModel.mainIndicator.value!!.MA_N5.toString()
+                averageN5Legend.formColor = Color.rgb(170, 170, 170)
+                listOf(
+                    movingAverageLegend,
+                    averageN1Legend,
+                    averageN2Legend,
+                    averageN3Legend,
+                    averageN4Legend,
+                    averageN5Legend
+                )
+            }
+            MainIndicator.BOLLINGER_BANDS -> {
+                binding.priceChart.legend.isEnabled = true
+                val upperLegend = LegendEntry()
+                upperLegend.label = "Upper"
+                upperLegend.formColor = Color.rgb(50, 51, 255)
+                val middleLegend = LegendEntry()
+                middleLegend.label = "Middle"
+                middleLegend.formColor = Color.rgb(53, 153, 101)
+                val lowerLegend = LegendEntry()
+                lowerLegend.label = "Lower"
+                lowerLegend.formColor = Color.rgb(255, 204, 1)
+                listOf(upperLegend, middleLegend, lowerLegend)
+            }
+            MainIndicator.DAILY_BALANCE_TABLE -> {
+                binding.priceChart.legend.isEnabled = true
+                val transitionLegend = LegendEntry()
+                transitionLegend.label = "전환 ${myViewModel.mainIndicator.value!!.DBT_1}"
+                transitionLegend.formColor = Color.rgb(10, 154, 131)
+                val baselineLegend = LegendEntry()
+                baselineLegend.label = "기준 ${myViewModel.mainIndicator.value!!.DBT_2}"
+                baselineLegend.formColor = Color.rgb(120, 120, 120)
+                val trailingLegend = LegendEntry()
+                trailingLegend.label = "후행 ${myViewModel.mainIndicator.value!!.DBT_3}"
+                trailingLegend.formColor = Color.rgb(167, 32, 223)
+                val leadingSpan1Legend = LegendEntry()
+                leadingSpan1Legend.label = "선행1 ${myViewModel.mainIndicator.value!!.DBT_4}"
+                leadingSpan1Legend.formColor = Color.rgb(247, 162, 107)
+                val leadingSpan2Legend = LegendEntry()
+                leadingSpan2Legend.label = "선행2 ${myViewModel.mainIndicator.value!!.DBT_5}"
+                leadingSpan2Legend.formColor = Color.rgb(105, 140, 240)
+                listOf(
+                    transitionLegend,
+                    baselineLegend,
+                    trailingLegend,
+                    leadingSpan1Legend,
+                    leadingSpan2Legend
+                )
+            }
+            MainIndicator.PIVOT -> {
+                binding.priceChart.legend.isEnabled = true
+                val resistanceLine2Legend = LegendEntry()
+                resistanceLine2Legend.label = "저항2"
+                resistanceLine2Legend.formColor = Color.rgb(244, 169, 225)
+                val resistanceLine1Legend = LegendEntry()
+                resistanceLine1Legend.label = "저항1"
+                resistanceLine1Legend.formColor = Color.rgb(166, 162, 247)
+                val pivotBaselineLegend = LegendEntry()
+                pivotBaselineLegend.label = "피봇"
+                pivotBaselineLegend.formColor = Color.rgb(157, 222, 242)
+                val supportLine1Legend = LegendEntry()
+                supportLine1Legend.label = "지지1"
+                supportLine1Legend.formColor = Color.rgb(162, 236, 175)
+                val supportLine2Legend = LegendEntry()
+                supportLine2Legend.label = "지지2"
+                supportLine2Legend.formColor = Color.rgb(254, 187, 160)
+                listOf(
+                    resistanceLine2Legend,
+                    resistanceLine1Legend,
+                    pivotBaselineLegend,
+                    supportLine1Legend,
+                    supportLine2Legend
+                )
+            }
+            MainIndicator.ENVELOPES -> {
+                binding.priceChart.legend.isEnabled = true
+                val upperLimitLegend = LegendEntry()
+                upperLimitLegend.label = "상한선"
+                upperLimitLegend.formColor = Color.rgb(101, 204, 51)
+                val baselineLegend = LegendEntry()
+                baselineLegend.label = "중심선"
+                baselineLegend.formColor = Color.rgb(51, 50, 203)
+                val lowerBoundLegend = LegendEntry()
+                lowerBoundLegend.label = "하한선"
+                lowerBoundLegend.formColor = Color.rgb(255, 51, 156)
+                val envelopesLegend = LegendEntry()
+                envelopesLegend.label =
+                    "${myViewModel.mainIndicator.value!!.ENV_N}, ${myViewModel.mainIndicator.value!!.ENV_K}"
+                envelopesLegend.form = Legend.LegendForm.NONE
+                listOf(upperLimitLegend, baselineLegend, lowerBoundLegend, envelopesLegend)
+            }
+            MainIndicator.PRICE_CHANNELS -> {
+                binding.priceChart.legend.isEnabled = true
+                val priceChannelsLegend = LegendEntry()
+                priceChannelsLegend.label = "PC ${myViewModel.mainIndicator.value!!.PC_N}"
+                priceChannelsLegend.form = Legend.LegendForm.NONE
+                val upperLimitLegend = LegendEntry()
+                upperLimitLegend.label = "상한선"
+                upperLimitLegend.formColor = Color.rgb(85, 197, 99)
+                val baselineLegend = LegendEntry()
+                baselineLegend.label = "중심선"
+                baselineLegend.formColor = Color.rgb(204, 204, 204)
+                val lowerBoundLegend = LegendEntry()
+                lowerBoundLegend.label = "하한선"
+                lowerBoundLegend.formColor = Color.rgb(85, 197, 99)
+                listOf(priceChannelsLegend, upperLimitLegend, baselineLegend, lowerBoundLegend)
+            }
+            else -> {
+                binding.priceChart.legend.isEnabled = false
+                Log.e("FragmentChart", "mainIndicator is $mainIndicatorType in setChartLegend()")
+                listOf()
+            }
+        }
+        if (legendList.isEmpty()) {
+            Log.e("FragmentChart", "legendList is empty in setChartLegend()")
+            return
+        }
+
+        priceChartLegendList.clear()
+        priceChartLegendList.addAll(legendList)
+//        val mEntries = legendList.toTypedArray()
+//        binding.priceChart.legend.apply {
+//            setCustom(mEntries)
+//
+//            Log.i("FragmentChart", mEntries.size.toString())
+//            for (entry in mEntries) {
+//                Log.i("FragmentChart", entry.label)
+//            }
+//
+//            textColor = Color.WHITE
+//            verticalAlignment = Legend.LegendVerticalAlignment.TOP
+//            horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
+//            orientation = Legend.LegendOrientation.HORIZONTAL
+//            setDrawInside(true)
+//        }
+    }
+
+    fun getMovingAverage(candles: ArrayList<Candle>): LineData {
+        val ret: LineData = LineData()
+        val N1: Int = myViewModel.mainIndicator.value!!.MA_N1
+        val N2: Int = myViewModel.mainIndicator.value!!.MA_N2
+        val N3: Int = myViewModel.mainIndicator.value!!.MA_N3
+        val N4: Int = myViewModel.mainIndicator.value!!.MA_N4
+        val N5: Int = myViewModel.mainIndicator.value!!.MA_N5
+        val averageN1Entries = ArrayList<Entry>()
+        val averageN2Entries = ArrayList<Entry>()
+        val averageN3Entries = ArrayList<Entry>()
+        val averageN4Entries = ArrayList<Entry>()
+        val averageN5Entries = ArrayList<Entry>()
+        var count: Int = 0
+        var sumN1: Float = 0.0f
+        var sumN2: Float = 0.0f
+        var sumN3: Float = 0.0f
+        var sumN4: Float = 0.0f
+        var sumN5: Float = 0.0f
+        for (candle in candles) {
+            count++
+            sumN1 += candle.close
+            sumN2 += candle.close
+            sumN3 += candle.close
+            sumN4 += candle.close
+            sumN5 += candle.close
+            val now = candles.indexOf(candle)
+            if (count >= N5) {
+                averageN5Entries.add(
+                    Entry(
+                        candle.createdAt.toFloat(),
+                        sumN5 / N5.toFloat()
+                    )
+                )
+                sumN5 -= candles[now - (N5 - 1)].close
+            }
+            if (count >= N4) {
+                averageN4Entries.add(
+                    Entry(
+                        candle.createdAt.toFloat(),
+                        sumN4 / N4.toFloat()
+                    )
+                )
+                sumN4 -= candles[now - (N4 - 1)].close
+            }
+            if (count >= N3) {
+                averageN3Entries.add(
+                    Entry(
+                        candle.createdAt.toFloat(),
+                        sumN3 / N3.toFloat()
+                    )
+                )
+                sumN3 -= candles[now - (N3 - 1)].close
+            }
+            if (count >= N2) {
+                averageN2Entries.add(
+                    Entry(
+                        candle.createdAt.toFloat(),
+                        sumN2 / N2.toFloat()
+                    )
+                )
+                sumN2 -= candles[now - (N2 - 1)].close
+            }
+            if (count >= N1) {
+                averageN1Entries.add(Entry(candle.createdAt.toFloat(), sumN1 / N1.toFloat()))
+                sumN1 -= candles[now - (N1 - 1)].close
+            }
+        }
+
+        val averageN1DataSet = LineDataSet(averageN1Entries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(219, 17, 179)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val averageN2DataSet = LineDataSet(averageN2Entries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(11, 41, 175)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val averageN3DataSet = LineDataSet(averageN3Entries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(234, 153, 1)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val averageN4DataSet = LineDataSet(averageN4Entries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(253, 52, 0)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val averageN5DataSet = LineDataSet(averageN5Entries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(170, 170, 170)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        ret.addDataSet(averageN1DataSet)
+        ret.addDataSet(averageN2DataSet)
+        ret.addDataSet(averageN3DataSet)
+        ret.addDataSet(averageN4DataSet)
+        ret.addDataSet(averageN5DataSet)
+        return ret
+    }
+
+    fun getBollingerBands(candles: ArrayList<Candle>): LineData {
+        val ret: LineData = LineData()
+        val N: Int = myViewModel.mainIndicator.value!!.BB_N
+        val K: Float = myViewModel.mainIndicator.value!!.BB_K
+        val baselineEntries = ArrayList<Entry>()
+        val upperLimitEntries = ArrayList<Entry>()
+        val lowerBoundEntries = ArrayList<Entry>()
+        var count: Int = 0
+        // N일 동안의 평균값
+        var sum: Float = 0.0f
+        // N일 동안의 (E[X])^2
+        var expValue: Float = 0.0f
+        // N일 동안의 E[X^2]
+        var expValue2: Float = 0.0f
+        for (candle in candles) {
+            count++
+            sum += candle.close
+            expValue += candle.close * 0.05f
+            expValue2 += candle.close * candle.close * 0.05f
+            val now = candles.indexOf(candle)
+            if (count >= N) {
+                val baselineValue: Float = sum / N.toFloat()
+                baselineEntries.add(Entry(candle.createdAt.toFloat(), baselineValue))
+                val sigma: Float = sqrt(expValue2 - (expValue * expValue))
+                upperLimitEntries.add(
+                    Entry(
+                        candle.createdAt.toFloat(),
+                        baselineValue + sigma * K
+                    )
+                )
+                lowerBoundEntries.add(
+                    Entry(
+                        candle.createdAt.toFloat(),
+                        baselineValue - sigma * K
+                    )
+                )
+
+                sum -= candles[now - (N - 1)].close
+                expValue -= candles[now - (N - 1)].close * 0.05f
+                expValue2 -= candles[now - (N - 1)].close * candles[now - (N - 1)].close * 0.05f
+            }
+        }
+
+        val baselineDataSet = LineDataSet(baselineEntries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(53, 153, 101)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val upperLimitDataSet = LineDataSet(upperLimitEntries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(50, 51, 255)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val lowerBoundDataSet = LineDataSet(lowerBoundEntries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(255, 204, 1)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        ret.addDataSet(baselineDataSet)
+        ret.addDataSet(upperLimitDataSet)
+        ret.addDataSet(lowerBoundDataSet)
+        return ret
+    }
+
+    fun getDailyBalanceTable(candles: ArrayList<Candle>): LineData {
+        val ret: LineData = LineData()
+        val DBT_1: Int = myViewModel.mainIndicator.value!!.DBT_1
+        val DBT_2: Int = myViewModel.mainIndicator.value!!.DBT_2
+        val DBT_3: Int = myViewModel.mainIndicator.value!!.DBT_3
+        val DBT_4: Int = myViewModel.mainIndicator.value!!.DBT_4
+        val DBT_5: Int = myViewModel.mainIndicator.value!!.DBT_5
+        // 전환선
+        val transitionLineEntries = ArrayList<Entry>()
+        // 기준선
+        val baselineEntries = ArrayList<Entry>()
+        // 후행스팬
+        val trailingSpanEntries = ArrayList<Entry>()
+        // 선행스팬1
+        val leadingSpan1Entries = ArrayList<Entry>()
+        // 선행스팬2
+        val leadingSpan2Entries = ArrayList<Entry>()
+        var count: Int = 0
+        var maxDuring1: Float = 0.0f
+        var minDuring1: Float = 987654321.0f
+        var maxDuring2: Float = 0.0f
+        var minDuring2: Float = 987654321.0f
+        var maxDuring5: Float = 0.0f
+        var minDuring5: Float = 987654321.0f
+        for (candle in candles) {
+            count++
+            maxDuring1 = 0.0f
+            minDuring1 = 0987654321.0f
+            maxDuring2 = 0.0f
+            minDuring2 = 0987654321.0f
+            maxDuring5 = 0.0f
+            minDuring5 = 0987654321.0f
+            val now = candles.indexOf(candle)
+            if (count >= DBT_1) {
+                for (i in 0..(DBT_1 - 1)) {
+                    maxDuring1 = max(maxDuring1, candles[now - i].shadowHigh)
+                    minDuring1 = min(minDuring1, candles[now - i].shadowLow)
+                }
+                val transitionValue: Float = (maxDuring1 + minDuring1) / 2.0f
+                transitionLineEntries.add(
+                    Entry(
+                        candle.createdAt.toFloat(),
+                        transitionValue
+                    )
+                )
+            }
+            if (count >= DBT_2) {
+                for (i in 0..(DBT_2 - 1)) {
+                    maxDuring2 = max(maxDuring2, candles[now - i].shadowHigh)
+                    minDuring2 = min(minDuring2, candles[now - i].shadowLow)
+                }
+                val baselineValue: Float = (maxDuring2 + minDuring2) / 2.0f
+                baselineEntries.add(
+                    Entry(
+                        candle.createdAt.toFloat(),
+                        baselineValue
+                    )
+                )
+            }
+            if (count >= DBT_3) {
+                trailingSpanEntries.add(
+                    Entry(
+                        candle.createdAt.toFloat() - DBT_3.toFloat(),
+                        candle.close
+                    )
+                )
+            }
+            if (count >= DBT_4) {
+                val transitionValue: Float = (maxDuring1 + minDuring1) / 2.0f
+                val baselineValue: Float = (maxDuring2 + minDuring2) / 2.0f
+                leadingSpan1Entries.add(
+                    Entry(
+                        candle.createdAt.toFloat() + 26.0f,
+                        (transitionValue + baselineValue) / 2.0f
+                    )
+                )
+            }
+            if (count >= DBT_5) {
+                for (i in 0..(DBT_5 - 1)) {
+                    maxDuring5 = max(maxDuring5, candles[now - i].shadowHigh)
+                    minDuring5 = min(minDuring5, candles[now - i].shadowLow)
+                }
+                leadingSpan2Entries.add(
+                    Entry(
+                        candle.createdAt.toFloat() + 26.0f,
+                        (maxDuring5 + minDuring5) / 2.0f
+                    )
+                )
+            }
+        }
+
+        val transitionDataSet = LineDataSet(transitionLineEntries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(10, 154, 131)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val baselineDataSet = LineDataSet(baselineEntries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(120, 120, 120)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val trailingSpanDataSet = LineDataSet(trailingSpanEntries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(167, 32, 223)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val leadingSpan1DataSet = LineDataSet(leadingSpan1Entries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(247, 162, 107)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val leadingSpan2DataSet = LineDataSet(leadingSpan2Entries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(105, 140, 240)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        ret.addDataSet(transitionDataSet)
+        ret.addDataSet(baselineDataSet)
+        ret.addDataSet(trailingSpanDataSet)
+        ret.addDataSet(leadingSpan1DataSet)
+        ret.addDataSet(leadingSpan2DataSet)
+        return ret
+    }
+
+    fun getPivot(candles: ArrayList<Candle>): LineData {
+        val ret: LineData = LineData()
+        val pivotBaselineEntries = ArrayList<Entry>()
+        val resistanceLine1Entries = ArrayList<Entry>()
+        val resistanceLine2Entries = ArrayList<Entry>()
+        val supportLine1Entries = ArrayList<Entry>()
+        val supportLine2Entries = ArrayList<Entry>()
+        for (candle in candles) {
+            val pivotValue: Float = (candle.shadowHigh + candle.shadowLow + candle.close) / 3.0f
+            pivotBaselineEntries.add(Entry(candle.createdAt.toFloat(), pivotValue))
+            resistanceLine1Entries.add(
+                Entry(
+                    candle.createdAt.toFloat(),
+                    2 * pivotValue - candle.shadowLow
+                )
+            )
+            resistanceLine2Entries.add(
+                Entry(
+                    candle.createdAt.toFloat(),
+                    pivotValue + candle.shadowHigh - candle.shadowLow
+                )
+            )
+            supportLine1Entries.add(
+                Entry(
+                    candle.createdAt.toFloat(),
+                    2 * pivotValue - candle.shadowHigh
+                )
+            )
+            supportLine2Entries.add(
+                Entry(
+                    candle.createdAt.toFloat(),
+                    pivotValue - candle.shadowHigh + candle.shadowLow
+                )
+            )
+        }
+
+        val pivotBaselineDataSet = LineDataSet(pivotBaselineEntries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(157, 222, 242)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val resistanceLine1DataSet = LineDataSet(resistanceLine1Entries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(166, 162, 247)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val resistanceLine2DataSet = LineDataSet(resistanceLine2Entries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(244, 169, 225)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val supportLine1DataSet = LineDataSet(supportLine1Entries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(162, 236, 175)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val supprotLine2DataSet = LineDataSet(supportLine2Entries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(254, 187, 160)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        ret.addDataSet(pivotBaselineDataSet)
+        ret.addDataSet(resistanceLine1DataSet)
+        ret.addDataSet(resistanceLine2DataSet)
+        ret.addDataSet(supportLine1DataSet)
+        ret.addDataSet(supprotLine2DataSet)
+        return ret
+    }
+
+    fun getEnvelopes(candles: ArrayList<Candle>): LineData {
+        val ret: LineData = LineData()
+        val ENV_N: Int = myViewModel.mainIndicator.value!!.ENV_N
+        val ENV_K: Int = myViewModel.mainIndicator.value!!.ENV_K
+        val baselineEntries = ArrayList<Entry>()
+        val upperLimitEntries = ArrayList<Entry>()
+        val lowerBoundEntries = ArrayList<Entry>()
+        var count: Int = 0
+        var sum: Float = 0.0f
+        for (candle in candles) {
+            count++
+            sum += candle.close
+            if (count >= ENV_N) {
+                val average: Float = sum / ENV_N.toFloat()
+                baselineEntries.add(Entry(candle.createdAt.toFloat(), average))
+                upperLimitEntries.add(
+                    Entry(
+                        candle.createdAt.toFloat(),
+                        average * (1 + 0.01f * ENV_K)
+                    )
+                )
+                lowerBoundEntries.add(
+                    Entry(
+                        candle.createdAt.toFloat(),
+                        average * (1 - 0.01f * ENV_K)
+                    )
+                )
+
+                val now = candles.indexOf(candle)
+                sum -= candles[now - (ENV_N - 1)].close
+            }
+        }
+
+        val baselineDataSet = LineDataSet(baselineEntries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(51, 50, 203)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val upperLimitDataSet = LineDataSet(upperLimitEntries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(101, 204, 51)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val lowerBoundDataSet = LineDataSet(lowerBoundEntries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(255, 51, 156)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        ret.addDataSet(baselineDataSet)
+        ret.addDataSet(upperLimitDataSet)
+        ret.addDataSet(lowerBoundDataSet)
+        return ret
+    }
+
+    fun getPriceChannels(candles: ArrayList<Candle>): LineData {
+        val ret: LineData = LineData()
+        val PC_N: Int = myViewModel.mainIndicator.value!!.PC_N
+        val baselineEntries = ArrayList<Entry>()
+        val upperLimitEntries = ArrayList<Entry>()
+        val lowerBoundEntries = ArrayList<Entry>()
+        var count: Int = 0
+        for (candle in candles) {
+            count++
+            if (count >= PC_N) {
+                val now = candles.indexOf(candle)
+                var maxDuringN: Float = 0.0f
+                var minDuringN: Float = 987654321.0f
+                for (i in 0..(PC_N - 1)) {
+                    maxDuringN = max(maxDuringN, candles[now - i].shadowHigh)
+                    minDuringN = min(minDuringN, candles[now - 1].shadowLow)
+                }
+                baselineEntries.add(
+                    Entry(
+                        candle.createdAt.toFloat(),
+                        (maxDuringN + minDuringN) / 2.0f
+                    )
+                )
+                upperLimitEntries.add(Entry(candle.createdAt.toFloat(), maxDuringN))
+                lowerBoundEntries.add(Entry(candle.createdAt.toFloat(), minDuringN))
+            }
+        }
+
+        val baselineDataSet = LineDataSet(baselineEntries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(204, 204, 204)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val upperLimitDataSet = LineDataSet(upperLimitEntries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(85, 197, 99)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        val lowerBoundDataSet = LineDataSet(lowerBoundEntries, "").apply {
+            setDrawCircles(false)
+            color = Color.rgb(85, 197, 99)
+            highLightColor = Color.TRANSPARENT
+            valueTextSize = 0f
+            lineWidth = 1.0f
+        }
+        ret.addDataSet(baselineDataSet)
+        ret.addDataSet(upperLimitDataSet)
+        ret.addDataSet(lowerBoundDataSet)
+        return ret
+    }
+
+    fun getMainIndicator(candles: ArrayList<Candle>, type: Int): LineData {
+        return when (type) {
+            MainIndicator.MOVING_AVERAGE -> getMovingAverage(candles)
+            MainIndicator.BOLLINGER_BANDS -> getBollingerBands(candles)
+            MainIndicator.DAILY_BALANCE_TABLE -> getDailyBalanceTable(candles)
+            MainIndicator.PIVOT -> getPivot(candles)
+            MainIndicator.ENVELOPES -> getEnvelopes(candles)
+            MainIndicator.PRICE_CHANNELS -> getPriceChannels(candles)
+            else -> getMovingAverage(candles)
+        }
+    }
+
     inner class UpbitCandleHandler : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
@@ -503,17 +1201,7 @@ class FragmentChart : Fragment() {
                     val priceEntries = ArrayList<CandleEntry>()
                     val transactionEntries = ArrayList<BarEntry>()
                     val barColor = ArrayList<Int>()
-                    val average5Entries = ArrayList<Entry>()
-                    val average10Entries = ArrayList<Entry>()
-                    val average20Entries = ArrayList<Entry>()
-                    val average60Entries = ArrayList<Entry>()
-                    val average120Entries = ArrayList<Entry>()
                     var count: Int = 0
-                    var average5: Float = 0.0f
-                    var average10: Float = 0.0f
-                    var average20: Float = 0.0f
-                    var average60: Float = 0.0f
-                    var average120: Float = 0.0f
                     val tranAverage5Entries = ArrayList<Entry>()
                     val tranAverage10Entries = ArrayList<Entry>()
                     val tranAverage20Entries = ArrayList<Entry>()
@@ -545,132 +1233,11 @@ class FragmentChart : Fragment() {
                         }
 
                         count++
-                        average5 += candle.close
-                        average10 += candle.close
-                        average20 += candle.close
-                        average60 += candle.close
-                        average120 += candle.close
                         tranAverage5 += candle.totalTradeVolume
                         tranAverage10 += candle.totalTradeVolume
                         tranAverage20 += candle.totalTradeVolume
                         val now = candles.indexOf(candle)
-                        if (count >= 120) {
-                            average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
-                            average10Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    average10 / 10.0f
-                                )
-                            )
-                            average20Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    average20 / 20.0f
-                                )
-                            )
-                            average60Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    average60 / 60.0f
-                                )
-                            )
-                            average120Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    average120 / 120.0f
-                                )
-                            )
-                            average5 -= candles[now - 4].close
-                            average10 -= candles[now - 9].close
-                            average20 -= candles[now - 19].close
-                            average60 -= candles[now - 59].close
-                            average120 -= candles[now - 119].close
-
-                            tranAverage5Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    tranAverage5 / 5.0f
-                                )
-                            )
-                            tranAverage10Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    tranAverage10 / 10.0f
-                                )
-                            )
-                            tranAverage20Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    tranAverage20 / 20.0f
-                                )
-                            )
-                            tranAverage5 -= candles[now - 4].totalTradeVolume
-                            tranAverage10 -= candles[now - 9].totalTradeVolume
-                            tranAverage20 -= candles[now - 19].totalTradeVolume
-                        } else if (count >= 60) {
-                            average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
-                            average10Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    average10 / 10.0f
-                                )
-                            )
-                            average20Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    average20 / 20.0f
-                                )
-                            )
-                            average60Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    average60 / 60.0f
-                                )
-                            )
-                            average5 -= candles[now - 4].close
-                            average10 -= candles[now - 9].close
-                            average20 -= candles[now - 19].close
-                            average60 -= candles[now - 59].close
-
-                            tranAverage5Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    tranAverage5 / 5.0f
-                                )
-                            )
-                            tranAverage10Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    tranAverage10 / 10.0f
-                                )
-                            )
-                            tranAverage20Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    tranAverage20 / 20.0f
-                                )
-                            )
-                            tranAverage5 -= candles[now - 4].totalTradeVolume
-                            tranAverage10 -= candles[now - 9].totalTradeVolume
-                            tranAverage20 -= candles[now - 19].totalTradeVolume
-                        } else if (count >= 20) {
-                            average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
-                            average10Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    average10 / 10.0f
-                                )
-                            )
-                            average20Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    average20 / 20.0f
-                                )
-                            )
-                            average5 -= candles[now - 4].close
-                            average10 -= candles[now - 9].close
-                            average20 -= candles[now - 19].close
-
+                        if (count >= 20) {
                             tranAverage5Entries.add(
                                 Entry(
                                     candle.createdAt.toFloat(),
@@ -693,16 +1260,6 @@ class FragmentChart : Fragment() {
                             tranAverage10 -= candles[now - 9].totalTradeVolume
                             tranAverage20 -= candles[now - 19].totalTradeVolume
                         } else if (count >= 10) {
-                            average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
-                            average10Entries.add(
-                                Entry(
-                                    candle.createdAt.toFloat(),
-                                    average10 / 10.0f
-                                )
-                            )
-                            average5 -= candles[now - 4].close
-                            average10 -= candles[now - 9].close
-
                             tranAverage5Entries.add(
                                 Entry(
                                     candle.createdAt.toFloat(),
@@ -718,9 +1275,6 @@ class FragmentChart : Fragment() {
                             tranAverage5 -= candles[now - 4].totalTradeVolume
                             tranAverage10 -= candles[now - 9].totalTradeVolume
                         } else if (count >= 5) {
-                            average5Entries.add(Entry(candle.createdAt.toFloat(), average5 / 5.0f))
-                            average5 -= candles[now - 4].close
-
                             tranAverage5Entries.add(
                                 Entry(
                                     candle.createdAt.toFloat(),
@@ -753,41 +1307,6 @@ class FragmentChart : Fragment() {
                         setDrawValues(false)
                         highLightColor = Color.TRANSPARENT
                     }
-                    val average5DataSet = LineDataSet(average5Entries, "").apply {
-                        setDrawCircles(false)
-                        color = Color.rgb(219, 17, 179)
-                        highLightColor = Color.TRANSPARENT
-                        valueTextSize = 0f
-                        lineWidth = 1.0f
-                    }
-                    val average10DataSet = LineDataSet(average10Entries, "").apply {
-                        setDrawCircles(false)
-                        color = Color.rgb(11, 41, 175)
-                        highLightColor = Color.TRANSPARENT
-                        valueTextSize = 0f
-                        lineWidth = 1.0f
-                    }
-                    val average20DataSet = LineDataSet(average20Entries, "").apply {
-                        setDrawCircles(false)
-                        color = Color.rgb(234, 153, 1)
-                        highLightColor = Color.TRANSPARENT
-                        valueTextSize = 0f
-                        lineWidth = 1.0f
-                    }
-                    val average60DataSet = LineDataSet(average60Entries, "").apply {
-                        setDrawCircles(false)
-                        color = Color.rgb(253, 52, 0)
-                        highLightColor = Color.TRANSPARENT
-                        valueTextSize = 0f
-                        lineWidth = 1.0f
-                    }
-                    val average120DataSet = LineDataSet(average120Entries, "").apply {
-                        setDrawCircles(false)
-                        color = Color.rgb(170, 170, 170)
-                        highLightColor = Color.TRANSPARENT
-                        valueTextSize = 0f
-                        lineWidth = 1.0f
-                    }
                     val tranAverage5DataSet = LineDataSet(tranAverage5Entries, "").apply {
                         setDrawCircles(false)
                         color = Color.rgb(219, 17, 179)
@@ -809,15 +1328,19 @@ class FragmentChart : Fragment() {
                         valueTextSize = 0f
                         lineWidth = 1.0f
                     }
+                    binding.priceChart.legend.apply {
+                        setCustom(priceChartLegendList)
+                        textColor = Color.WHITE
+                        verticalAlignment = Legend.LegendVerticalAlignment.TOP
+                        horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
+                        orientation = Legend.LegendOrientation.HORIZONTAL
+                        setDrawInside(true)
+                    }
                     binding.priceChart.apply {
                         val combinedData = CombinedData()
                         combinedData.setData(CandleData(priceDataSet))
-                        val lineData = LineData()
-                        lineData.addDataSet(average5DataSet)
-                        lineData.addDataSet(average10DataSet)
-                        lineData.addDataSet(average20DataSet)
-                        lineData.addDataSet(average60DataSet)
-                        lineData.addDataSet(average120DataSet)
+                        val lineData =
+                            getMainIndicator(candles, myViewModel.mainIndicatorType.value!!)
                         combinedData.setData(lineData)
                         this.data = combinedData
                         invalidate()
@@ -909,6 +1432,8 @@ class FragmentChart : Fragment() {
                         bundle.putSerializable("candles", candles)
                     }
                 }
+
+                setChartLegend(myViewModel.mainIndicatorType.value!!)
 
                 message.data = bundle
                 upbitCandleHandler.sendMessage(message)

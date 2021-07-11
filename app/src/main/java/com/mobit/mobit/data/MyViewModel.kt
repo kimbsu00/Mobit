@@ -25,6 +25,12 @@ class MyViewModel : ViewModel() {
     // 사용자가 매수 또는 매도를 진행할 때마다, 거래 내역을 저장할 변수
     val transaction: MutableLiveData<ArrayList<Transaction>> = MutableLiveData()
 
+    // 차트에서 보여주는 메인 지표의 타입을 결정하는 변수
+    val mainIndicatorType: MutableLiveData<Int> = MutableLiveData()
+
+    // 차트에서 보여주는 메인 지표를 생성할 때, 사용되는 변수
+    val mainIndicator: MutableLiveData<MainIndicator> = MutableLiveData()
+
     // DB에 데이터를 저장하기 위한 변수
     var myDBHelper: MyDBHelper? = null
 
@@ -50,6 +56,14 @@ class MyViewModel : ViewModel() {
 
     fun setTransaction(transaction: ArrayList<Transaction>) {
         this.transaction.value = transaction
+    }
+
+    fun setMainIndicatorType(mainIndicatorType: Int) {
+        this.mainIndicatorType.value = mainIndicatorType
+    }
+
+    fun setMainIndicator(mainIndicator: MainIndicator) {
+        this.mainIndicator.value = mainIndicator
     }
 
     fun addTransaction(transaction: Transaction) {

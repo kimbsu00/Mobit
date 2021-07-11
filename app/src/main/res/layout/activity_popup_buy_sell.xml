@@ -167,7 +167,7 @@
             android:background="@drawable/popup_buy_sell_button_border"
             android:gravity="center"
             android:text="@string/popup_buy_sell_cancel"
-            android:textColor="#555d6a"
+            android:textColor="@color/popup_buy_sell_gray"
             android:textSize="16sp"
             android:textStyle="bold" />
 

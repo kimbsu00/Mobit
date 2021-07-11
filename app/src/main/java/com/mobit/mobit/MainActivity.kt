@@ -72,10 +72,12 @@ class MainActivity : AppCompatActivity() {
                                 intent.getSerializableExtra("favoriteCoinInfo") as ArrayList<CoinInfo>
                             if (coinInfo.isNotEmpty()) {
                                 myViewModel.setCoinInfo(coinInfo)
+                            } else {
                                 Log.e("MainActivity", "coinInfo is empty")
                             }
                             if (favoriteCoinInfo.isNotEmpty()) {
                                 myViewModel.setFavoriteCoinInfo(favoriteCoinInfo)
+                            } else {
                                 Log.e("MainActivity", "favoriteCoinInfo is empty")
                             }
                         }
@@ -152,6 +154,8 @@ class MainActivity : AppCompatActivity() {
         myViewModel.setFavoriteCoinInfo(ArrayList<CoinInfo>())
         myViewModel.setOrderBook(ArrayList<OrderBook>())
         myViewModel.setAsset(Asset(0.0, ArrayList<CoinAsset>()))
+        myViewModel.setMainIndicatorType(MainIndicator.MOVING_AVERAGE)
+        myViewModel.setMainIndicator(MainIndicator())
     }
 
     fun initService() {
@@ -301,6 +305,14 @@ class MainActivity : AppCompatActivity() {
                     myViewModel.setTransaction(transactions)
                 }
 
+                val mainIndicatorType = bundle.getInt("mainIndicatorType")
+                if (mainIndicatorType != -1)
+                    myViewModel.setMainIndicatorType(mainIndicatorType)
+
+                val mainIndicator: MainIndicator =
+                    bundle.getSerializable("mainIndicator") as MainIndicator
+                myViewModel.setMainIndicator(mainIndicator)
+
                 val flag = bundle.getBoolean("flag")
                 setTheme(R.style.Theme_Mobit)
                 if (!flag) {
@@ -365,6 +377,12 @@ class MainActivity : AppCompatActivity() {
 
             val flag = myViewModel.myDBHelper!!.getFlag()
             bundle.putBoolean("flag", flag)
+
+            val mainIndicatorType = myViewModel.myDBHelper!!.getMainIndicatorType()
+            bundle.putInt("mainIndicatorType", mainIndicatorType)
+
+            val mainIndicator = myViewModel.myDBHelper!!.getMainIndicator()
+            bundle.putSerializable("mainIndicator", mainIndicator)
 
             message.data = bundle
             dbHandler.sendMessage(message)

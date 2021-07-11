@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background"
+    android:orientation="vertical"
+    tools:context=".MainIndicatorSettingActivity">
+
+    <TextView
+        android:id="@+id/mainIndicatorTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:drawableLeft="@drawable/ic_baseline_keyboard_arrow_left_24"
+        android:gravity="center_vertical"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:text="@string/main_indicator_setting_title"
+        android:textColor="@color/upbit_light_gray"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transaction_background"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:background="@color/asset_background"
+                android:gravity="center_vertical|left"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:text="@string/main_indicator_setting_main_indicator"
+                android:textColor="@color/upbit_light_gray"
+                android:textSize="16sp" />
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:background="@color/main_background"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/movingAverageBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:button="@drawable/main_indicator_setting_radio_button_background"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="15dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="15dp"
+                        android:text="@string/main_indicator_setting_moving_average"
+                        android:textColor="@color/upbit_light_gray"
+                        android:textSize="16sp" />
+
+                    <ImageButton
+                        android:id="@+id/movingAverageSettingBtn"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/main_background"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="15dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="15dp"
+                        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_right_24" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:background="@color/main_background"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/bollingerBandsBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:button="@drawable/main_indicator_setting_radio_button_background"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="15dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="15dp"
+                        android:text="@string/main_indicator_setting_bollinger_bands"
+                        android:textColor="@color/upbit_light_gray"
+                        android:textSize="16sp" />
+
+                    <ImageButton
+                        android:id="@+id/bollingerBandsSettingBtn"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/main_background"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="15dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="15dp"
+                        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_right_24" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:background="@color/main_background"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/dailyBalanceTableBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:button="@drawable/main_indicator_setting_radio_button_background"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="15dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="15dp"
+                        android:text="@string/main_indicator_setting_daily_balance_table"
+                        android:textColor="@color/upbit_light_gray"
+                        android:textSize="16sp" />
+
+                    <ImageButton
+                        android:id="@+id/dailyBalanceTableSettingBtn"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/main_background"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="15dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="15dp"
+                        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_right_24" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:background="@color/main_background"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/pivotBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:button="@drawable/main_indicator_setting_radio_button_background"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="15dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="15dp"
+                        android:text="@string/main_indicator_setting_pivot"
+                        android:textColor="@color/upbit_light_gray"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:background="@color/main_background"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/envelopesBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:button="@drawable/main_indicator_setting_radio_button_background"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="15dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="15dp"
+                        android:text="@string/main_indicator_setting_envelopes"
+                        android:textColor="@color/upbit_light_gray"
+                        android:textSize="16sp" />
+
+                    <ImageButton
+                        android:id="@+id/envelopesSettingBtn"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/main_background"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="15dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="15dp"
+                        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_right_24" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
+                    android:background="@color/main_background"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/priceChannelsBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:button="@drawable/main_indicator_setting_radio_button_background"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="15dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="15dp"
+                        android:text="@string/main_indicator_setting_price_channels"
+                        android:textColor="@color/upbit_light_gray"
+                        android:textSize="16sp" />
+
+                    <ImageButton
+                        android:id="@+id/priceChannelsSettingBtn"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/main_background"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="15dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="15dp"
+                        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_right_24" />
+                </LinearLayout>
+
+            </RadioGroup>
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/resetBtn"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@color/popup_buy_sell_gray"
+            android:gravity="center"
+            android:text="@string/main_indicator_setting_reset"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/saveBtn"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@color/main_bottom_nav"
+            android:gravity="center"
+            android:text="@string/main_indicator_setting_save"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

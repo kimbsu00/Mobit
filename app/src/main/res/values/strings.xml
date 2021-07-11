@@ -144,7 +144,7 @@
     <string name="setting_title">설정</string>
     <string name="setting_guide">Mobit 이용가이드</string>
     <string name="setting_app_version_title">앱 버전</string>
-    <string name="setting_app_version_info">1.0.0</string>
+    <string name="setting_app_version_info">1.2.0</string>
     <string name="setting_reset">초기화</string>
 
     <!--    about activity_reset_confirm-->
@@ -153,4 +153,39 @@
     <string name="reset_confirm_confirm">초기화</string>
     <string name="reset_confirm_info1">초기화하면 다시 복구할 수 없습니다.</string>
     <string name="reset_confirm_info2">정말로 초기화하시겠습니까?</string>
+
+    <!--    about activity_main_indicator_setting-->
+    <string name="main_indicator_setting_title">차트 설정</string>
+    <string name="main_indicator_setting_main_indicator">메인지표</string>
+    <string name="main_indicator_setting_moving_average">이동평균선</string>
+    <string name="main_indicator_setting_bollinger_bands">볼린저밴드</string>
+    <string name="main_indicator_setting_daily_balance_table">일목균형표</string>
+    <string name="main_indicator_setting_pivot">피봇</string>
+    <string name="main_indicator_setting_envelopes">Envelopes</string>
+    <string name="main_indicator_setting_price_channels">Price Channels</string>
+    <string name="main_indicator_setting_reset">초기화</string>
+    <string name="main_indicator_setting_save">저장</string>
+
+    <!--    about popup_chart_reset_confirm-->
+    <string name="popup_chart_reset_info1">모든 설정이 초기화됩니다.</string>
+    <string name="popup_chart_reset_info2">계속하시겠습니까?</string>
+    <string name="popup_chart_reset_cancel">취소</string>
+    <string name="popup_chart_reset_confirm">확인</string>
+
+    <!--    about popup_main_indicator_setting-->
+    <string name="moving_average_1">MA1</string>
+    <string name="moving_average_2">MA2</string>
+    <string name="moving_average_3">MA3</string>
+    <string name="moving_average_4">MA4</string>
+    <string name="moving_average_5">MA5</string>
+    <string name="bollinger_bands_1">기간</string>
+    <string name="bollinger_bands_2">승수</string>
+    <string name="daily_balance_table_1">전환</string>
+    <string name="daily_balance_table_2">기준</string>
+    <string name="daily_balance_table_3">후행</string>
+    <string name="daily_balance_table_4">선행1</string>
+    <string name="daily_balance_table_5">선행2</string>
+    <string name="envelopes_1">기간</string>
+    <string name="envelopes_2">Percent</string>
+    <string name="price_channels">기간</string>
 </resources>

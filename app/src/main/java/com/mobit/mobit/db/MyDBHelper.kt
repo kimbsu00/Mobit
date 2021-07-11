@@ -6,14 +6,24 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import com.mobit.mobit.data.CoinAsset
+import com.mobit.mobit.data.MainIndicator
 import com.mobit.mobit.data.Transaction
 import org.json.JSONObject
 
 class MyDBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
     companion object {
         val DB_NAME = "mobit.db"
-        val DB_VERSION = 1
-        val TABLE_NAME = arrayOf("favorite", "krw", "coinAsset", "trade", "firstFlag")
+        val DB_VERSION = 2
+        val TABLE_NAME =
+            arrayOf(
+                "favorite",
+                "krw",
+                "coinAsset",
+                "trade",
+                "firstFlag",
+                "mainIndicatorType",
+                "mainIndicator"
+            )
 
         // about favorite
         val CODE = "code"
@@ -32,6 +42,12 @@ class MyDBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null
 
         // about flag
         val FIRST_SETTING = "firstSetting"
+
+        // about mainIndicatorType
+        val MAIN_INDICATOR_TYPE = "mainIndicatorType"
+
+        // about mainIndicator
+        val MAIN_INDICATOR = "mainIndicator"
     }
 
     // 관심 코인을 DB에 저장
@@ -301,6 +317,7 @@ class MyDBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null
         val strsql3 = "delete from ${TABLE_NAME[2]}"
         val strsql4 = "delete from ${TABLE_NAME[3]}"
         val strsql5 = "delete from ${TABLE_NAME[4]}"
+        val strsql6 = "delete from ${TABLE_NAME[5]}"
 
         val db = writableDatabase
         db.execSQL(strsql1)
@@ -308,8 +325,121 @@ class MyDBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null
         db.execSQL(strsql3)
         db.execSQL(strsql4)
         db.execSQL(strsql5)
+        db.execSQL(strsql6)
 
         return true
+    }
+
+    // mainIndicatorType 테이블에 저장되어 있는 데이터를 mainIndicatorType 변경
+    fun setMainIndicatorType(mainIndicatorType: Int): Boolean {
+        clearMainIndicatorType()
+        return insertMainIndicatorType(mainIndicatorType)
+    }
+
+    // KRW 테이블에 krw 데이터 추가
+    fun insertMainIndicatorType(mainIndicatorType: Int): Boolean {
+        val values = ContentValues()
+        values.put(MAIN_INDICATOR_TYPE, mainIndicatorType)
+
+        val db = writableDatabase
+        val ret = db.insert(TABLE_NAME[5], null, values) > 0
+        db.close()
+        return ret
+    }
+
+    // mainIndicatorType 테이블의 데이터를 모두 제거
+    fun clearMainIndicatorType() {
+        val strsql = "delete from ${TABLE_NAME[5]}"
+        val db = writableDatabase
+        db.execSQL(strsql)
+    }
+
+    fun getMainIndicatorType(): Int {
+        var ret: Int = -1
+
+        val strsql = "select * from ${TABLE_NAME[5]};"
+        val db = readableDatabase
+        val cursor = db.rawQuery(strsql, null)
+        cursor.moveToFirst()
+        if (cursor.count != 0) {
+            val num = cursor.getInt(0)
+            ret = num
+        }
+        cursor.close()
+        db.close()
+
+        return ret
+    }
+
+    fun setMainIndicator(mainIndicator: MainIndicator): Boolean {
+        clearMainIndicator()
+        return insertMainIndicator(mainIndicator)
+    }
+
+    fun insertMainIndicator(mainIndicator: MainIndicator): Boolean {
+        val jsonObject: JSONObject = JSONObject()
+        jsonObject.put("MA_N1", mainIndicator.MA_N1)
+        jsonObject.put("MA_N2", mainIndicator.MA_N2)
+        jsonObject.put("MA_N3", mainIndicator.MA_N3)
+        jsonObject.put("MA_N4", mainIndicator.MA_N4)
+        jsonObject.put("MA_N5", mainIndicator.MA_N5)
+        jsonObject.put("BB_N", mainIndicator.BB_N)
+        jsonObject.put("BB_K", mainIndicator.BB_K)
+        jsonObject.put("DBT_1", mainIndicator.DBT_1)
+        jsonObject.put("DBT_2", mainIndicator.DBT_2)
+        jsonObject.put("DBT_3", mainIndicator.DBT_3)
+        jsonObject.put("DBT_4", mainIndicator.DBT_4)
+        jsonObject.put("DBT_5", mainIndicator.DBT_5)
+        jsonObject.put("ENV_N", mainIndicator.ENV_N)
+        jsonObject.put("ENV_K", mainIndicator.ENV_K)
+        jsonObject.put("PC_N", mainIndicator.PC_N)
+        val jsonString: String = jsonObject.toString()
+
+        val values = ContentValues()
+        values.put(MAIN_INDICATOR, jsonString)
+
+        val db = writableDatabase
+        val ret = db.insert(TABLE_NAME[6], null, values) > 0
+        db.close()
+        return ret
+    }
+
+    fun clearMainIndicator() {
+        val strsql = "delete from ${TABLE_NAME[6]}"
+        val db = writableDatabase
+        db.execSQL(strsql)
+    }
+
+    fun getMainIndicator(): MainIndicator {
+        val ret: MainIndicator = MainIndicator()
+
+        val strsql = "select * from ${TABLE_NAME[6]};"
+        val db = readableDatabase
+        val cursor = db.rawQuery(strsql, null)
+        cursor.moveToFirst()
+        if (cursor.count != 0) {
+            val jsonString: String = cursor.getString(0)
+            val jsonObject: JSONObject = JSONObject(jsonString)
+            ret.MA_N1 = jsonObject.getInt("MA_N1")
+            ret.MA_N2 = jsonObject.getInt("MA_N2")
+            ret.MA_N3 = jsonObject.getInt("MA_N3")
+            ret.MA_N4 = jsonObject.getInt("MA_N4")
+            ret.MA_N5 = jsonObject.getInt("MA_N5")
+            ret.BB_N = jsonObject.getInt("BB_N")
+            ret.BB_K = jsonObject.getDouble("BB_K").toFloat()
+            ret.DBT_1 = jsonObject.getInt("DBT_1")
+            ret.DBT_2 = jsonObject.getInt("DBT_2")
+            ret.DBT_3 = jsonObject.getInt("DBT_3")
+            ret.DBT_4 = jsonObject.getInt("DBT_4")
+            ret.DBT_5 = jsonObject.getInt("DBT_5")
+            ret.ENV_N = jsonObject.getInt("ENV_N")
+            ret.ENV_K = jsonObject.getInt("ENV_K")
+            ret.PC_N = jsonObject.getInt("PC_N")
+        }
+        cursor.close()
+        db.close()
+
+        return ret
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -320,25 +450,24 @@ class MyDBHelper(val context: Context) : SQLiteOpenHelper(context, DB_NAME, null
             "create table if not exists ${TABLE_NAME[2]}($CODE text primary key, $NAME text, $NUMBER real, $AMOUNT real, $AVERAGE_PRICE real)"
         val createTable4 = "create table if not exists ${TABLE_NAME[3]}($TRANSACTION text)"
         val createTable5 = "create table if not exists ${TABLE_NAME[4]}($FIRST_SETTING INTEGER)"
+        val createTable6 =
+            "create table if not exists ${TABLE_NAME[5]}($MAIN_INDICATOR_TYPE INTEGER)"
+        val createTable7 = "create table if not exists ${TABLE_NAME[6]}($MAIN_INDICATOR text)"
         db?.execSQL(createTable1)
         db?.execSQL(createTable2)
         db?.execSQL(createTable3)
         db?.execSQL(createTable4)
         db?.execSQL(createTable5)
+        db?.execSQL(createTable6)
+        db?.execSQL(createTable7)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        val dropTable1 = "drop table if exists ${TABLE_NAME[0]}"
-        val dropTable2 = "drop table if exists ${TABLE_NAME[1]}"
-        val dropTable3 = "drop table if exists ${TABLE_NAME[2]}"
-        val dropTable4 = "drop table if exists ${TABLE_NAME[3]}"
-        val dropTable5 = "drop table if exists ${TABLE_NAME[4]}"
-        db?.execSQL(dropTable1)
-        db?.execSQL(dropTable2)
-        db?.execSQL(dropTable3)
-        db?.execSQL(dropTable4)
-        db?.execSQL(dropTable5)
-        onCreate(db)
+        val createTable6 =
+            "create table if not exists ${TABLE_NAME[5]}($MAIN_INDICATOR_TYPE INTEGER)"
+        val createTable7 = "create table if not exists ${TABLE_NAME[6]}($MAIN_INDICATOR text)"
+        db?.execSQL(createTable6)
+        db?.execSQL(createTable7)
     }
 
 }

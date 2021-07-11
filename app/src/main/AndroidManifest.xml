@@ -16,6 +16,14 @@
             android:enabled="true"
             android:exported="true" />
 
+
+        <activity
+            android:name=".PopupMainIndicatorSettingActivity"
+            android:theme="@android:style/Theme.Dialog" />
+        <activity
+            android:name=".PopupChartResetConfirmActivity"
+            android:theme="@android:style/Theme.Dialog" />
+        <activity android:name=".MainIndicatorSettingActivity" />
         <activity
             android:name=".PopupResetConfirmActivity"
             android:theme="@android:style/Theme.Dialog" />

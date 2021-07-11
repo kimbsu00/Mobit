@@ -12,7 +12,7 @@ import com.mobit.mobit.network.UpbitAPICaller
 
 class UpbitAPIService : Service() {
 
-    lateinit var selectedCoin: String
+    var selectedCoin: String = CoinInfo.BTC_CODE
     var favoriteCoinInfo: ArrayList<CoinInfo> = ArrayList()
     var coinInfo: ArrayList<CoinInfo> = ArrayList()
 

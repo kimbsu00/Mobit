@@ -23,6 +23,7 @@
     <color name="transaction_recyclerview_background_red">#241a23</color>
     <color name="popup_buy_red">#c34c34</color>
     <color name="popup_sell_blue">#1262c5</color>
+    <color name="popup_buy_sell_gray">#555d6a</color>
     <color name="chart_light_gray">#061222</color>
     <color name="chart_blue">#1262c5</color>
     <color name="chart_red">#c84a31</color>

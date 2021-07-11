@@ -114,16 +114,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/coin_list_linearlayout_border"
+        android:gravity="right|center_vertical"
         android:orientation="horizontal"
         android:padding="10dp">
 
         <RadioGroup
             android:id="@+id/radioGroup"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="right|center_vertical"
             android:orientation="horizontal">
-
 
             <RadioButton
                 android:id="@+id/minuteBtn"
@@ -174,6 +173,16 @@
                 android:textSize="14sp" />
 
         </RadioGroup>
+
+        <ImageButton
+            android:id="@+id/mainIndicatorSettingBtn"
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@color/transaction_background"
+            android:src="@drawable/ic_outline_settings_24_gray" />
+
     </LinearLayout>
 
     <com.github.mikephil.charting.charts.CombinedChart

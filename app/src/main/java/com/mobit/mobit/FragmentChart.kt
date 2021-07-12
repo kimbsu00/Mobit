@@ -651,21 +651,6 @@ class FragmentChart : Fragment() {
 
         priceChartLegendList.clear()
         priceChartLegendList.addAll(legendList)
-//        val mEntries = legendList.toTypedArray()
-//        binding.priceChart.legend.apply {
-//            setCustom(mEntries)
-//
-//            Log.i("FragmentChart", mEntries.size.toString())
-//            for (entry in mEntries) {
-//                Log.i("FragmentChart", entry.label)
-//            }
-//
-//            textColor = Color.WHITE
-//            verticalAlignment = Legend.LegendVerticalAlignment.TOP
-//            horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
-//            orientation = Legend.LegendOrientation.HORIZONTAL
-//            setDrawInside(true)
-//        }
     }
 
     fun getMovingAverage(candles: ArrayList<Candle>): LineData {

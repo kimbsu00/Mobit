@@ -126,7 +126,7 @@
 
             <RadioButton
                 android:id="@+id/minuteBtn"
-                android:layout_width="40dp"
+                android:layout_width="35dp"
                 android:layout_height="30dp"
                 android:background="@drawable/coin_list_button_border"
                 android:button="@drawable/coin_list_button_border"
@@ -134,11 +134,11 @@
                 android:gravity="center"
                 android:text="@string/chart_unit_minute_1"
                 android:textColor="@color/coin_list_button_selector_color"
-                android:textSize="14sp" />
+                android:textSize="12sp" />
 
             <RadioButton
                 android:id="@+id/dayBtn"
-                android:layout_width="40dp"
+                android:layout_width="35dp"
                 android:layout_height="30dp"
                 android:background="@drawable/coin_list_button_border"
                 android:button="@drawable/coin_list_button_border"
@@ -146,11 +146,11 @@
                 android:gravity="center"
                 android:text="@string/chart_unit_day"
                 android:textColor="@color/coin_list_button_selector_color"
-                android:textSize="14sp" />
+                android:textSize="12sp" />
 
             <RadioButton
                 android:id="@+id/weekBtn"
-                android:layout_width="40dp"
+                android:layout_width="35dp"
                 android:layout_height="30dp"
                 android:background="@drawable/coin_list_button_border"
                 android:button="@drawable/coin_list_button_border"
@@ -158,11 +158,11 @@
                 android:gravity="center"
                 android:text="@string/chart_unit_week"
                 android:textColor="@color/coin_list_button_selector_color"
-                android:textSize="14sp" />
+                android:textSize="12sp" />
 
             <RadioButton
                 android:id="@+id/monthBtn"
-                android:layout_width="40dp"
+                android:layout_width="35dp"
                 android:layout_height="30dp"
                 android:background="@drawable/coin_list_button_border"
                 android:button="@drawable/coin_list_button_border"
@@ -170,13 +170,13 @@
                 android:gravity="center"
                 android:text="@string/chart_unit_month"
                 android:textColor="@color/coin_list_button_selector_color"
-                android:textSize="14sp" />
+                android:textSize="12sp" />
 
         </RadioGroup>
 
         <ImageButton
             android:id="@+id/mainIndicatorSettingBtn"
-            android:layout_width="40dp"
+            android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"

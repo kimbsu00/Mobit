@@ -315,6 +315,7 @@ class MainActivity : AppCompatActivity() {
 
                 val flag = bundle.getBoolean("flag")
                 setTheme(R.style.Theme_Mobit)
+                window.statusBarColor = getColor(R.color.main_background)
                 if (!flag) {
                     val intent = Intent(this@MainActivity, FirstSettingActivity::class.java)
                     getContent.launch(intent)

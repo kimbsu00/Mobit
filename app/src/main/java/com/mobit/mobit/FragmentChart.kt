@@ -774,20 +774,22 @@ class FragmentChart : Fragment() {
         var count: Int = 0
         // N일 동안의 가격의 합
         var sum: Float = 0.0f
-        // N일 동안의 (E[X])^2
-        var expValue: Float = 0.0f
-        // N일 동안의 E[X^2]
-        var expValue2: Float = 0.0f
         for (candle in candles) {
             count++
             sum += candle.close
-            expValue += candle.close * (1.0f / N.toFloat())
-            expValue2 += candle.close * candle.close * (1.0f / N.toFloat())
             val now = candles.indexOf(candle)
             if (count >= N) {
                 val baselineValue: Float = sum / N.toFloat()
                 baselineEntries.add(Entry(candle.createdAt.toFloat(), baselineValue))
-                val sigma: Float = sqrt(expValue2 - (expValue * expValue))
+                // 편차 제곱의 합
+                var diffSum: Float = 0.0f
+                for (i in 0..(N - 1)) {
+                    diffSum += (candles[now - i].close - baselineValue) * (candles[now - i].close - baselineValue)
+                }
+                // 편차 제곱의 합의 평균을 구하고
+                diffSum = diffSum / N.toFloat()
+                // 제곱근을 구하면 표준편차가 된다.
+                val sigma: Float = sqrt(diffSum)
                 upperLimitEntries.add(
                     Entry(
                         candle.createdAt.toFloat(),
@@ -802,8 +804,6 @@ class FragmentChart : Fragment() {
                 )
 
                 sum -= candles[now - (N - 1)].close
-                expValue -= candles[now - (N - 1)].close * 0.05f
-                expValue2 -= candles[now - (N - 1)].close * candles[now - (N - 1)].close * 0.05f
             }
         }
 

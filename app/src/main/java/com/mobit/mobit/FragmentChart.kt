@@ -772,7 +772,7 @@ class FragmentChart : Fragment() {
         val upperLimitEntries = ArrayList<Entry>()
         val lowerBoundEntries = ArrayList<Entry>()
         var count: Int = 0
-        // N일 동안의 평균값
+        // N일 동안의 가격의 합
         var sum: Float = 0.0f
         // N일 동안의 (E[X])^2
         var expValue: Float = 0.0f
@@ -781,8 +781,8 @@ class FragmentChart : Fragment() {
         for (candle in candles) {
             count++
             sum += candle.close
-            expValue += candle.close * 0.05f
-            expValue2 += candle.close * candle.close * 0.05f
+            expValue += candle.close * (1.0f / N.toFloat())
+            expValue2 += candle.close * candle.close * (1.0f / N.toFloat())
             val now = candles.indexOf(candle)
             if (count >= N) {
                 val baselineValue: Float = sum / N.toFloat()

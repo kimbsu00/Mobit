@@ -42,6 +42,8 @@
     <string name="asset_average_price">매수평균가</string>
     <string name="asset_evaluation">평가금액</string>
     <string name="asset_buy_price">매수금액</string>
+    <string name="asset_portfolio_title">보유자산 포트폴리오</string>
+    <string name="asset_percent">보유 비중\n(%)</string>
 
     <!--    about fragment_transaction-->
     <string name="transaction_title">도지코인(DOGE)</string>
@@ -144,7 +146,7 @@
     <string name="setting_title">설정</string>
     <string name="setting_guide">Mobit 이용가이드</string>
     <string name="setting_app_version_title">앱 버전</string>
-    <string name="setting_app_version_info">1.2.0</string>
+    <string name="setting_app_version_info">1.2.1</string>
     <string name="setting_reset">초기화</string>
 
     <!--    about activity_reset_confirm-->

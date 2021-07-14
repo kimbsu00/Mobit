@@ -33,6 +33,9 @@ class MainActivity : AppCompatActivity() {
 
     // UI 변수 시작
     lateinit var binding: ActivityMainBinding
+    val myProgressBar: MyProgressBar = MyProgressBar()
+    var isDataLoaded: Boolean = false
+    var isDBLoaded: Boolean = false
     // UI 변수 끝
 
     val myViewModel: MyViewModel by viewModels<MyViewModel>()
@@ -81,6 +84,10 @@ class MainActivity : AppCompatActivity() {
                             } else {
                                 Log.e("MainActivity", "favoriteCoinInfo is empty")
                             }
+
+                            if (!isDataLoaded) {
+                                isDataLoaded = true
+                            }
                         }
                     }
                     "orderBook" -> {
@@ -104,6 +111,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        myProgressBar.progressON(this, "Loading")
+        val progressBarThread = object : Thread() {
+            override fun run() {
+                while (true) {
+                    if (isDataLoaded && isDBLoaded) {
+                        myProgressBar.progressOFF()
+                        break
+                    }
+                }
+            }
+        }
+        progressBarThread.start()
 
         initDB()
         initData()
@@ -333,6 +353,10 @@ class MainActivity : AppCompatActivity() {
                 val serviceBRIntent2 = Intent("com.mobit.APICALL")
                 serviceBRIntent2.putExtra("mode", "START_THREAD1")
                 sendBroadcast(serviceBRIntent2)
+
+                if (!isDBLoaded) {
+                    isDBLoaded = true
+                }
             }
         }
     }

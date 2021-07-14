@@ -305,6 +305,11 @@ class FragmentChart : Fragment() {
             }
             binding.apply {
                 if (selectedCoin != null) {
+                    // 코인이 관심목록에 등록되어 있는 경우에는 ImageButton을 채워진 별로 변경해야 한다.
+                    if (myViewModel.favoriteCoinInfo.value!!.contains(selectedCoin)) {
+                        favoriteBtn.setImageResource(R.drawable.ic_round_star_24)
+                    }
+
                     val formatter = DecimalFormat("###,###")
                     val changeFormatter = DecimalFormat("###,###.##")
                     coinName.text = "${selectedCoin!!.name}(${selectedCoin!!.code.split('-')[1]})"
@@ -1422,7 +1427,7 @@ class FragmentChart : Fragment() {
 
                 message.data = bundle
                 upbitCandleHandler.sendMessage(message)
-                sleep(300)
+                sleep(200)
             }
         }
 

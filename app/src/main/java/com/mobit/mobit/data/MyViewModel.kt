@@ -1,6 +1,5 @@
 package com.mobit.mobit.data
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mobit.mobit.db.MyDBHelper
@@ -106,9 +105,7 @@ class MyViewModel : ViewModel() {
     fun bidCoin(code: String, name: String, price: Double, number: Double): Int {
         val temp = Asset(this.asset.value!!.krw, this.asset.value!!.coins)
         val ret = temp.bidCoin(code, name, price, number)
-        Log.i("FragmentBuy before setValue", temp.coins[ret].number.toString())
         this.asset.value = temp
-        Log.i("FragmentBuy after setValue", this.asset.value!!.coins[ret].number.toString())
         return ret
     }
 

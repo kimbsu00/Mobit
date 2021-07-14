@@ -214,7 +214,7 @@ class UpbitAPIService : Service() {
                 }
 
                 sendBroadcast(intent)
-                sleep(300)
+                sleep(200)
             }
         }
 

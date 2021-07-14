@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.util.Log
 import android.widget.Toast
@@ -99,6 +100,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_Mobit)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -151,6 +153,7 @@ class MainActivity : AppCompatActivity() {
 
     fun initData() {
         myViewModel.setSelectedCoin(CoinInfo.BTC_CODE)
+        myViewModel.setCoinInfo(ArrayList<CoinInfo>())
         myViewModel.setFavoriteCoinInfo(ArrayList<CoinInfo>())
         myViewModel.setOrderBook(ArrayList<OrderBook>())
         myViewModel.setAsset(Asset(0.0, ArrayList<CoinAsset>()))
@@ -236,7 +239,7 @@ class MainActivity : AppCompatActivity() {
         fragmentTransaction.commit()
     }
 
-    inner class DBHandler : Handler() {
+    inner class DBHandler : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
 
@@ -314,7 +317,6 @@ class MainActivity : AppCompatActivity() {
                 myViewModel.setMainIndicator(mainIndicator)
 
                 val flag = bundle.getBoolean("flag")
-                setTheme(R.style.Theme_Mobit)
                 window.statusBarColor = getColor(R.color.main_background)
                 if (!flag) {
                     val intent = Intent(this@MainActivity, FirstSettingActivity::class.java)

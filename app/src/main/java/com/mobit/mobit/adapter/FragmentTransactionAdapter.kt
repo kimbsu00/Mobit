@@ -11,7 +11,7 @@ import com.mobit.mobit.R
 import com.mobit.mobit.data.OrderBook
 import java.text.DecimalFormat
 
-class FragmentTransactionAdapter(var items: ArrayList<OrderBook>, val openPrice: Double) :
+class FragmentTransactionAdapter(var items: ArrayList<OrderBook>, var openPrice: Double) :
     RecyclerView.Adapter<FragmentTransactionAdapter.ViewHolder>() {
 
     var listener: OnItemClickListener? = null

@@ -97,6 +97,8 @@ class FragmentTransaction : Fragment() {
             }
             binding.apply {
                 if (selectedCoin != null) {
+                    adapter.openPrice = selectedCoin!!.price.openPrice
+
                     val formatter = DecimalFormat("###,###")
                     val changeFormatter = DecimalFormat("###,###.##")
                     coinName.text = "${selectedCoin!!.name}(${selectedCoin!!.code.split('-')[1]})"
@@ -140,7 +142,11 @@ class FragmentTransaction : Fragment() {
                 break
             }
         }
-        adapter = FragmentTransactionAdapter(orderBook, selectedCoin!!.price.openPrice)
+        if (selectedCoin != null) {
+            adapter = FragmentTransactionAdapter(orderBook, selectedCoin!!.price.openPrice)
+        } else {
+            adapter = FragmentTransactionAdapter(orderBook, 0.0)
+        }
 
         binding.apply {
             recyclerView.layoutManager =

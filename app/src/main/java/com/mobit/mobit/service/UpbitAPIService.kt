@@ -118,7 +118,9 @@ class UpbitAPIService : Service() {
                 "START_THREAD1" -> {
                     val thread: Thread = object : Thread() {
                         override fun run() {
+                            upbitAPIThread.threadStop(true)
                             if (upbitAPIThread.isAlive) {
+                                upbitAPIThread.threadStop(true)
                                 try {
                                     upbitAPIThread.join()
                                 } catch (e: InterruptedException) {
@@ -134,7 +136,9 @@ class UpbitAPIService : Service() {
                 "START_THREAD2" -> {
                     val thread: Thread = object : Thread() {
                         override fun run() {
+                            upbitAPIThread2.threadStop(true)
                             if (upbitAPIThread2.isAlive) {
+                                upbitAPIThread2.threadStop(true)
                                 try {
                                     upbitAPIThread2.join()
                                 } catch (e: InterruptedException) {

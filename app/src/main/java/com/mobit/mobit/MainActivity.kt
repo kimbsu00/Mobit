@@ -249,6 +249,12 @@ class MainActivity : AppCompatActivity() {
                     serviceBTIntent.putExtra("mode", "STOP_THREAD2")
                     sendBroadcast(serviceBTIntent)
                 }
+
+                override fun orderBookThreadStart() {
+                    val serviceBTIntent = Intent("com.mobit.APICALL")
+                    serviceBTIntent.putExtra("mode", "START_THREAD2")
+                    sendBroadcast(serviceBTIntent)
+                }
             }
     }
 

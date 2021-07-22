@@ -51,6 +51,7 @@ class FragmentTransaction : Fragment() {
 
     interface OnFragmentInteraction {
         fun orderBookThreadStop()
+        fun orderBookThreadStart()
     }
 
     override fun onCreateView(
@@ -72,13 +73,18 @@ class FragmentTransaction : Fragment() {
         } else {
             resumeFlag = true
         }
+        listener?.orderBookThreadStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        myViewModel.orderBook.value!!.clear()
+        listener?.orderBookThreadStop()
+        doScrollVertically = true
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        listener?.orderBookThreadStop()
-        myViewModel.orderBook.value!!.clear()
-        doScrollVertically = true
     }
 
     fun init() {

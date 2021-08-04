@@ -61,7 +61,7 @@ class FragmentCoinInfo : Fragment() {
             CoinInfo.XEM_CODE -> getString(R.string.XEM)
             CoinInfo.STX_CODE -> getString(R.string.STX)
             CoinInfo.ZIL_CODE -> getString(R.string.ZIL)
-            else -> ""
+            else -> getString(R.string.ELSE)
         }
     }
 

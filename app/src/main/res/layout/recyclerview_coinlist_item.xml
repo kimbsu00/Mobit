@@ -16,7 +16,7 @@
         <TextView
             android:id="@+id/korCoinName"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="wrap_content"
             android:gravity="left|center_vertical"
             android:text="도지코인"
             android:textColor="@color/upbit_light_gray"

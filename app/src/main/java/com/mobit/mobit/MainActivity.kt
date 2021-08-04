@@ -17,9 +17,11 @@ import androidx.fragment.app.Fragment
 import com.mobit.mobit.data.*
 import com.mobit.mobit.databinding.ActivityMainBinding
 import com.mobit.mobit.db.MyDBHelper
+import com.mobit.mobit.network.UpbitAPICaller
 import com.mobit.mobit.service.UpbitAPIService
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,6 +41,11 @@ class MainActivity : AppCompatActivity() {
     // UI 변수 끝
 
     val myViewModel: MyViewModel by viewModels<MyViewModel>()
+
+    val codes: ArrayList<String> = ArrayList()
+    val names: HashMap<String, String> = HashMap()
+    val warnings: HashMap<String, String> = HashMap()
+    var coinListThread: Thread? = null
 
     val dbHandler: DBHandler = DBHandler()
     lateinit var dbThread: DBThread
@@ -125,9 +132,26 @@ class MainActivity : AppCompatActivity() {
         }
         progressBarThread.start()
 
-        initDB()
+        // 업비트에서 원화로 거래되는 가상화폐 목록을 받아온다.
+        // 받아온 데이터는 DBHandler.handleMessage()에서 Service와 동기화한다.
+        coinListThread = object : Thread() {
+            override fun run() {
+                val upbitAPICaller = UpbitAPICaller()
+                val coinList: ArrayList<Triple<String, String, String>> = upbitAPICaller.getMarket()
+                if (coinList.isNotEmpty()) {
+                    for (temp in coinList) {
+                        codes.add(temp.first)
+                        names.put(temp.first, temp.second)
+                        warnings.put(temp.first, temp.third)
+                    }
+                }
+            }
+        }
+        coinListThread!!.start()
+
         initData()
         initService()
+        initDB()
         init()
     }
 
@@ -302,7 +326,7 @@ class MainActivity : AppCompatActivity() {
                                     0.0,
                                     "",
                                     0.0
-                                )
+                                ), "NONE"
                             )
                         )
                     }
@@ -349,11 +373,60 @@ class MainActivity : AppCompatActivity() {
                     getContent.launch(intent)
                 }
 
+                if (coinListThread!!.isAlive) {
+                    try {
+                        coinListThread!!.join()
+                    } catch (e: InterruptedException) {
+                        Log.e("MainActivity DBHandler", e.toString())
+                    }
+                }
+
+                // 상장폐지된 화폐를 즐겨찾기 또는 자산으로 가지고 있는 경우, 문제가 발생할 수 있다.
+                // 따라서 상장폐지된 화폐를 즐겨찾기와 자산에서 삭제한다.
+                val delistingFavorites: ArrayList<CoinInfo> = ArrayList()
+                for (favorite in myViewModel.favoriteCoinInfo.value!!) {
+                    if (!codes.contains(favorite.code)) {
+                        delistingFavorites.add(favorite)
+                    }
+                }
+                val delistingCoinAsset: ArrayList<CoinAsset> = ArrayList()
+                for (coinAsset in myViewModel.asset.value!!.coins) {
+                    if (!codes.contains(coinAsset.code)) {
+                        delistingCoinAsset.add(coinAsset)
+                    }
+                }
+                Log.i(
+                    "MainActivity",
+                    "delistingFavorites size is ${delistingFavorites.size}"
+                )
+                Log.i(
+                    "MainActivity",
+                    "delistingCoinAsset size is ${delistingCoinAsset.size}"
+                )
+                // ViewModel에 저장되어 있는 변수 수정해주고
+                myViewModel.favoriteCoinInfo.value!!.removeAll(delistingFavorites)
+                myViewModel.asset.value!!.coins.removeAll(delistingCoinAsset)
+                // DB에 저장되어 있는 값도 수정하면 된다.
+                val removeDelistingThread: Thread = object : Thread() {
+                    override fun run() {
+                        for (favorite in delistingFavorites) {
+                            myViewModel.myDBHelper!!.deleteFavorite(favorite.code)
+                        }
+                        for (coinAsset in delistingCoinAsset) {
+                            myViewModel.myDBHelper!!.deleteCoinAsset(coinAsset)
+                        }
+                    }
+                }
+                removeDelistingThread.start()
+
                 val serviceBRIntent = Intent("com.mobit.APICALL")
                 serviceBRIntent.putExtra("mode", "INITIAL_SETTING")
                 serviceBRIntent.putExtra("selectedCoin", myViewModel.selectedCoin.value!!)
                 serviceBRIntent.putExtra("favoriteCoinInfo", myViewModel.favoriteCoinInfo.value!!)
                 serviceBRIntent.putExtra("asset", myViewModel.asset.value!!)
+                serviceBRIntent.putExtra("codes", codes)
+                serviceBRIntent.putExtra("names", names)
+                serviceBRIntent.putExtra("warnings", warnings)
                 sendBroadcast(serviceBRIntent)
 
                 val serviceBRIntent2 = Intent("com.mobit.APICALL")

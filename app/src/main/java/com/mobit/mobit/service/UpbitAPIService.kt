@@ -24,38 +24,10 @@ class UpbitAPIService : Service() {
     // 코인 호가 정보 가져오는 쓰레드
     lateinit var upbitAPIThread2: UpbitAPIThread
 
-    val codes: ArrayList<String> = arrayListOf(
-        CoinInfo.BTC_CODE,
-        CoinInfo.ETH_CODE,
-        CoinInfo.ADA_CODE,
-        CoinInfo.DOGE_CODE,
-        CoinInfo.XRP_CODE,
-        CoinInfo.DOT_CODE,
-        CoinInfo.BCH_CODE,
-        CoinInfo.LTC_CODE,
-        CoinInfo.LINK_CODE,
-        CoinInfo.ETC_CODE,
-        CoinInfo.THETA_CODE,
-        CoinInfo.XLM_CODE,
-        CoinInfo.VET_CODE,
-        CoinInfo.EOS_CODE,
-        CoinInfo.TRX_CODE,
-        CoinInfo.NEO_CODE,
-        CoinInfo.IOTA_CODE,
-        CoinInfo.ATOM_CODE,
-        CoinInfo.BSV_CODE,
-        CoinInfo.BTT_CODE,
-        CoinInfo.QTUM_CODE,
-        CoinInfo.HBAR_CODE,
-        CoinInfo.CRO_CODE,
-        CoinInfo.XTZ_CODE,
-        CoinInfo.TFUEL_CODE,
-        CoinInfo.WAVES_CODE,
-        CoinInfo.CHZ_CODE,
-        CoinInfo.XEM_CODE,
-        CoinInfo.STX_CODE,
-        CoinInfo.ZIL_CODE
-    )
+    // 업비트에서 원화로 거래되는 가상화폐들의 코드, 한글이름, 투자유의여부
+    val codes: ArrayList<String> = ArrayList()
+    val names: HashMap<String, String> = HashMap()
+    val warnings: HashMap<String, String> = HashMap()
 
     var receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -71,8 +43,8 @@ class UpbitAPIService : Service() {
         super.onCreate()
         registerReceiver(receiver, IntentFilter("com.mobit.APICALL"))
 
-        upbitAPIThread = UpbitAPIThread(100, codes)
-        upbitAPIThread2 = UpbitAPIThread(200, codes)
+        upbitAPIThread = UpbitAPIThread(100)
+        upbitAPIThread2 = UpbitAPIThread(200)
     }
 
     override fun onDestroy() {
@@ -88,6 +60,9 @@ class UpbitAPIService : Service() {
                     selectedCoin = intent.getStringExtra("selectedCoin")!!
                     favoriteCoinInfo.clear()
                     favoriteCoinInfo.addAll(intent.getSerializableExtra("favoriteCoinInfo") as ArrayList<CoinInfo>)
+                    codes.addAll(intent.getSerializableExtra("codes") as ArrayList<String>)
+                    names.putAll(intent.getSerializableExtra("names") as HashMap<String, String>)
+                    warnings.putAll(intent.getSerializableExtra("warnings") as HashMap<String, String>)
                 }
                 "SELECTED_COIN_SETTING" -> {
                     selectedCoin = intent.getStringExtra("selectedCoin")!!
@@ -107,9 +82,9 @@ class UpbitAPIService : Service() {
                                     Log.e("OnRestart Error", e.toString())
                                 }
                             }
-                            upbitAPIThread = UpbitAPIThread(100, codes)
+                            upbitAPIThread = UpbitAPIThread(100)
                             upbitAPIThread.start()
-                            upbitAPIThread2 = UpbitAPIThread(200, codes)
+                            upbitAPIThread2 = UpbitAPIThread(200)
                             upbitAPIThread2.start()
                         }
                     }
@@ -127,7 +102,7 @@ class UpbitAPIService : Service() {
                                     Log.e("OnRestart Error", e.toString())
                                 }
                             }
-                            upbitAPIThread = UpbitAPIThread(100, codes)
+                            upbitAPIThread = UpbitAPIThread(100)
                             upbitAPIThread.start()
                         }
                     }
@@ -145,7 +120,7 @@ class UpbitAPIService : Service() {
                                     Log.e("OnRestart Error", e.toString())
                                 }
                             }
-                            upbitAPIThread2 = UpbitAPIThread(200, codes)
+                            upbitAPIThread2 = UpbitAPIThread(200)
                             upbitAPIThread2.start()
                         }
                     }
@@ -165,7 +140,7 @@ class UpbitAPIService : Service() {
         }
     }
 
-    inner class UpbitAPIThread(var type: Int, val codes: ArrayList<String>) : Thread() {
+    inner class UpbitAPIThread(var type: Int) : Thread() {
 
         var stopFlag: Boolean = false
 
@@ -183,7 +158,14 @@ class UpbitAPIService : Service() {
                                 prices[i].realTimePriceDiff =
                                     prices[i].realTimePrice - coinInfo[i].price.realTimePrice
                             }
-                            _coinInfo.add(CoinInfo(codes[i], getCoinName(codes[i]), prices[i]))
+                            _coinInfo.add(
+                                CoinInfo(
+                                    codes[i],
+                                    names.get(codes[i])!!,
+                                    prices[i],
+                                    warnings.get(codes[i])!!
+                                )
+                            )
                         }
                         intent.putExtra("coinInfo", _coinInfo)
                         intent.putExtra("isSuccess", true)
@@ -219,42 +201,6 @@ class UpbitAPIService : Service() {
 
                 sendBroadcast(intent)
                 sleep(200)
-            }
-        }
-
-        fun getCoinName(code: String): String {
-            return when (code) {
-                CoinInfo.BTC_CODE -> CoinInfo.BTC_NAME
-                CoinInfo.ETH_CODE -> CoinInfo.ETH_NAME
-                CoinInfo.ADA_CODE -> CoinInfo.ADA_NAME
-                CoinInfo.DOGE_CODE -> CoinInfo.DOGE_NAME
-                CoinInfo.XRP_CODE -> CoinInfo.XRP_NAME
-                CoinInfo.DOT_CODE -> CoinInfo.DOT_NAME
-                CoinInfo.BCH_CODE -> CoinInfo.BCH_NAME
-                CoinInfo.LTC_CODE -> CoinInfo.LTC_NAME
-                CoinInfo.LINK_CODE -> CoinInfo.LINK_NAME
-                CoinInfo.ETC_CODE -> CoinInfo.ETC_NAME
-                CoinInfo.THETA_CODE -> CoinInfo.THETA_NAME
-                CoinInfo.XLM_CODE -> CoinInfo.XLM_NAME
-                CoinInfo.VET_CODE -> CoinInfo.VET_NAME
-                CoinInfo.EOS_CODE -> CoinInfo.EOS_NAME
-                CoinInfo.TRX_CODE -> CoinInfo.TRX_NAME
-                CoinInfo.NEO_CODE -> CoinInfo.NEO_NAME
-                CoinInfo.IOTA_CODE -> CoinInfo.IOTA_NAME
-                CoinInfo.ATOM_CODE -> CoinInfo.ATOM_NAME
-                CoinInfo.BSV_CODE -> CoinInfo.BSV_NAME
-                CoinInfo.BTT_CODE -> CoinInfo.BTT_NAME
-                CoinInfo.QTUM_CODE -> CoinInfo.QTUM_NAME
-                CoinInfo.HBAR_CODE -> CoinInfo.HBAR_NAME
-                CoinInfo.CRO_CODE -> CoinInfo.CRO_NAME
-                CoinInfo.XTZ_CODE -> CoinInfo.XTZ_NAME
-                CoinInfo.TFUEL_CODE -> CoinInfo.TFUEL_NAME
-                CoinInfo.WAVES_CODE -> CoinInfo.WAVES_NAME
-                CoinInfo.CHZ_CODE -> CoinInfo.CHZ_NAME
-                CoinInfo.XEM_CODE -> CoinInfo.XEM_NAME
-                CoinInfo.STX_CODE -> CoinInfo.STX_NAME
-                CoinInfo.ZIL_CODE -> CoinInfo.ZIL_NAME
-                else -> CoinInfo.BTC_NAME
             }
         }
 

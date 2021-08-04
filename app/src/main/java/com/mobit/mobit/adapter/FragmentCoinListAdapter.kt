@@ -1,6 +1,10 @@
 package com.mobit.mobit.adapter
 
 import android.graphics.Color
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.BackgroundColorSpan
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,7 +71,33 @@ class FragmentCoinListAdapter(
         val formatter = DecimalFormat("###,###")
         val changeFormatter = DecimalFormat("###,###.##")
 
-        holder.korCoinName.text = filteredItems[position].name
+        holder.korCoinName.text = when (filteredItems[position].warning) {
+            // 투자 유의 종목이 아닌 경우
+            "NONE" -> {
+                filteredItems[position].name
+            }
+            // 투자 유의 종목인 경우
+            "CAUTION" -> {
+                val sb: SpannableStringBuilder =
+                    SpannableStringBuilder("${filteredItems[position].name}  유")
+                sb.setSpan(
+                    ForegroundColorSpan(Color.parseColor("#d3d4d6")),
+                    filteredItems[position].name.length + 2,
+                    filteredItems[position].name.length + 3,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                sb.setSpan(
+                    BackgroundColorSpan(Color.rgb(220, 126, 54)),
+                    filteredItems[position].name.length + 2,
+                    filteredItems[position].name.length + 3,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                sb
+            }
+            else -> {
+                filteredItems[position].name
+            }
+        }
         holder.engCoinName.text = filteredItems[position].code.split('-')[1] + "/KRW"
         holder.realTimePrice.text =
             if (filteredItems[position].price.realTimePrice > 100.0)
@@ -76,7 +106,7 @@ class FragmentCoinListAdapter(
                 changeFormatter.format(filteredItems[position].price.realTimePrice)
         holder.changeRate.text =
             changeFormatter.format(filteredItems[position].price.changeRate * 100) + "%"
-        var temp = (filteredItems[position].price.totalTradePrice24 / 1000000).toInt()
+        val temp = (filteredItems[position].price.totalTradePrice24 / 1000000).toInt()
         holder.totalTradePrice.text = formatter.format(temp) + "백만"
 
         if (filteredItems[position].price.changeRate > 0) {
@@ -108,7 +138,7 @@ class FragmentCoinListAdapter(
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val str: String = constraint.toString()
 
-                if (str.isNullOrBlank()) {
+                if (str.isBlank()) {
                     filteredItems = items
                 } else {
                     val filteringList: ArrayList<CoinInfo> = ArrayList()

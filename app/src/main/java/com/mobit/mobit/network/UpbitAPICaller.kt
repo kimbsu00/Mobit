@@ -17,6 +17,7 @@ Upbit open API를 사용해서 데이터를 얻어오는 작업을 구현할 클
 class UpbitAPICaller {
 
     companion object {
+        val MARKET_URL = "https://api.upbit.com/v1/market/all?isDetails=true"
         val TICKER_URL = "https://api.upbit.com/v1/ticker"
         val ORDERBOOK_URL = "https://api.upbit.com/v1/orderbook"
         val CANDLE_MINUTE_URL = "https://api.upbit.com/v1/candles/minutes"
@@ -51,6 +52,29 @@ class UpbitAPICaller {
         } catch (e: Exception) {
             Log.e("UpbitAPICaller", e.toString())
             return ret
+        }
+
+        return ret
+    }
+
+    // 업비트에서 원화로 거래되는 화폐들에 대하여, { code, name } 형태의 리스트를 반환하는 함수
+    fun getMarket(): ArrayList<Triple<String, String, String>> {
+        val ret = ArrayList<Triple<String, String, String>>()
+
+        val url = MARKET_URL
+        val text = connect(url)
+        if (text.isBlank())
+            return ret
+
+        val jsonArray: JSONArray = JSONArray(text)
+        for (i in 0..jsonArray.length() - 1) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            val code = jsonObject.getString("market")
+            val name = jsonObject.getString("korean_name")
+            val warning = jsonObject.getString("market_warning")
+
+            if (code.split('-')[0] == "KRW")
+                ret.add(Triple(code, name, warning))
         }
 
         return ret

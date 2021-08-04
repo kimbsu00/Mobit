@@ -57,7 +57,9 @@ class FragmentBuy : Fragment() {
                 Activity.RESULT_OK -> {
                     val code: String = it.data!!.getStringExtra("code")!!
                     val name: String = it.data!!.getStringExtra("name")!!
-                    val price: Double = orderPrice * orderCount
+                    val nowOrderPrice: Double = it.data!!.getDoubleExtra("unitPrice", 0.0)
+                    val count: Double = it.data!!.getDoubleExtra("count", 0.0)
+                    val price: Double = nowOrderPrice * count
                     val fee: Double = price * 0.0005
                     val time: String = getNowTime()
                     val transaction = Transaction(

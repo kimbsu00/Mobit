@@ -57,6 +57,8 @@ class PopupBuySellActivity : Activity() {
                 val intent: Intent = Intent()
                 intent.putExtra("code", code)
                 intent.putExtra("name", name)
+                intent.putExtra("unitPrice", unitPrice)
+                intent.putExtra("count", count)
                 setResult(RESULT_OK, intent)
                 Log.i("PopupBuySellActivity", "RESULT_OK")
                 finish()

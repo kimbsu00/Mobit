@@ -147,7 +147,7 @@
     <string name="setting_title">설정</string>
     <string name="setting_guide">Mobit 이용가이드</string>
     <string name="setting_app_version_title">앱 버전</string>
-    <string name="setting_app_version_info">1.3.0</string>
+    <string name="setting_app_version_info">1.4.0</string>
     <string name="setting_reset">초기화</string>
 
     <!--    about activity_reset_confirm-->

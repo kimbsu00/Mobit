@@ -91,40 +91,29 @@ class UpbitAPIService : Service() {
                     thread.start()
                 }
                 "START_THREAD1" -> {
-                    val thread: Thread = object : Thread() {
-                        override fun run() {
-                            upbitAPIThread.threadStop(true)
-                            if (upbitAPIThread.isAlive) {
-                                upbitAPIThread.threadStop(true)
-                                try {
-                                    upbitAPIThread.join()
-                                } catch (e: InterruptedException) {
-                                    Log.e("OnRestart Error", e.toString())
-                                }
-                            }
-                            upbitAPIThread = UpbitAPIThread(100)
-                            upbitAPIThread.start()
+                    upbitAPIThread.threadStop(true)
+                    if (upbitAPIThread.isAlive) {
+                        upbitAPIThread.threadStop(true)
+                        try {
+                            upbitAPIThread.join()
+                        } catch (e: InterruptedException) {
+                            Log.e("OnRestart Error", e.toString())
                         }
                     }
-                    thread.start()
+                    upbitAPIThread = UpbitAPIThread(100)
+                    upbitAPIThread.start()
                 }
                 "START_THREAD2" -> {
-                    val thread: Thread = object : Thread() {
-                        override fun run() {
-                            upbitAPIThread2.threadStop(true)
-                            if (upbitAPIThread2.isAlive) {
-                                upbitAPIThread2.threadStop(true)
-                                try {
-                                    upbitAPIThread2.join()
-                                } catch (e: InterruptedException) {
-                                    Log.e("OnRestart Error", e.toString())
-                                }
-                            }
-                            upbitAPIThread2 = UpbitAPIThread(200)
-                            upbitAPIThread2.start()
+                    upbitAPIThread2.threadStop(true)
+                    if (upbitAPIThread2.isAlive) {
+                        try {
+                            upbitAPIThread2.join()
+                        } catch (e: InterruptedException) {
+                            Log.e("OnRestart Error", e.toString())
                         }
                     }
-                    thread.start()
+                    upbitAPIThread2 = UpbitAPIThread(200)
+                    upbitAPIThread2.start()
                 }
                 "STOP" -> {
                     upbitAPIThread.threadStop(true)

@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity() {
                                 intent.getSerializableExtra("orderBook") as ArrayList<OrderBook>
                             if (orderBook.isNotEmpty()) {
                                 myViewModel.setOrderBook(orderBook)
+                            } else {
                                 Log.e("MainActivity", "orderBook is empty")
                             }
                         }

@@ -60,6 +60,9 @@ class UpbitAPIService : Service() {
                     selectedCoin = intent.getStringExtra("selectedCoin")!!
                     favoriteCoinInfo.clear()
                     favoriteCoinInfo.addAll(intent.getSerializableExtra("favoriteCoinInfo") as ArrayList<CoinInfo>)
+                    codes.clear()
+                    names.clear()
+                    warnings.clear()
                     codes.addAll(intent.getSerializableExtra("codes") as ArrayList<String>)
                     names.putAll(intent.getSerializableExtra("names") as HashMap<String, String>)
                     warnings.putAll(intent.getSerializableExtra("warnings") as HashMap<String, String>)

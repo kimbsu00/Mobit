@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                             if (favoriteCoinInfo.isNotEmpty()) {
                                 myViewModel.setFavoriteCoinInfo(favoriteCoinInfo)
                             } else {
-                                Log.e("MainActivity", "favoriteCoinInfo is empty")
+                                Log.i("MainActivity", "favoriteCoinInfo is empty")
                             }
 
                             if (!isDataLoaded) {
@@ -370,6 +370,7 @@ class MainActivity : AppCompatActivity() {
                 val flag = bundle.getBoolean("flag")
                 window.statusBarColor = getColor(R.color.main_background)
                 if (!flag) {
+                    myProgressBar.progressOFF()
                     val intent = Intent(this@MainActivity, FirstSettingActivity::class.java)
                     getContent.launch(intent)
                 }

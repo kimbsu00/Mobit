@@ -87,19 +87,16 @@ class FragmentSell : Fragment() {
                         orderCount
                     )
                     myViewModel.addTransaction(transaction)
-                    val thread = object : Thread() {
-                        override fun run() {
-                            myViewModel.myDBHelper!!.setKRW(myViewModel.asset.value!!.krw)
-                            myViewModel.myDBHelper!!.insertTransaction(transaction)
 
-                            if (myViewModel.asset.value!!.coins.contains(coinAsset!!)) {
-                                myViewModel.myDBHelper!!.updateCoinAsset(coinAsset!!)
-                            } else {
-                                myViewModel.myDBHelper!!.deleteCoinAsset(coinAsset!!)
-                            }
-                        }
+                    myViewModel.myDBHelper!!.setKRW(myViewModel.asset.value!!.krw)
+                    myViewModel.myDBHelper!!.insertTransaction(transaction)
+
+                    if (myViewModel.asset.value!!.coins.contains(coinAsset!!)) {
+                        myViewModel.myDBHelper!!.updateCoinAsset(coinAsset!!)
+                    } else {
+                        myViewModel.myDBHelper!!.deleteCoinAsset(coinAsset!!)
                     }
-                    thread.start()
+
                     binding.canOrderCoin.text = "${formatter.format(coinAsset!!.number)} ${
                         myViewModel.selectedCoin.value!!.split('-')[1]
                     }"

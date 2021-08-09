@@ -82,21 +82,20 @@ class FragmentBuy : Fragment() {
                     )
 
                     myViewModel.addTransaction(transaction)
-                    val thread = object : Thread() {
-                        override fun run() {
-                            myViewModel.myDBHelper!!.setKRW(myViewModel.asset.value!!.krw)
-                            myViewModel.myDBHelper!!.insertTransaction(transaction)
 
-                            if (myViewModel.myDBHelper!!.findCoinAsset(code)) {
-                                val ret =
-                                    myViewModel.myDBHelper!!.updateCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
-                            } else {
-                                val ret =
-                                    myViewModel.myDBHelper!!.insertCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
-                            }
-                        }
+                    // ver 1.4.3까지는 Thread 생성해서 수행했던 작업들인데
+                    // buyIndex 변수에 대해 ArrayIndexOutOfBoundsException 발생해서 Thread 제거함.
+                    myViewModel.myDBHelper!!.setKRW(myViewModel.asset.value!!.krw)
+                    myViewModel.myDBHelper!!.insertTransaction(transaction)
+
+                    if (myViewModel.myDBHelper!!.findCoinAsset(code)) {
+                        val ret =
+                            myViewModel.myDBHelper!!.updateCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
+                    } else {
+                        val ret =
+                            myViewModel.myDBHelper!!.insertCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
                     }
-                    thread.start()
+
                     binding.canOrderPrice.text =
                         "${formatter.format(myViewModel.asset.value!!.krw)}KRW"
                     resetOrderTextView()

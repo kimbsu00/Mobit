@@ -97,7 +97,7 @@ class FragmentSell : Fragment() {
                         myViewModel.myDBHelper!!.deleteCoinAsset(coinAsset!!)
                     }
 
-                    binding.canOrderCoin.text = "${formatter.format(coinAsset!!.number)} ${
+                    binding.canOrderCoin.text = "${formatter2.format(coinAsset!!.number)} ${
                         myViewModel.selectedCoin.value!!.split('-')[1]
                     }"
                     resetOrderTextView()
@@ -165,7 +165,7 @@ class FragmentSell : Fragment() {
                 if (coinAsset.code == myViewModel.selectedCoin.value!!) {
                     selectedCoin = coinAsset
                     canOrderCoin.text =
-                        "${formatter.format(coinAsset.number)} ${coinAsset.code.split('-')[1]}"
+                        "${formatter2.format(coinAsset.number)} ${coinAsset.code.split('-')[1]}"
                     break
                 }
             }

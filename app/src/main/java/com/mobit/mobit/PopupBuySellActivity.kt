@@ -16,6 +16,13 @@ class PopupBuySellActivity : Activity() {
     val formatter = DecimalFormat("###,###")
     val formatter2 = DecimalFormat("###,###.####")
 
+    var type: Int? = null
+    var code: String? = null
+    var name: String? = null
+    var unitPrice: Double? = null
+    var count: Double? = null
+    var totalPrice: Double? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPopupBuySellBinding.inflate(layoutInflater)
@@ -26,12 +33,12 @@ class PopupBuySellActivity : Activity() {
 
         // 1-> 매수
         // 2-> 매도
-        val type: Int = intent.getIntExtra("type", 1)
-        val code: String = intent.getStringExtra("code")!!
-        val name: String = intent.getStringExtra("name")!!
-        val unitPrice: Double = intent.getDoubleExtra("unitPrice", 0.0)
-        val count: Double = intent.getDoubleExtra("count", 0.0)
-        val totalPrice: Double = unitPrice * count
+        type = intent.getIntExtra("type", 1)
+        code = intent.getStringExtra("code")!!
+        name = intent.getStringExtra("name")!!
+        unitPrice = intent.getDoubleExtra("unitPrice", 0.0)
+        count = intent.getDoubleExtra("count", 0.0)
+        totalPrice = unitPrice!! * count!!
 
         binding.apply {
             when (type) {
@@ -48,7 +55,7 @@ class PopupBuySellActivity : Activity() {
                     confirmBtn.text = "매도확인"
                 }
             }
-            coin.text = "$name(${code.split('-')[1]}/KRW)"
+            coin.text = "$name(${code!!.split('-')[1]}/KRW)"
             orderPrice.text = formatter.format(unitPrice)
             orderCount.text = formatter2.format(count)
             orderTotalPrice.text = formatter.format(totalPrice)

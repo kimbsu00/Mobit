@@ -67,8 +67,8 @@ class FragmentBuy : Fragment() {
                         name,
                         time,
                         Transaction.BID,
-                        orderCount,
-                        orderPrice,
+                        count,
+                        nowOrderPrice,
                         price - fee,
                         fee,
                         price
@@ -77,24 +77,27 @@ class FragmentBuy : Fragment() {
                     buyIndex = myViewModel.bidCoin(
                         code,
                         name,
-                        orderPrice,
-                        orderCount
+                        nowOrderPrice,
+                        count
                     )
 
                     myViewModel.addTransaction(transaction)
 
-                    // ver 1.4.3까지는 Thread 생성해서 수행했던 작업들인데
-                    // buyIndex 변수에 대해 ArrayIndexOutOfBoundsException 발생해서 Thread 제거함.
-                    myViewModel.myDBHelper!!.setKRW(myViewModel.asset.value!!.krw)
-                    myViewModel.myDBHelper!!.insertTransaction(transaction)
+                    val thread: Thread = object : Thread() {
+                        override fun run() {
+                            myViewModel.myDBHelper!!.setKRW(myViewModel.asset.value!!.krw)
+                            myViewModel.myDBHelper!!.insertTransaction(transaction)
 
-                    if (myViewModel.myDBHelper!!.findCoinAsset(code)) {
-                        val ret =
-                            myViewModel.myDBHelper!!.updateCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
-                    } else {
-                        val ret =
-                            myViewModel.myDBHelper!!.insertCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
+                            if (myViewModel.myDBHelper!!.findCoinAsset(code)) {
+                                val ret =
+                                    myViewModel.myDBHelper!!.updateCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
+                            } else {
+                                val ret =
+                                    myViewModel.myDBHelper!!.insertCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
+                            }
+                        }
                     }
+                    thread.start()
 
                     binding.canOrderPrice.text =
                         "${formatter.format(myViewModel.asset.value!!.krw)}KRW"
@@ -238,7 +241,8 @@ class FragmentBuy : Fragment() {
             buyBtn.setOnClickListener {
                 orderCount.clearFocus()
                 val nowOrderPrice = this@FragmentBuy.orderPrice
-                if (this@FragmentBuy.orderCount != 0.0 && this@FragmentBuy.orderCount * nowOrderPrice >= 5000.0) {
+                val nowOrderCount = this@FragmentBuy.orderCount
+                if (nowOrderCount != 0.0 && nowOrderCount * nowOrderPrice >= 5000.0) {
                     var coin: CoinInfo? = null
                     for (coinInfo in myViewModel.coinInfo.value!!) {
                         if (coinInfo.code == myViewModel.selectedCoin.value!!) {
@@ -251,7 +255,7 @@ class FragmentBuy : Fragment() {
                         coin!!.code,
                         coin!!.name,
                         nowOrderPrice,
-                        this@FragmentBuy.orderCount
+                        nowOrderCount
                     )
                     if (flag) {
                         val intent: Intent = Intent(context, PopupBuySellActivity::class.java)
@@ -259,7 +263,7 @@ class FragmentBuy : Fragment() {
                         intent.putExtra("code", coin!!.code)
                         intent.putExtra("name", coin!!.name)
                         intent.putExtra("unitPrice", nowOrderPrice)
-                        intent.putExtra("count", this@FragmentBuy.orderCount)
+                        intent.putExtra("count", nowOrderCount)
                         getContent.launch(intent)
                     } else {
                         Toast.makeText(context, "주문가능 금액이 부족합니다.", Toast.LENGTH_SHORT).show()

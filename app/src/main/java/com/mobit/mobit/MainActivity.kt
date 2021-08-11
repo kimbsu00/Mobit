@@ -228,15 +228,15 @@ class MainActivity : AppCompatActivity() {
 
         replaceFragment(fragmentCoinList)
         binding.apply {
-            bottomNavBar.setOnNavigationItemSelectedListener {
+            bottomNavBar.setOnItemSelectedListener {
                 when (it.itemId) {
                     R.id.menu_coinlist -> {
                         replaceFragment(fragmentCoinList)
-                        return@setOnNavigationItemSelectedListener true
+                        true
                     }
                     R.id.menu_chart -> {
                         replaceFragment(fragmentChart)
-                        return@setOnNavigationItemSelectedListener true
+                        true
                     }
                     R.id.menu_transaction -> {
                         val serviceBTIntent = Intent("com.mobit.APICALL")
@@ -244,18 +244,18 @@ class MainActivity : AppCompatActivity() {
                         sendBroadcast(serviceBTIntent)
 
                         replaceFragment(fragmentTransaction)
-                        return@setOnNavigationItemSelectedListener true
+                        true
                     }
                     R.id.menu_investment -> {
                         replaceFragment(fragmentInvestment)
-                        return@setOnNavigationItemSelectedListener true
+                        true
                     }
                     R.id.menu_setting -> {
                         replaceFragment(fragmentSetting)
-                        return@setOnNavigationItemSelectedListener true
+                        true
                     }
                     else -> {
-                        return@setOnNavigationItemSelectedListener false
+                        false
                     }
                 }
             }

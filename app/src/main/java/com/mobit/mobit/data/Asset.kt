@@ -14,7 +14,7 @@ class Asset : Serializable {
     val coins: ArrayList<CoinAsset> = ArrayList()   // 보유 코인 자산
 
     fun canBidCoin(code: String, name: String, price: Double, number: Double): Boolean {
-        val orderPrice = price * number
+        val orderPrice = price * number * 1.0005
 
         if (krw < orderPrice)
             return false
@@ -26,9 +26,10 @@ class Asset : Serializable {
     // 매수한 코인의 인덱스를 리턴한다.
     fun bidCoin(code: String, name: String, price: Double, number: Double): Int {
         val orderPrice = price * number
-        if (krw < orderPrice)
+        val fee = orderPrice * 0.0005
+        if (krw < (orderPrice + fee))
             return -1
-        krw -= orderPrice
+        krw -= (orderPrice + fee)
 
         var index: Int = -1
         for (i in coins.indices) {
@@ -40,14 +41,14 @@ class Asset : Serializable {
 
         var ret: Int = 0
         if (index == -1) {
-            val newCoin = CoinAsset(code, name, number, number * price, price)
+            val newCoin = CoinAsset(code, name, number, orderPrice, price)
             coins.add(newCoin)
             ret = coins.indexOf(newCoin)
         } else {
             coins[index].averagePrice =
                 (coins[index].number * coins[index].averagePrice + orderPrice) / (coins[index].number + number)
             coins[index].number += number
-            coins[index].amount += price * number
+            coins[index].amount += orderPrice
             ret = index
         }
         Log.i("bidCoin in Asset", coins[ret].number.toString())
@@ -100,7 +101,7 @@ class Asset : Serializable {
             ret = coin
         } else {
             coins[index].number -= number
-            coins[index].amount -= (price * number)
+            coins[index].amount -= orderPrice
             ret = coins[index]
         }
 

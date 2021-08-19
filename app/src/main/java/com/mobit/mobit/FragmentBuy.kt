@@ -69,9 +69,9 @@ class FragmentBuy : Fragment() {
                         Transaction.BID,
                         count,
                         nowOrderPrice,
-                        price - fee,
+                        price,
                         fee,
-                        price
+                        price + fee
                     )
 
                     buyIndex = myViewModel.bidCoin(

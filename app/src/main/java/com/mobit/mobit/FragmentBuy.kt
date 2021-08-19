@@ -81,28 +81,39 @@ class FragmentBuy : Fragment() {
                         count
                     )
 
-                    myViewModel.addTransaction(transaction)
+                    if (buyIndex in 0 until myViewModel.asset.value!!.coins.size) {
+                        myViewModel.addTransaction(transaction)
 
-                    val thread: Thread = object : Thread() {
-                        override fun run() {
-                            myViewModel.myDBHelper!!.setKRW(myViewModel.asset.value!!.krw)
-                            myViewModel.myDBHelper!!.insertTransaction(transaction)
+                        val thread: Thread = object : Thread() {
+                            override fun run() {
+                                myViewModel.myDBHelper!!.setKRW(myViewModel.asset.value!!.krw)
+                                myViewModel.myDBHelper!!.insertTransaction(transaction)
 
-                            if (myViewModel.myDBHelper!!.findCoinAsset(code)) {
-                                val ret =
+                                if (myViewModel.myDBHelper!!.findCoinAsset(code)) {
                                     myViewModel.myDBHelper!!.updateCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
-                            } else {
-                                val ret =
+                                } else {
                                     myViewModel.myDBHelper!!.insertCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
+                                }
                             }
                         }
-                    }
-                    thread.start()
+                        thread.start()
 
+                        Toast.makeText(context, "매수주문이 정상 처리되었습니다.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Log.e(
+                            "FragmentBuy",
+                            "buyIndex is $buyIndex, but coins range is [0, ${myViewModel.asset.value!!.coins.size})."
+                        )
+                        Toast.makeText(
+                            context,
+                            "매수주문을 처리하는데 오류가 발생했습니다.\n 다시 시도해 주세요.",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    }
                     binding.canOrderPrice.text =
                         "${formatter.format(myViewModel.asset.value!!.krw)}KRW"
                     resetOrderTextView()
-                    Toast.makeText(context, "매수주문이 정상 처리되었습니다.", Toast.LENGTH_SHORT).show()
                 }
                 Activity.RESULT_CANCELED -> {
                     Log.i("resultCode", "RESULT_CANCELED")

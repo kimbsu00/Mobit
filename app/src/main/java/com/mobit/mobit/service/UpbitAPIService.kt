@@ -163,9 +163,9 @@ class UpbitAPIService : Service() {
                         intent.putExtra("isSuccess", true)
 
                         val favoriteCoinInfo2 = ArrayList<CoinInfo>()
-                        for (favorite in favoriteCoinInfo) {
+                        for (i in 0 until favoriteCoinInfo.size) {
                             for (coin in _coinInfo) {
-                                if (favorite.code == coin.code) {
+                                if (favoriteCoinInfo[i].code == coin.code) {
                                     favoriteCoinInfo2.add(coin)
                                     break
                                 }

@@ -5,8 +5,10 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
+import android.widget.Toast
 import com.mobit.mobit.data.MainIndicator
 import com.mobit.mobit.databinding.ActivityPopupMainIndicatorSettingBinding
 
@@ -19,7 +21,7 @@ class PopupMainIndicatorSettingActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPopupMainIndicatorSettingBinding.inflate(layoutInflater)
-        requestWindowFeature (Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(binding.root)
 
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -109,59 +111,144 @@ class PopupMainIndicatorSettingActivity : Activity() {
                 intent.putExtra("mainIndicatorType", mainIndicatorType)
                 when (mainIndicatorType) {
                     MainIndicator.MOVING_AVERAGE -> {
-                        var MA1: Int = MA1.text.toString().toInt()
-                        if (MA1 <= 0) MA1 = 5
-                        var MA2: Int = MA2.text.toString().toInt()
-                        if (MA2 <= 0) MA2 = 10
-                        var MA3: Int = MA3.text.toString().toInt()
-                        if (MA3 <= 0) MA3 = 20
-                        var MA4: Int = MA4.text.toString().toInt()
-                        if (MA4 <= 0) MA4 = 60
-                        var MA5: Int = MA5.text.toString().toInt()
-                        if (MA5 <= 0) MA5 = 120
-                        intent.putExtra("MA1", MA1)
-                        intent.putExtra("MA2", MA2)
-                        intent.putExtra("MA3", MA3)
-                        intent.putExtra("MA4", MA4)
-                        intent.putExtra("MA5", MA5)
+                        var MA1_V: Int = 5
+                        var MA2_V: Int = 10
+                        var MA3_V: Int = 20
+                        var MA4_V: Int = 60
+                        var MA5_V: Int = 120
+                        try {
+                            MA1_V = MA1.text.toString().toInt()
+                            if (MA1_V <= 0) MA1_V = 5
+                            MA2_V = MA2.text.toString().toInt()
+                            if (MA2_V <= 0) MA2_V = 10
+                            MA3_V = MA3.text.toString().toInt()
+                            if (MA3_V <= 0) MA3_V = 20
+                            MA4_V = MA4.text.toString().toInt()
+                            if (MA4_V <= 0) MA4_V = 60
+                            MA5_V = MA5.text.toString().toInt()
+                            if (MA5_V <= 0) MA5_V = 120
+                        } catch (e: NumberFormatException) {
+                            MA1_V = 5
+                            MA2_V = 10
+                            MA3_V = 20
+                            MA4_V = 60
+                            MA5_V = 120
+                            Toast.makeText(
+                                applicationContext,
+                                "지정 가능한 범위가 아닙니다.\n 다시 입력해주세요.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Log.e("PopupMainIndicatorSettingActivity", e.toString())
+                        } catch (e: Exception) {
+                            Log.e("PopupMainIndicatorSettingActivity", e.toString())
+                        }
+                        intent.putExtra("MA1", MA1_V)
+                        intent.putExtra("MA2", MA2_V)
+                        intent.putExtra("MA3", MA3_V)
+                        intent.putExtra("MA4", MA4_V)
+                        intent.putExtra("MA5", MA5_V)
                     }
                     MainIndicator.BOLLINGER_BANDS -> {
-                        var BB1: Int = BB1.text.toString().toInt()
-                        if (BB1 <= 0) BB1 = 20
-                        var BB2: Float = BB2.text.toString().toFloat()
-                        if (BB2 <= 0 || BB2 > 100) BB2 = 2.0f
-                        intent.putExtra("BB1", BB1)
-                        intent.putExtra("BB2", BB2)
+                        var BB1_V: Int = 20
+                        var BB2_V: Float = 2.0f
+                        try {
+                            BB1_V = BB1.text.toString().toInt()
+                            if (BB1_V <= 0) BB1_V = 20
+                            BB2_V = BB2.text.toString().toFloat()
+                            if (BB2_V <= 0 || BB2_V > 100) BB2_V = 2.0f
+                        } catch (e: NumberFormatException) {
+                            BB1_V = 20
+                            BB2_V = 2.0f
+                            Toast.makeText(
+                                applicationContext,
+                                "지정 가능한 범위가 아닙니다.\n 다시 입력해주세요.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Log.e("PopupMainIndicatorSettingActivity", e.toString())
+                        } catch (e: Exception) {
+                            Log.e("PopupMainIndicatorSettingActivity", e.toString())
+                        }
+                        intent.putExtra("BB1", BB1_V)
+                        intent.putExtra("BB2", BB2_V)
                     }
                     MainIndicator.DAILY_BALANCE_TABLE -> {
-                        var DBT1: Int = DBT1.text.toString().toInt()
-                        if (DBT1 <= 0) DBT1 = 9
-                        var DBT2: Int = DBT2.text.toString().toInt()
-                        if (DBT2 <= 0) DBT2 = 26
-                        var DBT3: Int = DBT3.text.toString().toInt()
-                        if (DBT3 <= 0) DBT3 = 26
-                        var DBT4: Int = DBT4.text.toString().toInt()
-                        if (DBT4 <= 0) DBT4 = 26
-                        var DBT5: Int = DBT5.text.toString().toInt()
-                        if (DBT5 <= 0) DBT5 = 52
-                        intent.putExtra("DBT1", DBT1)
-                        intent.putExtra("DBT2", DBT2)
-                        intent.putExtra("DBT3", DBT3)
-                        intent.putExtra("DBT4", DBT4)
-                        intent.putExtra("DBT5", DBT5)
+                        var DBT1_V: Int = 9
+                        var DBT2_V: Int = 26
+                        var DBT3_V: Int = 26
+                        var DBT4_V: Int = 26
+                        var DBT5_V: Int = 52
+                        try {
+                            DBT1_V = DBT1.text.toString().toInt()
+                            if (DBT1_V <= 0) DBT1_V = 9
+                            DBT2_V = DBT2.text.toString().toInt()
+                            if (DBT2_V <= 0) DBT2_V = 26
+                            DBT3_V = DBT3.text.toString().toInt()
+                            if (DBT3_V <= 0) DBT3_V = 26
+                            DBT4_V = DBT4.text.toString().toInt()
+                            if (DBT4_V <= 0) DBT4_V = 26
+                            DBT5_V = DBT5.text.toString().toInt()
+                            if (DBT5_V <= 0) DBT5_V = 52
+                        } catch (e: NumberFormatException) {
+                            DBT1_V = 9
+                            DBT2_V = 26
+                            DBT3_V = 26
+                            DBT4_V = 26
+                            DBT5_V = 52
+                            Toast.makeText(
+                                applicationContext,
+                                "지정 가능한 범위가 아닙니다.\n 다시 입력해주세요.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Log.e("PopupMainIndicatorSettingActivity", e.toString())
+                        } catch (e: Exception) {
+                            Log.e("PopupMainIndicatorSettingActivity", e.toString())
+                        }
+                        intent.putExtra("DBT1", DBT1_V)
+                        intent.putExtra("DBT2", DBT2_V)
+                        intent.putExtra("DBT3", DBT3_V)
+                        intent.putExtra("DBT4", DBT4_V)
+                        intent.putExtra("DBT5", DBT5_V)
                     }
                     MainIndicator.ENVELOPES -> {
-                        var ENV1: Int = ENV1.text.toString().toInt()
-                        if (ENV1 <= 0) ENV1 = 20
-                        var ENV2: Int = ENV2.text.toString().toInt()
-                        if (ENV2 <= 0 || ENV2 > 100) ENV2 = 6
-                        intent.putExtra("ENV1", ENV1)
-                        intent.putExtra("ENV2", ENV2)
+                        var ENV1_V: Int = 20
+                        var ENV2_V: Int = 6
+                        try {
+                            ENV1_V = ENV1.text.toString().toInt()
+                            if (ENV1_V <= 0) ENV1_V = 20
+                            ENV2_V = ENV2.text.toString().toInt()
+                            if (ENV2_V <= 0 || ENV2_V > 100) ENV2_V = 6
+                        } catch (e: NumberFormatException) {
+                            ENV1_V = 20
+                            ENV2_V = 6
+                            Toast.makeText(
+                                applicationContext,
+                                "지정 가능한 범위가 아닙니다.\n 다시 입력해주세요.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Log.e("PopupMainIndicatorSettingActivity", e.toString())
+                        } catch (e: Exception) {
+                            Log.e("PopupMainIndicatorSettingActivity", e.toString())
+                        }
+                        intent.putExtra("ENV1", ENV1_V)
+                        intent.putExtra("ENV2", ENV2_V)
                     }
                     MainIndicator.PRICE_CHANNELS -> {
-                        var PC: Int = PC.text.toString().toInt()
-                        if (PC <= 0) PC = 5
-                        intent.putExtra("PC", PC)
+                        var PC_V: Int = 5
+                        try {
+                            PC_V = PC.text.toString().toInt()
+                            if (PC_V <= 0) PC_V = 5
+                        } catch (e: NumberFormatException) {
+                            PC_V = 5
+                            Toast.makeText(
+                                applicationContext,
+                                "지정 가능한 범위가 아닙니다.\n 다시 입력해주세요.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Log.e("PopupMainIndicatorSettingActivity", e.toString())
+                        } catch (e: Exception) {
+                            Log.e("PopupMainIndicatorSettingActivity", e.toString())
+                        }
+                        intent.putExtra("PC", PC_V)
                     }
                 }
                 setResult(RESULT_OK, intent)

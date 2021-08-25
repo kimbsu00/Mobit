@@ -216,7 +216,20 @@ class FragmentBuy : Fragment() {
                     if (s.isNullOrEmpty()) {
                         this@FragmentBuy.orderCount = 0.0
                     } else {
-                        this@FragmentBuy.orderCount = s.toString().replace(",", "").toDouble()
+                        try {
+                            this@FragmentBuy.orderCount = s.toString().replace(",", "").toDouble()
+                        } catch (e: NumberFormatException) {
+                            this@FragmentBuy.orderCount = 0.0
+                            orderCount.setText("0")
+                            Toast.makeText(
+                                context,
+                                "지정 가능한 범위가 아닙니다.\n 다시 입력해주세요.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Log.e("FragmentBuy", e.toString())
+                        } catch (e: Exception) {
+                            Log.e("FragmentBuy", e.toString())
+                        }
                         if (this@FragmentBuy.orderCount < 0) {
                             this@FragmentBuy.orderCount = 0.0
                             orderCount.setText("0")
@@ -234,7 +247,21 @@ class FragmentBuy : Fragment() {
                         if (!hasFocus) {
                             val text = orderCount.text.toString()
                             if (text.isNotEmpty()) {
-                                val number = text.replace(",", "").toDouble()
+                                var number: Double = 0.0
+                                try {
+                                    number = text.replace(",", "").toDouble()
+                                } catch (e: NumberFormatException) {
+                                    number = 0.0
+                                    orderCount.setText("0")
+                                    Toast.makeText(
+                                        context,
+                                        "지정 가능한 범위가 아닙니다.\n 다시 입력해주세요.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    Log.e("FragmentBuy", e.toString())
+                                } catch (e: Exception) {
+                                    Log.e("FragmentBuy", e.toString())
+                                }
                                 this@FragmentBuy.orderCount = if (number > 0.0) number else 0.0
                             } else {
                                 this@FragmentBuy.orderCount = 0.0

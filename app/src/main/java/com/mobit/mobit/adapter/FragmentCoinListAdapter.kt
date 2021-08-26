@@ -48,7 +48,9 @@ class FragmentCoinListAdapter(
             val clickListener: View.OnClickListener = object : View.OnClickListener {
                 override fun onClick(v: View?) {
                     if (v != null) {
-                        listener?.onItemClicked(v, filteredItems[adapterPosition])
+                        if (adapterPosition < filteredItems.size) {
+                            listener?.onItemClicked(v, filteredItems[adapterPosition])
+                        }
                     }
                 }
             }

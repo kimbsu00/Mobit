@@ -3,6 +3,7 @@ package com.mobit.mobit.data
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mobit.mobit.db.MyDBHelper
+import java.util.concurrent.locks.ReentrantLock
 
 class MyViewModel : ViewModel() {
 
@@ -12,8 +13,14 @@ class MyViewModel : ViewModel() {
     // 실시간으로 얻어온 코인 정보를 저장할 변수
     val coinInfo: MutableLiveData<ArrayList<CoinInfo>> = MutableLiveData()
 
+    // coinInfo에 대한 Lock
+    val coinInfoLock: ReentrantLock = ReentrantLock()
+
     // 사용자가 즐겨찾기에 추가한 코인 정보를 저장할 변수
     val favoriteCoinInfo: MutableLiveData<ArrayList<CoinInfo>> = MutableLiveData()
+
+    // favoriteCoinInfo에 대한 Lock
+    val favoriteCoinInfoLock: ReentrantLock = ReentrantLock()
 
     // 실시간으로 얻어온 호가 정보를 저장할 변수
     val orderBook: MutableLiveData<ArrayList<OrderBook>> = MutableLiveData()
@@ -38,11 +45,21 @@ class MyViewModel : ViewModel() {
     }
 
     fun setCoinInfo(coinInfo: ArrayList<CoinInfo>) {
-        this.coinInfo.value = coinInfo
+        coinInfoLock.lock()
+        try {
+            this.coinInfo.value = coinInfo
+        } finally {
+            coinInfoLock.unlock()
+        }
     }
 
     fun setFavoriteCoinInfo(favoriteCoinInfo: ArrayList<CoinInfo>) {
-        this.favoriteCoinInfo.value = favoriteCoinInfo
+        favoriteCoinInfoLock.lock()
+        try {
+            this.favoriteCoinInfo.value = favoriteCoinInfo
+        } finally {
+            favoriteCoinInfoLock.unlock()
+        }
     }
 
     fun setOrderBook(orderBook: ArrayList<OrderBook>) {

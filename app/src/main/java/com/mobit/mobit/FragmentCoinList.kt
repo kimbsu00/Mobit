@@ -15,6 +15,7 @@ import com.mobit.mobit.adapter.FragmentCoinListAdapter
 import com.mobit.mobit.data.CoinInfo
 import com.mobit.mobit.data.MyViewModel
 import com.mobit.mobit.databinding.FragmentCoinListBinding
+import java.util.concurrent.TimeUnit
 
 /*
 가상화폐 목록과 정보 확인 기능이 구현될 Fragment 입니다.
@@ -77,8 +78,18 @@ class FragmentCoinList : Fragment() {
         adapter = FragmentCoinListAdapter(coinInfo, coinInfo)
         adapter.listener = object : FragmentCoinListAdapter.OnItemClickListener {
             override fun onItemClicked(view: View, coinInfo: CoinInfo) {
-                myViewModel.setSelectedCoin(coinInfo.code)
-                listener?.showTransaction()
+                if (myViewModel.coinInfoLock.tryLock() || myViewModel.coinInfoLock.tryLock(
+                        1000,
+                        TimeUnit.MILLISECONDS
+                    )
+                ) {
+                    try {
+                        myViewModel.setSelectedCoin(coinInfo.code)
+                        listener?.showTransaction()
+                    } finally {
+                        myViewModel.coinInfoLock.unlock()
+                    }
+                }
                 Log.i("Clicked Coin", coinInfo.code)
             }
         }
@@ -86,8 +97,18 @@ class FragmentCoinList : Fragment() {
         favoriteAdapter = FragmentCoinListAdapter(favoriteCoinInfo, favoriteCoinInfo)
         favoriteAdapter.listener = object : FragmentCoinListAdapter.OnItemClickListener {
             override fun onItemClicked(view: View, coinInfo: CoinInfo) {
-                myViewModel.setSelectedCoin(coinInfo.code)
-                listener?.showTransaction()
+                if (myViewModel.favoriteCoinInfoLock.tryLock() || myViewModel.favoriteCoinInfoLock.tryLock(
+                        1000,
+                        TimeUnit.MILLISECONDS
+                    )
+                ) {
+                    try {
+                        myViewModel.setSelectedCoin(coinInfo.code)
+                        listener?.showTransaction()
+                    } finally {
+                        myViewModel.favoriteCoinInfoLock.unlock()
+                    }
+                }
                 Log.i("Clicked Coin", coinInfo.code)
             }
         }

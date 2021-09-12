@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     val myProgressBar: MyProgressBar = MyProgressBar()
     var isDataLoaded: Boolean = false
-    var isDBLoaded: Boolean = false
     // UI 변수 끝
 
     val myViewModel: MyViewModel by viewModels<MyViewModel>()
@@ -94,6 +93,7 @@ class MainActivity : AppCompatActivity() {
 
                             if (!isDataLoaded) {
                                 isDataLoaded = true
+                                myProgressBar.progressOFF()
                             }
                         }
                     }
@@ -121,17 +121,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         myProgressBar.progressON(this, "Loading")
-        val progressBarThread = object : Thread() {
-            override fun run() {
-                while (true) {
-                    if (isDataLoaded && isDBLoaded) {
-                        myProgressBar.progressOFF()
-                        break
-                    }
-                }
-            }
-        }
-        progressBarThread.start()
 
         // 업비트에서 원화로 거래되는 가상화폐 목록을 받아온다.
         // 받아온 데이터는 DBHandler.handleMessage()에서 Service와 동기화한다.
@@ -434,10 +423,6 @@ class MainActivity : AppCompatActivity() {
                 val serviceBRIntent2 = Intent("com.mobit.APICALL")
                 serviceBRIntent2.putExtra("mode", "START_THREAD1")
                 sendBroadcast(serviceBRIntent2)
-
-                if (!isDBLoaded) {
-                    isDBLoaded = true
-                }
             }
         }
     }

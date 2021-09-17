@@ -3,6 +3,7 @@ package com.mobit.mobit.data
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mobit.mobit.db.MyDBHelper
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 
 class MyViewModel : ViewModel() {
@@ -45,19 +46,19 @@ class MyViewModel : ViewModel() {
     }
 
     fun setCoinInfo(coinInfo: ArrayList<CoinInfo>) {
-        coinInfoLock.lock()
-        try {
+        if (coinInfoLock.tryLock() || coinInfoLock.tryLock(1000, TimeUnit.MILLISECONDS)) {
             this.coinInfo.value = coinInfo
-        } finally {
             coinInfoLock.unlock()
         }
     }
 
     fun setFavoriteCoinInfo(favoriteCoinInfo: ArrayList<CoinInfo>) {
-        favoriteCoinInfoLock.lock()
-        try {
+        if (favoriteCoinInfoLock.tryLock() || favoriteCoinInfoLock.tryLock(
+                1000,
+                TimeUnit.MILLISECONDS
+            )
+        ) {
             this.favoriteCoinInfo.value = favoriteCoinInfo
-        } finally {
             favoriteCoinInfoLock.unlock()
         }
     }

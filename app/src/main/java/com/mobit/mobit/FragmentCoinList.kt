@@ -1,6 +1,9 @@
 package com.mobit.mobit
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +18,6 @@ import com.mobit.mobit.adapter.FragmentCoinListAdapter
 import com.mobit.mobit.data.CoinInfo
 import com.mobit.mobit.data.MyViewModel
 import com.mobit.mobit.databinding.FragmentCoinListBinding
-import java.util.concurrent.TimeUnit
 
 /*
 가상화폐 목록과 정보 확인 기능이 구현될 Fragment 입니다.
@@ -32,10 +34,11 @@ class FragmentCoinList : Fragment() {
     // false -> 관심 코인 리스트를 보여주고 있는 상황
     var adapterState: Boolean = true
 
-    val coinInfo: ArrayList<CoinInfo> = ArrayList()             // 전체 코인 리스트
+    val coinInfoUpdateHandler: CoinInfoUpdateHandler = CoinInfoUpdateHandler()
+    val coinInfo: ArrayList<CoinInfo> = ArrayList()             // 전체 코인 정보 리스트
     lateinit var adapter: FragmentCoinListAdapter               // 전체 코인 리스트 adapter
 
-    val favoriteCoinInfo: ArrayList<CoinInfo> = ArrayList()     // 관심 코인 리스트
+    val favoriteCoinInfo: ArrayList<CoinInfo> = ArrayList()     // 관심 코인 정보 리스트
     lateinit var favoriteAdapter: FragmentCoinListAdapter       // 관심 코인 리스트 adapter
 
     var listener: OnFragmentInteraction? = null     // MainActivity와 통신할 때 사용되는 interface
@@ -57,59 +60,33 @@ class FragmentCoinList : Fragment() {
 
     fun init() {
         myViewModel.coinInfo.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-//            coinInfo.clear()
-//            coinInfo.addAll(myViewModel.coinInfo.value!!)
-            for (index in it.indices) {
-                if (coinInfo.size > index)
-                    coinInfo[index] = it[index]
-                else
-                    coinInfo.add(it[index])
-            }
-            adapter.notifyDataSetChanged()
+            val runnable: CoinInfoUpdateRunnable = CoinInfoUpdateRunnable()
+            val thread: Thread = Thread(runnable)
+            thread.start()
         })
 
         myViewModel.favoriteCoinInfo.observe(viewLifecycleOwner, Observer {
             favoriteCoinInfo.clear()
             favoriteCoinInfo.addAll(myViewModel.favoriteCoinInfo.value!!)
-            favoriteAdapter.notifyDataSetChanged()
+            favoriteAdapter.notifyItemRangeChanged(0, favoriteCoinInfo.size)
         })
 
         // 일반 코인 목록을 보여주는 adapter
         adapter = FragmentCoinListAdapter(coinInfo, coinInfo)
         adapter.listener = object : FragmentCoinListAdapter.OnItemClickListener {
-            override fun onItemClicked(view: View, coinInfo: CoinInfo) {
-                if (myViewModel.coinInfoLock.tryLock() || myViewModel.coinInfoLock.tryLock(
-                        1000,
-                        TimeUnit.MILLISECONDS
-                    )
-                ) {
-                    try {
-                        myViewModel.setSelectedCoin(coinInfo.code)
-                        listener?.showTransaction()
-                    } finally {
-                        myViewModel.coinInfoLock.unlock()
-                    }
-                }
-                Log.i("Clicked Coin", coinInfo.code)
+            override fun onItemClicked(view: View, code: String) {
+                myViewModel.setSelectedCoin(code)
+                listener?.showTransaction()
+                Log.i("Clicked Coin", code)
             }
         }
         // 관심 목록을 보여주는 adapter
         favoriteAdapter = FragmentCoinListAdapter(favoriteCoinInfo, favoriteCoinInfo)
         favoriteAdapter.listener = object : FragmentCoinListAdapter.OnItemClickListener {
-            override fun onItemClicked(view: View, coinInfo: CoinInfo) {
-                if (myViewModel.favoriteCoinInfoLock.tryLock() || myViewModel.favoriteCoinInfoLock.tryLock(
-                        1000,
-                        TimeUnit.MILLISECONDS
-                    )
-                ) {
-                    try {
-                        myViewModel.setSelectedCoin(coinInfo.code)
-                        listener?.showTransaction()
-                    } finally {
-                        myViewModel.favoriteCoinInfoLock.unlock()
-                    }
-                }
-                Log.i("Clicked Coin", coinInfo.code)
+            override fun onItemClicked(view: View, code: String) {
+                myViewModel.setSelectedCoin(code)
+                listener?.showTransaction()
+                Log.i("Clicked Coin", code)
             }
         }
 
@@ -117,6 +94,7 @@ class FragmentCoinList : Fragment() {
             recyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             recyclerView.adapter = adapter
+            recyclerView.itemAnimator = null
 
             radioGroup.setOnCheckedChangeListener(object : RadioGroup.OnCheckedChangeListener {
                 override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
@@ -161,4 +139,60 @@ class FragmentCoinList : Fragment() {
         }
     }
 
+    inner class CoinInfoUpdateHandler : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+
+            val bundle: Bundle = msg.data
+            if (!bundle.isEmpty) {
+                val notifyFlag: Boolean = bundle.getBoolean("notifyFlag")
+                if (notifyFlag) {
+                    adapter.notifyItemRangeChanged(0, coinInfo.size)
+                }
+            }
+        }
+    }
+
+    inner class CoinInfoUpdateRunnable : Runnable {
+        override fun run() {
+            val message = coinInfoUpdateHandler.obtainMessage()
+            val bundle: Bundle = Bundle()
+
+            myViewModel.coinInfoLock.lock()
+            try {
+                val it = myViewModel.coinInfo.value!!
+                for (index in it.indices) {
+                    if (coinInfo.size > index) {
+                        coinInfo[index].price.apply {
+                            realTimePrice = it[index].price.realTimePrice
+                            openPrice = it[index].price.openPrice
+                            highPrice = it[index].price.highPrice
+                            lowPrice = it[index].price.lowPrice
+                            endPrice = it[index].price.endPrice
+                            prevEndPrice = it[index].price.prevEndPrice
+                            change = it[index].price.change
+                            changePrice = it[index].price.changeRate
+                            changeRate = it[index].price.changeRate
+                            totalTradeVolume = it[index].price.totalTradeVolume
+                            totalTradePrice = it[index].price.totalTradePrice
+                            totalTradePrice24 = it[index].price.totalTradePrice24
+                            highestWeekPrice = it[index].price.highestWeekPrice
+                            highestWeekDate = it[index].price.highestWeekDate
+                            lowestWeekPrice = it[index].price.lowestWeekPrice
+                            lowestWeekDate = it[index].price.lowestWeekDate
+                            realTimePriceDiff = it[index].price.realTimePriceDiff
+                        }
+                    } else {
+                        coinInfo.add(it[index])
+                    }
+                    bundle.putBoolean("notifyFlag", true)
+                }
+            } finally {
+                myViewModel.coinInfoLock.unlock()
+            }
+
+            message.data = bundle
+            coinInfoUpdateHandler.sendMessage(message)
+        }
+    }
 }

@@ -26,7 +26,7 @@ class FragmentCoinListAdapter(
     var listener: OnItemClickListener? = null
 
     interface OnItemClickListener {
-        fun onItemClicked(view: View, coinInfo: CoinInfo)
+        fun onItemClicked(view: View, code: String)
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -49,7 +49,7 @@ class FragmentCoinListAdapter(
                 override fun onClick(v: View?) {
                     if (v != null) {
                         if (adapterPosition < filteredItems.size) {
-                            listener?.onItemClicked(v, filteredItems[adapterPosition])
+                            listener?.onItemClicked(v, filteredItems[adapterPosition].code)
                         }
                     }
                 }

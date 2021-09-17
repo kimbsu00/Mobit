@@ -5,7 +5,7 @@ import java.io.Serializable
 data class CoinInfo(
     val code: String,       // 코인 코드
     val name: String,       // 코인 이름
-    val price: Price,       // 코인 현재가 정보
+    var price: Price,       // 코인 현재가 정보
     val warning: String     // 투자 유의 유무, NONE=일반, CAUTION=투자유의
 ) : Serializable {
     companion object {

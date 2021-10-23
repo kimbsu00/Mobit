@@ -135,7 +135,7 @@ class PopupMainIndicatorSettingActivity : Activity() {
                             MA5_V = 120
                             Toast.makeText(
                                 applicationContext,
-                                "지정 가능한 범위가 아닙니다.\n 다시 입력해주세요.",
+                                "지정 가능한 범위가 아닙니다.\n다시 입력해주세요.",
                                 Toast.LENGTH_SHORT
                             ).show()
                             Log.e("PopupMainIndicatorSettingActivity", e.toString())
@@ -161,7 +161,7 @@ class PopupMainIndicatorSettingActivity : Activity() {
                             BB2_V = 2.0f
                             Toast.makeText(
                                 applicationContext,
-                                "지정 가능한 범위가 아닙니다.\n 다시 입력해주세요.",
+                                "지정 가능한 범위가 아닙니다.\n다시 입력해주세요.",
                                 Toast.LENGTH_SHORT
                             ).show()
                             Log.e("PopupMainIndicatorSettingActivity", e.toString())
@@ -196,7 +196,7 @@ class PopupMainIndicatorSettingActivity : Activity() {
                             DBT5_V = 52
                             Toast.makeText(
                                 applicationContext,
-                                "지정 가능한 범위가 아닙니다.\n 다시 입력해주세요.",
+                                "지정 가능한 범위가 아닙니다.\n다시 입력해주세요.",
                                 Toast.LENGTH_SHORT
                             ).show()
                             Log.e("PopupMainIndicatorSettingActivity", e.toString())
@@ -222,7 +222,7 @@ class PopupMainIndicatorSettingActivity : Activity() {
                             ENV2_V = 6
                             Toast.makeText(
                                 applicationContext,
-                                "지정 가능한 범위가 아닙니다.\n 다시 입력해주세요.",
+                                "지정 가능한 범위가 아닙니다.\n다시 입력해주세요.",
                                 Toast.LENGTH_SHORT
                             ).show()
                             Log.e("PopupMainIndicatorSettingActivity", e.toString())
@@ -241,7 +241,7 @@ class PopupMainIndicatorSettingActivity : Activity() {
                             PC_V = 5
                             Toast.makeText(
                                 applicationContext,
-                                "지정 가능한 범위가 아닙니다.\n 다시 입력해주세요.",
+                                "지정 가능한 범위가 아닙니다.\n다시 입력해주세요.",
                                 Toast.LENGTH_SHORT
                             ).show()
                             Log.e("PopupMainIndicatorSettingActivity", e.toString())

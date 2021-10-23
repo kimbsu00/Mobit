@@ -9,14 +9,17 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import com.mobit.mobit.data.*
 import com.mobit.mobit.databinding.ActivityMainBinding
 import com.mobit.mobit.db.MyDBHelper
+import com.mobit.mobit.network.NetworkManager
 import com.mobit.mobit.network.UpbitAPICaller
 import com.mobit.mobit.service.UpbitAPIService
 import java.util.*
@@ -120,29 +123,45 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        myProgressBar.progressON(this, "Loading")
+        // 네트워크가 연결되어 있지 않은 경우
+        if (!NetworkManager.checkNetworkState(this)) {
+            Snackbar.make(
+                binding.bottomNavBar,
+                getString(R.string.network_connection_need),
+                Snackbar.LENGTH_INDEFINITE
+            ).setAction("확인", View.OnClickListener {
+                moveTaskToBack(true)
+                finishAndRemoveTask()
+                android.os.Process.killProcess(android.os.Process.myPid())
+            }).show()
+        }
+        // 네트워크가 연결되어 있는 경우
+        else {
+            myProgressBar.progressON(this, "Loading")
 
-        // 업비트에서 원화로 거래되는 가상화폐 목록을 받아온다.
-        // 받아온 데이터는 DBHandler.handleMessage()에서 Service와 동기화한다.
-        coinListThread = object : Thread() {
-            override fun run() {
-                val upbitAPICaller = UpbitAPICaller()
-                val coinList: ArrayList<Triple<String, String, String>> = upbitAPICaller.getMarket()
-                if (coinList.isNotEmpty()) {
-                    for (temp in coinList) {
-                        codes.add(temp.first)
-                        names.put(temp.first, temp.second)
-                        warnings.put(temp.first, temp.third)
+            // 업비트에서 원화로 거래되는 가상화폐 목록을 받아온다.
+            // 받아온 데이터는 DBHandler.handleMessage()에서 Service와 동기화한다.
+            coinListThread = object : Thread() {
+                override fun run() {
+                    val upbitAPICaller = UpbitAPICaller()
+                    val coinList: ArrayList<Triple<String, String, String>> =
+                        upbitAPICaller.getMarket()
+                    if (coinList.isNotEmpty()) {
+                        for (temp in coinList) {
+                            codes.add(temp.first)
+                            names.put(temp.first, temp.second)
+                            warnings.put(temp.first, temp.third)
+                        }
                     }
                 }
             }
-        }
-        coinListThread!!.start()
+            coinListThread!!.start()
 
-        initData()
-        initService()
-        initDB()
-        init()
+            initData()
+            initService()
+            initDB()
+            init()
+        }
     }
 
     override fun onBackPressed() {

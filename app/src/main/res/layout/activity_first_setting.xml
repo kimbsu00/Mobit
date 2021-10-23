@@ -56,24 +56,35 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:gravity="left|center_vertical"
-                    android:text="@string/first_setting_deposit_info"
+                    android:text="@string/first_setting_deposit_info_1"
                     android:textColor="@color/upbit_light_gray"
                     android:textSize="16sp" />
 
-                <Spinner
-                    android:id="@+id/depositSpinner"
-                    style="@style/SpinnerwithNoArrow"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/transaction_linearlayout_border"
-                    android:dropDownWidth="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="left|center_vertical"
+                    android:text="@string/first_setting_deposit_info_2"
+                    android:textColor="@color/upbit_light_gray"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/depositEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@null"
+                    android:ems="10"
                     android:gravity="center"
-                    android:padding="10dp"
-                    android:popupBackground="@color/main_background"
-                    android:prompt="@string/depositSpinner_prompt"
-                    android:spinnerMode="dropdown" />
+                    android:hint="@string/first_setting_deposit_input"
+                    android:inputType="numberDecimal"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:textColor="@color/upbit_light_gray"
+                    android:textColorHint="@color/coin_list_button_selector_color"
+                    android:textCursorDrawable="@drawable/edittext_cursor_color_gray"
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
@@ -178,7 +189,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:layout_weight="1"
                     android:background="@drawable/first_setting_button_pressed_background"
                     android:gravity="center"
                     android:text="@string/first_setting_close"

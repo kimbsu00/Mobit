@@ -10,14 +10,4 @@
         <item>10%</item>
     </string-array>
 
-    <string name="depositSpinner_prompt">예수금</string>
-    <string-array name="depositSpinner">
-        <item>1,000,000 KRW</item>
-        <item>3,000,000 KRW</item>
-        <item>5,000,000 KRW</item>
-        <item>10,000,000 KRW</item>
-        <item>30,000,000 KRW</item>
-        <item>50,000,000 KRW</item>
-    </string-array>
-
 </resources>

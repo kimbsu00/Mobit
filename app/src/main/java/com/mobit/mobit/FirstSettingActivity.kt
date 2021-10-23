@@ -2,16 +2,13 @@ package com.mobit.mobit
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.mobit.mobit.databinding.ActivityFirstSettingBinding
 
 class FirstSettingActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityFirstSettingBinding
-    var depositValue: Double = 1000000.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,42 +19,31 @@ class FirstSettingActivity : AppCompatActivity() {
     }
 
     fun init() {
-        // spinner 아이템을 보여주는 view를 커스텀하기 위해서 adapter를 만들어준다
-        val spinnerAdapter = ArrayAdapter<String>(
-            this,
-            R.layout.spinner_item,
-            resources.getStringArray(R.array.depositSpinner)
-        )
-
         binding.apply {
-            depositSpinner.adapter = spinnerAdapter
-            depositSpinner.setSelection(0, false)
-            depositSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    depositValue = when (position) {
-                        0 -> 1000000.0
-                        1 -> 3000000.0
-                        2 -> 5000000.0
-                        3 -> 10000000.0
-                        4 -> 30000000.0
-                        5 -> 50000000.0
-                        else -> 1000000.0
-                    }
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
-            }
-
             confirmBtn.setOnClickListener {
-                val intent = Intent()
-                intent.putExtra("krw", depositValue)
-                setResult(RESULT_OK, intent)
-                finish()
+                try {
+                    val input: String = depositEditText.text.toString()
+                    val depositValue: Double = input.toInt().toDouble()
+
+                    if (depositValue in 0.0..2e10) {
+                        val intent = Intent()
+                        intent.putExtra("krw", depositValue)
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    } else {
+                        Toast.makeText(
+                            this@FirstSettingActivity,
+                            "지정 가능한 범위가 아닙니다.\n다시 입력해주세요.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } catch (e: NumberFormatException) {
+                    Toast.makeText(
+                        this@FirstSettingActivity,
+                        "지정 가능한 범위가 아닙니다.\n다시 입력해주세요.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
     }

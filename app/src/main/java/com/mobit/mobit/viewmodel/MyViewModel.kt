@@ -1,7 +1,8 @@
-package com.mobit.mobit.data
+package com.mobit.mobit.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.mobit.mobit.data.*
 import com.mobit.mobit.db.MyDBHelper
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock

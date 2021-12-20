@@ -289,6 +289,12 @@ class MainActivity : AppCompatActivity() {
                     sendBroadcast(serviceBTIntent)
                 }
             }
+        (fragmentInvestment as FragmentInvestment).listener =
+            object : FragmentInvestment.OnFragmentInteraction {
+                override fun showTransaction() {
+                    binding.bottomNavBar.selectedItemId = R.id.menu_transaction
+                }
+            }
     }
 
     fun replaceFragment(fragment: Fragment) {

@@ -2,6 +2,7 @@ package com.mobit.mobit
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,6 +57,12 @@ class FragmentAsset : Fragment() {
     val formatter = DecimalFormat("###,###")
     val changeFormatter = DecimalFormat("###,###.##")
     val percentFormatter = DecimalFormat("###,###.#")
+
+    var listener: OnFragmentInteraction? = null
+
+    interface OnFragmentInteraction {
+        fun showTransaction()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -148,6 +155,13 @@ class FragmentAsset : Fragment() {
         })
 
         adapter = FragmentAssetAdapter(retainedCoin)
+        adapter.listener = object : FragmentAssetAdapter.OnItemClickListener {
+            override fun onItemClicked(code: String) {
+                Log.i("FragmentAsset", "clicked code is $code")
+                myViewModel.setSelectedCoin(code)
+                listener?.showTransaction()
+            }
+        }
         legendAdapter = FragmentAssetLegendAdapter(legendEntries)
         binding.apply {
             recyclerView.layoutManager =

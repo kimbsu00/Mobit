@@ -20,6 +20,12 @@ class FragmentAssetAdapter(var items: ArrayList<CoinAsset>) :
     val formatter2 = DecimalFormat("###,###.##")
     val formatter3 = DecimalFormat("###,###.####")
 
+    var listener: OnItemClickListener? = null
+
+    interface OnItemClickListener {
+        fun onItemClicked(code: String)
+    }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameView: TextView
         val codeView: TextView
@@ -39,6 +45,10 @@ class FragmentAssetAdapter(var items: ArrayList<CoinAsset>) :
             averagePriceView = itemView.findViewById(R.id.averagePriceView)
             evaluationView = itemView.findViewById(R.id.evaluationView)
             buyPriceView = itemView.findViewById(R.id.buyPriceView)
+
+            itemView.setOnClickListener {
+                listener?.onItemClicked(items[adapterPosition].code)
+            }
         }
     }
 

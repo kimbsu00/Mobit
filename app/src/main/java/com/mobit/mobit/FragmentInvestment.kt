@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.mobit.mobit.adapter.InvestmentStateAdapter
 import com.mobit.mobit.data.MyViewModel
 import com.mobit.mobit.databinding.FragmentInvestmentBinding
 
@@ -21,6 +22,12 @@ class FragmentInvestment : Fragment() {
     // UI 변수 끝
 
     val myViewModel: MyViewModel by activityViewModels()
+
+    var listener: OnFragmentInteraction? = null
+
+    interface OnFragmentInteraction {
+        fun showTransaction()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,4 +53,28 @@ class FragmentInvestment : Fragment() {
         }
     }
 
+    inner class InvestmentStateAdapter(fragmentActivity: FragmentActivity) :
+        FragmentStateAdapter(fragmentActivity) {
+
+        val fragmentAsset: Fragment = FragmentAsset().also {
+            it.listener = object : FragmentAsset.OnFragmentInteraction {
+                override fun showTransaction() {
+                    listener?.showTransaction()
+                }
+            }
+        }
+        val fragmentRecord: Fragment = FragmentRecord()
+
+        override fun getItemCount(): Int {
+            return 2
+        }
+
+        override fun createFragment(position: Int): Fragment {
+            return when (position) {
+                0 -> fragmentAsset
+                1 -> fragmentRecord
+                else -> fragmentAsset
+            }
+        }
+    }
 }

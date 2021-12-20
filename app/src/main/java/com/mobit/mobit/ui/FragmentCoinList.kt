@@ -1,4 +1,4 @@
-package com.mobit.mobit
+package com.mobit.mobit.ui
 
 import android.os.Bundle
 import android.os.Handler
@@ -14,9 +14,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mobit.mobit.R
 import com.mobit.mobit.adapter.FragmentCoinListAdapter
 import com.mobit.mobit.data.CoinInfo
-import com.mobit.mobit.data.MyViewModel
+import com.mobit.mobit.viewmodel.MyViewModel
 import com.mobit.mobit.databinding.FragmentCoinListBinding
 
 /*

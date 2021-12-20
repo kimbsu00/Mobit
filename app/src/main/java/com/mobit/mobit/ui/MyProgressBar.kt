@@ -1,4 +1,4 @@
-package com.mobit.mobit
+package com.mobit.mobit.ui
 
 import android.app.Activity
 import android.graphics.Color
@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDialog
+import com.mobit.mobit.R
 
 class MyProgressBar {
     private var progressDialog: AppCompatDialog? = null

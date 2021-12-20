@@ -1,4 +1,4 @@
-package com.mobit.mobit
+package com.mobit.mobit.ui
 
 import android.content.Intent
 import android.os.Bundle

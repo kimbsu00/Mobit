@@ -1,19 +1,19 @@
-package com.mobit.mobit
+package com.mobit.mobit.ui
 
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Window
-import com.mobit.mobit.databinding.ActivityPopupResetConfirmBinding
+import com.mobit.mobit.databinding.ActivityPopupChartResetConfirmBinding
 
-class PopupResetConfirmActivity : Activity() {
+class PopupChartResetConfirmActivity : Activity() {
 
-    lateinit var binding: ActivityPopupResetConfirmBinding
+    lateinit var binding: ActivityPopupChartResetConfirmBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityPopupResetConfirmBinding.inflate(layoutInflater)
+        binding = ActivityPopupChartResetConfirmBinding.inflate(layoutInflater)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(binding.root)
 
@@ -33,6 +33,6 @@ class PopupResetConfirmActivity : Activity() {
     }
 
     override fun onBackPressed() {
-        
+
     }
 }

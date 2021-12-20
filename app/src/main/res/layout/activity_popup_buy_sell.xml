@@ -8,7 +8,7 @@
     android:background="@color/main_background"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".PopupBuySellActivity">
+    tools:context=".ui.PopupBuySellActivity">
 
     <TextView
         android:id="@+id/title"

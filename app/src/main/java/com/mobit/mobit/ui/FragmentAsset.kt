@@ -1,4 +1,4 @@
-package com.mobit.mobit
+package com.mobit.mobit.ui
 
 import android.graphics.Color
 import android.os.Bundle
@@ -15,11 +15,12 @@ import com.github.mikephil.charting.components.LegendEntry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.mobit.mobit.R
 import com.mobit.mobit.adapter.FragmentAssetAdapter
 import com.mobit.mobit.adapter.FragmentAssetLegendAdapter
 import com.mobit.mobit.data.Asset
 import com.mobit.mobit.data.CoinAsset
-import com.mobit.mobit.data.MyViewModel
+import com.mobit.mobit.viewmodel.MyViewModel
 import com.mobit.mobit.databinding.FragmentAssetBinding
 import java.text.DecimalFormat
 

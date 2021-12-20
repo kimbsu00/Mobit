@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/main_background"
     android:orientation="vertical"
-    tools:context=".FragmentCoinList">
+    tools:context=".ui.FragmentCoinList">
 
     <TextView
         android:id="@+id/coinListTitle"

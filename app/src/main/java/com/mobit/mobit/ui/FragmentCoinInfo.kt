@@ -1,4 +1,4 @@
-package com.mobit.mobit
+package com.mobit.mobit.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,8 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.mobit.mobit.R
 import com.mobit.mobit.data.CoinInfo
-import com.mobit.mobit.data.MyViewModel
+import com.mobit.mobit.viewmodel.MyViewModel
 import com.mobit.mobit.databinding.FragmentCoinInfoBinding
 
 class FragmentCoinInfo : Fragment() {

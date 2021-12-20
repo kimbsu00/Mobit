@@ -19,21 +19,21 @@
 
 
         <activity
-            android:name=".PopupMainIndicatorSettingActivity"
+            android:name=".ui.PopupMainIndicatorSettingActivity"
             android:theme="@android:style/Theme.Dialog" />
         <activity
-            android:name=".PopupChartResetConfirmActivity"
+            android:name=".ui.PopupChartResetConfirmActivity"
             android:theme="@android:style/Theme.Dialog" />
-        <activity android:name=".MainIndicatorSettingActivity" />
+        <activity android:name=".ui.MainIndicatorSettingActivity" />
         <activity
-            android:name=".PopupResetConfirmActivity"
+            android:name=".ui.PopupResetConfirmActivity"
             android:theme="@android:style/Theme.Dialog" />
-        <activity android:name=".FirstSettingActivity" />
+        <activity android:name=".ui.FirstSettingActivity" />
         <activity
-            android:name=".PopupBuySellActivity"
+            android:name=".ui.PopupBuySellActivity"
             android:theme="@android:style/Theme.Dialog" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

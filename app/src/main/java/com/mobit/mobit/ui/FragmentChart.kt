@@ -1,4 +1,4 @@
-package com.mobit.mobit
+package com.mobit.mobit.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -30,10 +30,11 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
+import com.mobit.mobit.R
 import com.mobit.mobit.data.Candle
 import com.mobit.mobit.data.CoinInfo
 import com.mobit.mobit.data.MainIndicator
-import com.mobit.mobit.data.MyViewModel
+import com.mobit.mobit.viewmodel.MyViewModel
 import com.mobit.mobit.databinding.FragmentChartBinding
 import com.mobit.mobit.network.UpbitAPICaller
 import java.text.DecimalFormat

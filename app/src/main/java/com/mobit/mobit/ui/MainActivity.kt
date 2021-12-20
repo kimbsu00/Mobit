@@ -1,4 +1,4 @@
-package com.mobit.mobit
+package com.mobit.mobit.ui
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -16,12 +16,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
+import com.mobit.mobit.R
 import com.mobit.mobit.data.*
 import com.mobit.mobit.databinding.ActivityMainBinding
 import com.mobit.mobit.db.MyDBHelper
 import com.mobit.mobit.network.NetworkManager
 import com.mobit.mobit.network.UpbitAPICaller
 import com.mobit.mobit.service.UpbitAPIService
+import com.mobit.mobit.viewmodel.MyViewModel
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap

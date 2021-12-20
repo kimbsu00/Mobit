@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/main_background"
     android:orientation="vertical"
-    tools:context=".FragmentBuy">
+    tools:context=".ui.FragmentBuy">
 
     <LinearLayout
         android:layout_width="match_parent"

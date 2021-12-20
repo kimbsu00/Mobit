@@ -1,4 +1,4 @@
-package com.mobit.mobit
+package com.mobit.mobit.ui
 
 import android.graphics.Color
 import android.os.Bundle
@@ -12,9 +12,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mobit.mobit.R
 import com.mobit.mobit.adapter.FragmentTransactionAdapter
 import com.mobit.mobit.data.CoinInfo
-import com.mobit.mobit.data.MyViewModel
+import com.mobit.mobit.viewmodel.MyViewModel
 import com.mobit.mobit.data.OrderBook
 import com.mobit.mobit.databinding.FragmentTransactionBinding
 import java.text.DecimalFormat

@@ -1,4 +1,4 @@
-package com.mobit.mobit
+package com.mobit.mobit.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -11,7 +11,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.mobit.mobit.data.MyViewModel
+import com.mobit.mobit.R
+import com.mobit.mobit.viewmodel.MyViewModel
 import com.mobit.mobit.databinding.FragmentSettingBinding
 
 /*

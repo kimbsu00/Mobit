@@ -1,4 +1,4 @@
-package com.mobit.mobit
+package com.mobit.mobit.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -17,46 +17,55 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import com.mobit.mobit.R
+import com.mobit.mobit.data.CoinAsset
 import com.mobit.mobit.data.CoinInfo
-import com.mobit.mobit.data.MyViewModel
+import com.mobit.mobit.viewmodel.MyViewModel
 import com.mobit.mobit.data.Transaction
-import com.mobit.mobit.databinding.FragmentBuyBinding
+import com.mobit.mobit.databinding.FragmentSellBinding
 import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 /*
-코인 매수 기능이 구현될 Fragment 입니다.
+코인 매도 기능이 구현될 Fragment 입니다.
 */
-class FragmentBuy : Fragment() {
+class FragmentSell : Fragment() {
 
     lateinit var getContent: ActivityResultLauncher<Intent>
 
     // UI 변수 시작
-    lateinit var binding: FragmentBuyBinding
+    lateinit var binding: FragmentSellBinding
     // UI 변수 끝
 
     val myViewModel: MyViewModel by activityViewModels()
 
+    var selectedCoin: CoinAsset? = null
     val formatter = DecimalFormat("###,###")
     val formatter2 = DecimalFormat("###,###.####")
     val formatter3 = DecimalFormat("###,###.##")
     var orderCount: Double = 0.0
     var orderPrice: Double = 0.0
 
-    var buyIndex: Int = -1
+    var coinAsset: CoinAsset? = null
+
+    var listener: OnPopupActivityControl? = null
+
+    interface OnPopupActivityControl {
+        fun onPopupActivityShow()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentBuyBinding.inflate(layoutInflater)
+        binding = FragmentSellBinding.inflate(layoutInflater)
         getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             binding.orderCount.clearFocus()
             when (it.resultCode) {
                 Activity.RESULT_OK -> {
-                    val code: String = it.data!!.getStringExtra("code")!!
-                    val name: String = it.data!!.getStringExtra("name")!!
+                    val code = it.data!!.getStringExtra("code")!!
+                    val name = it.data!!.getStringExtra("name")!!
                     val nowOrderPrice: Double = it.data!!.getDoubleExtra("unitPrice", 0.0)
                     val count: Double = it.data!!.getDoubleExtra("count", 0.0)
                     val price: Double = nowOrderPrice * count
@@ -66,54 +75,39 @@ class FragmentBuy : Fragment() {
                         code,
                         name,
                         time,
-                        Transaction.BID,
+                        Transaction.ASK,
                         count,
                         nowOrderPrice,
                         price,
                         fee,
-                        price + fee
+                        price - fee
                     )
-
-                    buyIndex = myViewModel.bidCoin(
+                    coinAsset = myViewModel.askCoin(
                         code,
-                        name,
                         nowOrderPrice,
                         count
                     )
+                    myViewModel.addTransaction(transaction)
 
-                    if (buyIndex in 0 until myViewModel.asset.value!!.coins.size) {
-                        myViewModel.addTransaction(transaction)
+                    val thread: Thread = object : Thread() {
+                        override fun run() {
+                            myViewModel.myDBHelper!!.setKRW(myViewModel.asset.value!!.krw)
+                            myViewModel.myDBHelper!!.insertTransaction(transaction)
 
-                        val thread: Thread = object : Thread() {
-                            override fun run() {
-                                myViewModel.myDBHelper!!.setKRW(myViewModel.asset.value!!.krw)
-                                myViewModel.myDBHelper!!.insertTransaction(transaction)
-
-                                if (myViewModel.myDBHelper!!.findCoinAsset(code)) {
-                                    myViewModel.myDBHelper!!.updateCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
-                                } else {
-                                    myViewModel.myDBHelper!!.insertCoinAsset(myViewModel.asset.value!!.coins[buyIndex])
-                                }
+                            if (myViewModel.asset.value!!.coins.contains(coinAsset!!)) {
+                                myViewModel.myDBHelper!!.updateCoinAsset(coinAsset!!)
+                            } else {
+                                myViewModel.myDBHelper!!.deleteCoinAsset(coinAsset!!)
                             }
                         }
-                        thread.start()
-
-                        Toast.makeText(context, "매수주문이 정상 처리되었습니다.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Log.e(
-                            "FragmentBuy",
-                            "buyIndex is $buyIndex, but coins range is [0, ${myViewModel.asset.value!!.coins.size})."
-                        )
-                        Toast.makeText(
-                            context,
-                            "매수주문을 처리하는데 오류가 발생했습니다.\n 다시 시도해 주세요.",
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
                     }
-                    binding.canOrderPrice.text =
-                        "${formatter.format(myViewModel.asset.value!!.krw)}KRW"
+                    thread.start()
+
+                    binding.canOrderCoin.text = "${formatter2.format(coinAsset!!.number)} ${
+                        myViewModel.selectedCoin.value!!.split('-')[1]
+                    }"
                     resetOrderTextView()
+                    Toast.makeText(context, "매도주문이 정상 처리되었습니다.", Toast.LENGTH_SHORT).show()
                 }
                 Activity.RESULT_CANCELED -> {
                     Log.i("resultCode", "RESULT_CANCELED")
@@ -129,7 +123,6 @@ class FragmentBuy : Fragment() {
     override fun onResume() {
         super.onResume()
         binding.apply {
-            canOrderPrice.text = "${formatter.format(myViewModel.asset.value!!.krw)}KRW"
             orderCount.setText("0")
             orderCountSpinner.setSelection(0)
         }
@@ -150,6 +143,21 @@ class FragmentBuy : Fragment() {
                     formatter3.format(orderPrice)
             binding.orderTotalPrice.text = "${formatter.format(orderPrice * orderCount)}KRW"
         })
+        myViewModel.selectedCoin.observe(viewLifecycleOwner, Observer {
+            var check = false
+            for (coinAsset in myViewModel.asset.value!!.coins) {
+                if (coinAsset.code == myViewModel.selectedCoin.value!!) {
+                    check = true
+                    selectedCoin = coinAsset
+                    binding.canOrderCoin.text =
+                        "${formatter2.format(coinAsset.number)} ${coinAsset.code.split('-')[1]}"
+                    break
+                }
+            }
+            if (!check) {
+                binding.canOrderCoin.text = "0 ${myViewModel.selectedCoin.value!!.split('-')[1]}"
+            }
+        })
 
         // spinner 아이템을 보여주는 view를 커스텀하기 위해서 adapter를 만들어준다
         val spinnerAdapter = ArrayAdapter<String>(
@@ -159,7 +167,17 @@ class FragmentBuy : Fragment() {
         )
 
         binding.apply {
-            canOrderPrice.text = "${formatter.format(myViewModel.asset.value!!.krw)}KRW"
+            for (coinAsset in myViewModel.asset.value!!.coins) {
+                if (coinAsset.code == myViewModel.selectedCoin.value!!) {
+                    selectedCoin = coinAsset
+                    canOrderCoin.text =
+                        "${formatter2.format(coinAsset.number)} ${coinAsset.code.split('-')[1]}"
+                    break
+                }
+            }
+            if (selectedCoin == null) {
+                canOrderCoin.text = "0 ${myViewModel.selectedCoin.value!!.split('-')[1]}"
+            }
             orderCountSpinner.adapter = spinnerAdapter
             orderCountSpinner.setSelection(0, false)
             orderCountSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -169,34 +187,37 @@ class FragmentBuy : Fragment() {
                     position: Int,
                     id: Long
                 ) {
-                    val krw = myViewModel.asset.value!!.krw
                     var canOrderCount: Double = 0.0
-                    when (position) {
-                        0 -> {
+                    // 선택된 코인이 매수한 적 없는 코인인 경우,
+                    // selectedCoin은 null이 되므로 조건문을 추가해야 한다.
+                    if (selectedCoin != null) {
+                        when (position) {
+                            0 -> {
 
-                        }
-                        // 최대
-                        1 -> {
-                            canOrderCount = krw / (this@FragmentBuy.orderPrice * 1.0005)
-                        }
-                        // 50%
-                        2 -> {
-                            canOrderCount = (krw / 2) / (this@FragmentBuy.orderPrice * 1.0005)
-                        }
-                        // 25%
-                        3 -> {
-                            canOrderCount = (krw / 4) / (this@FragmentBuy.orderPrice * 1.0005)
-                        }
-                        // 10%
-                        4 -> {
-                            canOrderCount = (krw / 10) / (this@FragmentBuy.orderPrice * 1.0005)
-                        }
-                        else -> {
-                            Log.e("FragmentBuy Spinner", "position is $position")
+                            }
+                            // 최대
+                            1 -> {
+                                canOrderCount = selectedCoin!!.number
+                            }
+                            // 50%
+                            2 -> {
+                                canOrderCount = selectedCoin!!.number / 2
+                            }
+                            // 25%
+                            3 -> {
+                                canOrderCount = selectedCoin!!.number / 4
+                            }
+                            // 10%
+                            4 -> {
+                                canOrderCount = selectedCoin!!.number / 10
+                            }
+                            else -> {
+                                Log.e("FragmentSell Spinner", "position is $position")
+                            }
                         }
                     }
                     orderCount.setText(formatter2.format(canOrderCount))
-                    val totalPrice = canOrderCount * this@FragmentBuy.orderPrice
+                    val totalPrice = canOrderCount * this@FragmentSell.orderPrice
                     orderTotalPrice.text = "${formatter.format(totalPrice)}KRW"
                 }
 
@@ -214,12 +235,12 @@ class FragmentBuy : Fragment() {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if (s.isNullOrEmpty()) {
-                        this@FragmentBuy.orderCount = 0.0
+                        this@FragmentSell.orderCount = 0.0
                     } else {
                         try {
-                            this@FragmentBuy.orderCount = s.toString().replace(",", "").toDouble()
+                            this@FragmentSell.orderCount = s.toString().replace(",", "").toDouble()
                         } catch (e: NumberFormatException) {
-                            this@FragmentBuy.orderCount = 0.0
+                            this@FragmentSell.orderCount = 0.0
                             orderCount.setText("0")
                             Toast.makeText(
                                 context,
@@ -230,12 +251,12 @@ class FragmentBuy : Fragment() {
                         } catch (e: Exception) {
                             Log.e("FragmentBuy", e.toString())
                         }
-                        if (this@FragmentBuy.orderCount < 0) {
-                            this@FragmentBuy.orderCount = 0.0
+                        if (this@FragmentSell.orderCount < 0) {
+                            this@FragmentSell.orderCount = 0.0
                             orderCount.setText("0")
                         }
                     }
-                    val totalPrice = this@FragmentBuy.orderCount * this@FragmentBuy.orderPrice
+                    val totalPrice = this@FragmentSell.orderCount * this@FragmentSell.orderPrice
                     orderTotalPrice.text = "${formatter.format(totalPrice)}KRW"
                 }
 
@@ -262,9 +283,9 @@ class FragmentBuy : Fragment() {
                                 } catch (e: Exception) {
                                     Log.e("FragmentBuy", e.toString())
                                 }
-                                this@FragmentBuy.orderCount = if (number > 0.0) number else 0.0
+                                this@FragmentSell.orderCount = if (number > 0.0) number else 0.0
                             } else {
-                                this@FragmentBuy.orderCount = 0.0
+                                this@FragmentSell.orderCount = 0.0
                                 orderCount.setText("0")
                             }
                         }
@@ -275,12 +296,11 @@ class FragmentBuy : Fragment() {
             resetBtn.setOnClickListener {
                 resetOrderTextView()
             }
-            // 코인 매수
-            buyBtn.setOnClickListener {
+            // 코인 매도
+            sellBtn.setOnClickListener {
                 orderCount.clearFocus()
-                val nowOrderPrice = this@FragmentBuy.orderPrice
-                val nowOrderCount = this@FragmentBuy.orderCount
-                if (nowOrderCount != 0.0 && nowOrderCount * nowOrderPrice >= 5000.0) {
+                val nowOrderPrice = this@FragmentSell.orderPrice
+                if (this@FragmentSell.orderCount != 0.0 && this@FragmentSell.orderCount * nowOrderPrice >= 5000.0) {
                     var coin: CoinInfo? = null
                     for (coinInfo in myViewModel.coinInfo.value!!) {
                         if (coinInfo.code == myViewModel.selectedCoin.value!!) {
@@ -289,22 +309,22 @@ class FragmentBuy : Fragment() {
                         }
                     }
 
-                    val flag = myViewModel.asset.value!!.canBidCoin(
+                    val flag = myViewModel.asset.value!!.canAskCoin(
                         coin!!.code,
-                        coin!!.name,
                         nowOrderPrice,
-                        nowOrderCount
+                        this@FragmentSell.orderCount
                     )
                     if (flag) {
+                        listener?.onPopupActivityShow()
                         val intent: Intent = Intent(context, PopupBuySellActivity::class.java)
-                        intent.putExtra("type", 1)
+                        intent.putExtra("type", 2)
                         intent.putExtra("code", coin!!.code)
                         intent.putExtra("name", coin!!.name)
                         intent.putExtra("unitPrice", nowOrderPrice)
-                        intent.putExtra("count", nowOrderCount)
+                        intent.putExtra("count", this@FragmentSell.orderCount)
                         getContent.launch(intent)
                     } else {
-                        Toast.makeText(context, "주문가능 금액이 부족합니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "주문가능 코인이 부족합니다.", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(context, "주문 가능한 최소 금액은 5,000KRW입니다.", Toast.LENGTH_SHORT)
@@ -315,7 +335,7 @@ class FragmentBuy : Fragment() {
     }
 
     fun resetOrderTextView() {
-        this@FragmentBuy.orderCount = 0.0
+        this@FragmentSell.orderCount = 0.0
         binding.orderCount.setText(formatter.format(orderCount))
         binding.orderPrice.text =
             if (orderPrice > 100.0)

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/main_background"
     android:orientation="vertical"
-    tools:context=".FragmentRecord">
+    tools:context=".ui.FragmentRecord">
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"

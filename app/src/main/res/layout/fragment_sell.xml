@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/main_background"
     android:orientation="vertical"
-    tools:context=".FragmentSell">
+    tools:context=".ui.FragmentSell">
 
     <LinearLayout
         android:layout_width="match_parent"

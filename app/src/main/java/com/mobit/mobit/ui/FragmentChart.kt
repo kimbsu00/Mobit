@@ -34,9 +34,9 @@ import com.mobit.mobit.R
 import com.mobit.mobit.data.Candle
 import com.mobit.mobit.data.CoinInfo
 import com.mobit.mobit.data.MainIndicator
-import com.mobit.mobit.viewmodel.MyViewModel
 import com.mobit.mobit.databinding.FragmentChartBinding
 import com.mobit.mobit.network.UpbitAPICaller
+import com.mobit.mobit.viewmodel.MyViewModel
 import java.text.DecimalFormat
 import kotlin.math.abs
 import kotlin.math.max
@@ -80,6 +80,8 @@ class FragmentChart : Fragment() {
     val upbitAPICaller: UpbitAPICaller = UpbitAPICaller()
     val upbitCandleHandler: UpbitCandleHandler = UpbitCandleHandler()
     lateinit var upbitCandleThread: UpbitCandleThread
+
+    val coinInfoUpdateHandler: CoinInfoUpdateHandler = CoinInfoUpdateHandler()
 
     val myViewModel: MyViewModel by activityViewModels()
 
@@ -298,39 +300,9 @@ class FragmentChart : Fragment() {
 
     fun init() {
         myViewModel.coinInfo.observe(viewLifecycleOwner, Observer {
-            for (coinInfo in myViewModel.coinInfo.value!!) {
-                if (coinInfo.code == myViewModel.selectedCoin.value!!) {
-                    selectedCoin = coinInfo
-                    break
-                }
-            }
-            binding.apply {
-                if (selectedCoin != null) {
-                    // 코인이 관심목록에 등록되어 있는 경우에는 ImageButton을 채워진 별로 변경해야 한다.
-                    if (myViewModel.favoriteCoinInfo.value!!.contains(selectedCoin)) {
-                        favoriteBtn.setImageResource(R.drawable.ic_round_star_24)
-                    }
-
-                    val formatter = DecimalFormat("###,###")
-                    val changeFormatter = DecimalFormat("###,###.##")
-                    coinName.text = "${selectedCoin!!.name}(${selectedCoin!!.code.split('-')[1]})"
-                    coinPrice.text =
-                        if (selectedCoin!!.price.realTimePrice > 100.0)
-                            formatter.format(selectedCoin!!.price.realTimePrice)
-                        else
-                            changeFormatter.format(selectedCoin!!.price.realTimePrice)
-                    coinRate.text =
-                        changeFormatter.format(selectedCoin!!.price.changeRate * 100) + "%"
-                    coinDiff.text = when (selectedCoin!!.price.change) {
-                        "EVEN" -> ""
-                        "RISE" -> "▲ "
-                        "FALL" -> "▼ "
-                        else -> ""
-                    } + changeFormatter.format(abs(selectedCoin!!.price.changePrice))
-
-                    setTextViewColor(selectedCoin!!)
-                }
-            }
+            val runnable: CoinInfoUpadateRunnable = CoinInfoUpadateRunnable()
+            val thread: Thread = Thread(runnable)
+            thread.start()
         })
 
         binding.apply {
@@ -1435,6 +1407,60 @@ class FragmentChart : Fragment() {
 
         fun threadStop(flag: Boolean) {
             this.stopFlag = flag
+        }
+    }
+
+    inner class CoinInfoUpdateHandler : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+
+            val bundle: Bundle = msg.data
+            if (!bundle.isEmpty) {
+                selectedCoin = bundle.getSerializable("coinInfo") as CoinInfo
+
+                binding.apply {
+                    // 코인이 관심목록에 등록되어 있는 경우에는 ImageButton을 채워진 별로 변경해야 한다.
+                    if (myViewModel.favoriteCoinInfo.value!!.contains(selectedCoin)) {
+                        favoriteBtn.setImageResource(R.drawable.ic_round_star_24)
+                    }
+
+                    val formatter = DecimalFormat("###,###")
+                    val changeFormatter = DecimalFormat("###,###.##")
+                    coinName.text = "${selectedCoin!!.name}(${selectedCoin!!.code.split('-')[1]})"
+                    coinPrice.text =
+                        if (selectedCoin!!.price.realTimePrice > 100.0)
+                            formatter.format(selectedCoin!!.price.realTimePrice)
+                        else
+                            changeFormatter.format(selectedCoin!!.price.realTimePrice)
+                    coinRate.text =
+                        changeFormatter.format(selectedCoin!!.price.changeRate * 100) + "%"
+                    coinDiff.text = when (selectedCoin!!.price.change) {
+                        "EVEN" -> ""
+                        "RISE" -> "▲ "
+                        "FALL" -> "▼ "
+                        else -> ""
+                    } + changeFormatter.format(abs(selectedCoin!!.price.changePrice))
+
+                    setTextViewColor(selectedCoin!!)
+                }
+            }
+        }
+    }
+
+    inner class CoinInfoUpadateRunnable : Runnable {
+        override fun run() {
+            val message = coinInfoUpdateHandler.obtainMessage()
+            val bundle: Bundle = message.data
+
+            for (coinInfo in myViewModel.coinInfo.value!!) {
+                if (coinInfo.code == myViewModel.selectedCoin.value!!) {
+                    bundle.putSerializable("coinInfo", coinInfo)
+                    break
+                }
+            }
+
+            message.data = bundle
+            coinInfoUpdateHandler.sendMessage(message)
         }
     }
 }

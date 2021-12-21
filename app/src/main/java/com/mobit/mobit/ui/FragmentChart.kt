@@ -300,7 +300,7 @@ class FragmentChart : Fragment() {
 
     fun init() {
         myViewModel.coinInfo.observe(viewLifecycleOwner, Observer {
-            val runnable: CoinInfoUpadateRunnable = CoinInfoUpadateRunnable()
+            val runnable: CoinInfoUpdateRunnable = CoinInfoUpdateRunnable()
             val thread: Thread = Thread(runnable)
             thread.start()
         })
@@ -1447,7 +1447,7 @@ class FragmentChart : Fragment() {
         }
     }
 
-    inner class CoinInfoUpadateRunnable : Runnable {
+    inner class CoinInfoUpdateRunnable : Runnable {
         override fun run() {
             val message = coinInfoUpdateHandler.obtainMessage()
             val bundle: Bundle = message.data

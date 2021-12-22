@@ -20,8 +20,9 @@ import com.mobit.mobit.adapter.FragmentAssetAdapter
 import com.mobit.mobit.adapter.FragmentAssetLegendAdapter
 import com.mobit.mobit.data.Asset
 import com.mobit.mobit.data.CoinAsset
-import com.mobit.mobit.viewmodel.MyViewModel
 import com.mobit.mobit.databinding.FragmentAssetBinding
+import com.mobit.mobit.viewmodel.MyViewModel
+import java.math.RoundingMode
 import java.text.DecimalFormat
 
 /*
@@ -55,9 +56,15 @@ class FragmentAsset : Fragment() {
     lateinit var adapter: FragmentAssetAdapter
     lateinit var legendAdapter: FragmentAssetLegendAdapter
 
-    val formatter = DecimalFormat("###,###")
-    val changeFormatter = DecimalFormat("###,###.##")
-    val percentFormatter = DecimalFormat("###,###.#")
+    val intFormatter = DecimalFormat("###,###").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
+    val doubleFormatter2 = DecimalFormat("###,###.##").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
+    val doubleFormatter1 = DecimalFormat("###,###.#").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
 
     var listener: OnFragmentInteraction? = null
 
@@ -94,17 +101,18 @@ class FragmentAsset : Fragment() {
             setPortfolioChartData(asset.coins, krw, total)
 
             binding.apply {
-                krwView.text = formatter.format(krw)
-                totalView.text = formatter.format(total)
-                totalBuyView.text = formatter.format(buyPrice)
+                krwView.text = intFormatter.format(krw)
+                totalView.text = intFormatter.format(total)
+                totalBuyView.text = intFormatter.format(buyPrice)
 
                 if (buyPrice > 0.0) {
                     recyclerView.visibility = View.VISIBLE
                     noAssetView.visibility = View.GONE
 
-                    gainAndLossView.text = formatter.format(gainAndLoss)
-                    totalEvaluationView.text = formatter.format(totalEvaluation)
-                    yieldView.text = changeFormatter.format(yieldValue) + "%"
+                    gainAndLossView.text = intFormatter.format(gainAndLoss)
+                    totalEvaluationView.text = intFormatter.format(totalEvaluation)
+                    yieldView.text =
+                        getString(R.string.asset_yield_string, doubleFormatter2.format(yieldValue))
 
                     val rgb = if (buyPrice > totalEvaluation) Color.rgb(
                         25,
@@ -248,14 +256,14 @@ class FragmentAsset : Fragment() {
                     portfolioEntries.add(
                         PieEntry(
                             price.toFloat(),
-                            percentFormatter.format(percent)
+                            doubleFormatter1.format(percent)
                         )
                     )
                 } else {
                     portfolioEntries.add(PieEntry(price.toFloat(), ""))
                 }
                 val label: String =
-                    "${sortedCoin[i].code.split('-')[1]}-${percentFormatter.format(percent)}%"
+                    "${sortedCoin[i].code.split('-')[1]}-${doubleFormatter1.format(percent)}%"
                 portfolioLegendEntries.add(
                     LegendEntry(
                         label,
@@ -276,13 +284,13 @@ class FragmentAsset : Fragment() {
                 portfolioEntries.add(
                     PieEntry(
                         etcSum.toFloat(),
-                        percentFormatter.format((etcSum / total) * 100)
+                        doubleFormatter1.format((etcSum / total) * 100)
                     )
                 )
             } else {
                 portfolioEntries.add(PieEntry(etcSum.toFloat(), ""))
             }
-            val label: String = "기타-${percentFormatter.format(etcPercent)}%"
+            val label: String = "기타-${doubleFormatter1.format(etcPercent)}%"
             portfolioLegendEntries.add(
                 LegendEntry(
                     label,

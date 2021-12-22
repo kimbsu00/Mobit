@@ -37,6 +37,7 @@ import com.mobit.mobit.data.MainIndicator
 import com.mobit.mobit.databinding.FragmentChartBinding
 import com.mobit.mobit.network.UpbitAPICaller
 import com.mobit.mobit.viewmodel.MyViewModel
+import java.math.RoundingMode
 import java.text.DecimalFormat
 import kotlin.math.abs
 import kotlin.math.max
@@ -1424,22 +1425,26 @@ class FragmentChart : Fragment() {
                         favoriteBtn.setImageResource(R.drawable.ic_round_star_24)
                     }
 
-                    val formatter = DecimalFormat("###,###")
-                    val changeFormatter = DecimalFormat("###,###.##")
+                    val intFormatter = DecimalFormat("###,###").also {
+                        it.roundingMode = RoundingMode.DOWN
+                    }
+                    val doubleFormatter2 = DecimalFormat("###,###.##").also {
+                        it.roundingMode = RoundingMode.DOWN
+                    }
                     coinName.text = "${selectedCoin!!.name}(${selectedCoin!!.code.split('-')[1]})"
                     coinPrice.text =
                         if (selectedCoin!!.price.realTimePrice > 100.0)
-                            formatter.format(selectedCoin!!.price.realTimePrice)
+                            intFormatter.format(selectedCoin!!.price.realTimePrice)
                         else
-                            changeFormatter.format(selectedCoin!!.price.realTimePrice)
+                            doubleFormatter2.format(selectedCoin!!.price.realTimePrice)
                     coinRate.text =
-                        changeFormatter.format(selectedCoin!!.price.changeRate * 100) + "%"
+                        doubleFormatter2.format(selectedCoin!!.price.changeRate * 100) + "%"
                     coinDiff.text = when (selectedCoin!!.price.change) {
                         "EVEN" -> ""
                         "RISE" -> "▲ "
                         "FALL" -> "▼ "
                         else -> ""
-                    } + changeFormatter.format(abs(selectedCoin!!.price.changePrice))
+                    } + doubleFormatter2.format(abs(selectedCoin!!.price.changePrice))
 
                     setTextViewColor(selectedCoin!!)
                 }

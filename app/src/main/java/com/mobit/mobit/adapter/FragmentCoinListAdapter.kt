@@ -72,7 +72,7 @@ class FragmentCoinListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val intFormatter = DecimalFormat("###,###")
         val doubleFormatter2 = DecimalFormat("###,###.##")
-        val doubleFormatter2Zero = DecimalFormat("###,###.00")
+        val doubleFormatter2Zero = DecimalFormat("###,##0.00")
 
         holder.korCoinName.text = when (filteredItems[position].warning) {
             // 투자 유의 종목이 아닌 경우
@@ -101,16 +101,25 @@ class FragmentCoinListAdapter(
                 filteredItems[position].name
             }
         }
-        holder.engCoinName.text = filteredItems[position].code.split('-')[1] + "/KRW"
-        holder.realTimePrice.text =
-            if (filteredItems[position].price.realTimePrice > 100.0)
-                intFormatter.format(filteredItems[position].price.realTimePrice)
-            else
-                doubleFormatter2.format(filteredItems[position].price.realTimePrice)
-        holder.changeRate.text =
-            doubleFormatter2Zero.format(filteredItems[position].price.changeRate * 100) + "%"
-        val temp = (filteredItems[position].price.totalTradePrice24 / 1000000).toInt()
-        holder.totalTradePrice.text = intFormatter.format(temp) + "백만"
+        holder.itemView.context.apply {
+            holder.engCoinName.text = getString(
+                R.string.coin_list_eng_coin_name_string,
+                filteredItems[position].code.split('-')[1]
+            )
+            holder.realTimePrice.text =
+                if (filteredItems[position].price.realTimePrice > 100.0)
+                    intFormatter.format(filteredItems[position].price.realTimePrice)
+                else
+                    doubleFormatter2.format(filteredItems[position].price.realTimePrice)
+            holder.changeRate.text =
+                getString(
+                    R.string.coin_list_change_rate_string,
+                    doubleFormatter2Zero.format(filteredItems[position].price.changeRate * 100)
+                )
+            val temp = (filteredItems[position].price.totalTradePrice24 / 1000000).toInt()
+            holder.totalTradePrice.text =
+                getString(R.string.coin_list_total_trade_price_string, intFormatter.format(temp))
+        }
 
         if (filteredItems[position].price.changeRate > 0) {
             holder.realTimePrice.setTextColor(Color.parseColor("#bd4e3a"))
@@ -119,8 +128,8 @@ class FragmentCoinListAdapter(
             holder.realTimePrice.setTextColor(Color.parseColor("#135fc1"))
             holder.changeRate.setTextColor(Color.parseColor("#135fc1"))
         } else {
-            holder.realTimePrice.setTextColor(Color.parseColor("#FFFFFF"))
-            holder.changeRate.setTextColor(Color.parseColor("#FFFFFF"))
+            holder.realTimePrice.setTextColor(Color.parseColor("#d3d4d6"))
+            holder.changeRate.setTextColor(Color.parseColor("#d3d4d6"))
         }
 
         if (filteredItems[position].price.realTimePriceDiff > 0) {

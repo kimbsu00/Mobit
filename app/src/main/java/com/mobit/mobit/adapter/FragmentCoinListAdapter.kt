@@ -70,8 +70,9 @@ class FragmentCoinListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val formatter = DecimalFormat("###,###")
-        val changeFormatter = DecimalFormat("###,###.##")
+        val intFormatter = DecimalFormat("###,###")
+        val doubleFormatter2 = DecimalFormat("###,###.##")
+        val doubleFormatter2Zero = DecimalFormat("###,###.00")
 
         holder.korCoinName.text = when (filteredItems[position].warning) {
             // 투자 유의 종목이 아닌 경우
@@ -103,13 +104,13 @@ class FragmentCoinListAdapter(
         holder.engCoinName.text = filteredItems[position].code.split('-')[1] + "/KRW"
         holder.realTimePrice.text =
             if (filteredItems[position].price.realTimePrice > 100.0)
-                formatter.format(filteredItems[position].price.realTimePrice)
+                intFormatter.format(filteredItems[position].price.realTimePrice)
             else
-                changeFormatter.format(filteredItems[position].price.realTimePrice)
+                doubleFormatter2.format(filteredItems[position].price.realTimePrice)
         holder.changeRate.text =
-            changeFormatter.format(filteredItems[position].price.changeRate * 100) + "%"
+            doubleFormatter2Zero.format(filteredItems[position].price.changeRate * 100) + "%"
         val temp = (filteredItems[position].price.totalTradePrice24 / 1000000).toInt()
-        holder.totalTradePrice.text = formatter.format(temp) + "백만"
+        holder.totalTradePrice.text = intFormatter.format(temp) + "백만"
 
         if (filteredItems[position].price.changeRate > 0) {
             holder.realTimePrice.setTextColor(Color.parseColor("#bd4e3a"))

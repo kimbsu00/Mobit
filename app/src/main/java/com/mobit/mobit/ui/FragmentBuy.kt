@@ -19,9 +19,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.mobit.mobit.R
 import com.mobit.mobit.data.CoinInfo
-import com.mobit.mobit.viewmodel.MyViewModel
 import com.mobit.mobit.data.Transaction
 import com.mobit.mobit.databinding.FragmentBuyBinding
+import com.mobit.mobit.viewmodel.MyViewModel
+import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -39,9 +40,15 @@ class FragmentBuy : Fragment() {
 
     val myViewModel: MyViewModel by activityViewModels()
 
-    val formatter = DecimalFormat("###,###")
-    val formatter2 = DecimalFormat("###,###.####")
-    val formatter3 = DecimalFormat("###,###.##")
+    val intFormatter = DecimalFormat("###,###").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
+    val doubleFormatter4 = DecimalFormat("###,###.####").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
+    val doubleFormatter2 = DecimalFormat("###,###.##").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
     var orderCount: Double = 0.0
     var orderPrice: Double = 0.0
 
@@ -113,7 +120,10 @@ class FragmentBuy : Fragment() {
                             .show()
                     }
                     binding.canOrderPrice.text =
-                        "${formatter.format(myViewModel.asset.value!!.krw)}KRW"
+                        getString(
+                            R.string.transaction_krw_string,
+                            intFormatter.format(myViewModel.asset.value!!.krw)
+                        )
                     resetOrderTextView()
                 }
                 Activity.RESULT_CANCELED -> {
@@ -130,7 +140,11 @@ class FragmentBuy : Fragment() {
     override fun onResume() {
         super.onResume()
         binding.apply {
-            canOrderPrice.text = "${formatter.format(myViewModel.asset.value!!.krw)}KRW"
+            canOrderPrice.text =
+                getString(
+                    R.string.transaction_krw_string,
+                    intFormatter.format(myViewModel.asset.value!!.krw)
+                )
             orderCount.setText("0")
             orderCountSpinner.setSelection(0)
         }
@@ -146,10 +160,15 @@ class FragmentBuy : Fragment() {
             }
             binding.orderPrice.text =
                 if (orderPrice > 100.0)
-                    formatter.format(orderPrice)
+                    intFormatter.format(orderPrice)
                 else
-                    formatter3.format(orderPrice)
-            binding.orderTotalPrice.text = "${formatter.format(orderPrice * orderCount)}KRW"
+                    doubleFormatter2.format(orderPrice)
+            val totalPrice = orderCount * orderPrice
+            binding.orderTotalPrice.text =
+                if (totalPrice > 100.0)
+                    getString(R.string.transaction_krw_string, intFormatter.format(totalPrice))
+                else
+                    getString(R.string.transaction_krw_string, doubleFormatter2.format(totalPrice))
         })
 
         // spinner 아이템을 보여주는 view를 커스텀하기 위해서 adapter를 만들어준다
@@ -160,7 +179,11 @@ class FragmentBuy : Fragment() {
         )
 
         binding.apply {
-            canOrderPrice.text = "${formatter.format(myViewModel.asset.value!!.krw)}KRW"
+            canOrderPrice.text =
+                getString(
+                    R.string.transaction_krw_string,
+                    intFormatter.format(myViewModel.asset.value!!.krw)
+                )
             orderCountSpinner.adapter = spinnerAdapter
             orderCountSpinner.setSelection(0, false)
             orderCountSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -196,9 +219,19 @@ class FragmentBuy : Fragment() {
                             Log.e("FragmentBuy Spinner", "position is $position")
                         }
                     }
-                    orderCount.setText(formatter2.format(canOrderCount))
+                    orderCount.setText(doubleFormatter4.format(canOrderCount))
                     val totalPrice = canOrderCount * this@FragmentBuy.orderPrice
-                    orderTotalPrice.text = "${formatter.format(totalPrice)}KRW"
+                    orderTotalPrice.text =
+                        if (totalPrice > 100.0)
+                            getString(
+                                R.string.transaction_krw_string,
+                                intFormatter.format(totalPrice)
+                            )
+                        else
+                            getString(
+                                R.string.transaction_krw_string,
+                                doubleFormatter2.format(totalPrice)
+                            )
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -237,7 +270,17 @@ class FragmentBuy : Fragment() {
                         }
                     }
                     val totalPrice = this@FragmentBuy.orderCount * this@FragmentBuy.orderPrice
-                    orderTotalPrice.text = "${formatter.format(totalPrice)}KRW"
+                    orderTotalPrice.text =
+                        if (totalPrice > 100.0)
+                            getString(
+                                R.string.transaction_krw_string,
+                                intFormatter.format(totalPrice)
+                            )
+                        else
+                            getString(
+                                R.string.transaction_krw_string,
+                                doubleFormatter2.format(totalPrice)
+                            )
                 }
 
                 override fun afterTextChanged(s: Editable?) {}
@@ -317,13 +360,13 @@ class FragmentBuy : Fragment() {
 
     fun resetOrderTextView() {
         this@FragmentBuy.orderCount = 0.0
-        binding.orderCount.setText(formatter.format(orderCount))
+        binding.orderCount.setText(intFormatter.format(orderCount))
         binding.orderPrice.text =
             if (orderPrice > 100.0)
-                formatter.format(orderPrice)
+                intFormatter.format(orderPrice)
             else
-                formatter3.format(orderPrice)
-        binding.orderTotalPrice.text = "0KRW"
+                doubleFormatter2.format(orderPrice)
+        binding.orderTotalPrice.text = getString(R.string.transaction_krw_string, "0")
     }
 
     fun getNowTime(): String {

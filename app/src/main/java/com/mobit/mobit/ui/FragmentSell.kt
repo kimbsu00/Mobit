@@ -20,9 +20,10 @@ import androidx.lifecycle.Observer
 import com.mobit.mobit.R
 import com.mobit.mobit.data.CoinAsset
 import com.mobit.mobit.data.CoinInfo
-import com.mobit.mobit.viewmodel.MyViewModel
 import com.mobit.mobit.data.Transaction
 import com.mobit.mobit.databinding.FragmentSellBinding
+import com.mobit.mobit.viewmodel.MyViewModel
+import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -41,9 +42,15 @@ class FragmentSell : Fragment() {
     val myViewModel: MyViewModel by activityViewModels()
 
     var selectedCoin: CoinAsset? = null
-    val formatter = DecimalFormat("###,###")
-    val formatter2 = DecimalFormat("###,###.####")
-    val formatter3 = DecimalFormat("###,###.##")
+    val intFormatter = DecimalFormat("###,###").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
+    val doubleFormatter4 = DecimalFormat("###,###.####").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
+    val doubleFormatter2 = DecimalFormat("###,###.##").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
     var orderCount: Double = 0.0
     var orderPrice: Double = 0.0
 
@@ -103,9 +110,11 @@ class FragmentSell : Fragment() {
                     }
                     thread.start()
 
-                    binding.canOrderCoin.text = "${formatter2.format(coinAsset!!.number)} ${
+                    binding.canOrderCoin.text = getString(
+                        R.string.transaction_coin_string,
+                        doubleFormatter4.format(coinAsset!!.number),
                         myViewModel.selectedCoin.value!!.split('-')[1]
-                    }"
+                    )
                     resetOrderTextView()
                     Toast.makeText(context, "매도주문이 정상 처리되었습니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -138,24 +147,33 @@ class FragmentSell : Fragment() {
             }
             binding.orderPrice.text =
                 if (orderPrice > 100.0)
-                    formatter.format(orderPrice)
+                    intFormatter.format(orderPrice)
                 else
-                    formatter3.format(orderPrice)
-            binding.orderTotalPrice.text = "${formatter.format(orderPrice * orderCount)}KRW"
+                    doubleFormatter2.format(orderPrice)
+            val totalPrice = orderPrice * orderCount
+            binding.orderTotalPrice.text =
+                if (totalPrice >= 100.0)
+                    getString(R.string.transaction_krw_string, intFormatter.format(totalPrice))
+                else
+                    getString(R.string.transaction_krw_string, doubleFormatter2.format(totalPrice))
         })
         myViewModel.selectedCoin.observe(viewLifecycleOwner, Observer {
             var check = false
             for (coinAsset in myViewModel.asset.value!!.coins) {
-                if (coinAsset.code == myViewModel.selectedCoin.value!!) {
+                if (coinAsset.code == it) {
                     check = true
                     selectedCoin = coinAsset
-                    binding.canOrderCoin.text =
-                        "${formatter2.format(coinAsset.number)} ${coinAsset.code.split('-')[1]}"
+                    binding.canOrderCoin.text = getString(
+                        R.string.transaction_coin_string,
+                        doubleFormatter4.format(coinAsset.number),
+                        coinAsset.code.split('-')[1]
+                    )
                     break
                 }
             }
             if (!check) {
-                binding.canOrderCoin.text = "0 ${myViewModel.selectedCoin.value!!.split('-')[1]}"
+                binding.canOrderCoin.text =
+                    getString(R.string.transaction_coin_string, "0", it.split('-')[1])
             }
         })
 
@@ -170,13 +188,20 @@ class FragmentSell : Fragment() {
             for (coinAsset in myViewModel.asset.value!!.coins) {
                 if (coinAsset.code == myViewModel.selectedCoin.value!!) {
                     selectedCoin = coinAsset
-                    canOrderCoin.text =
-                        "${formatter2.format(coinAsset.number)} ${coinAsset.code.split('-')[1]}"
+                    canOrderCoin.text = getString(
+                        R.string.transaction_coin_string,
+                        doubleFormatter4.format(coinAsset.number),
+                        coinAsset.code.split('-')[1]
+                    )
                     break
                 }
             }
             if (selectedCoin == null) {
-                canOrderCoin.text = "0 ${myViewModel.selectedCoin.value!!.split('-')[1]}"
+                canOrderCoin.text = getString(
+                    R.string.transaction_coin_string,
+                    "0",
+                    myViewModel.selectedCoin.value!!.split('-')[1]
+                )
             }
             orderCountSpinner.adapter = spinnerAdapter
             orderCountSpinner.setSelection(0, false)
@@ -216,9 +241,19 @@ class FragmentSell : Fragment() {
                             }
                         }
                     }
-                    orderCount.setText(formatter2.format(canOrderCount))
+                    orderCount.setText(doubleFormatter4.format(canOrderCount))
                     val totalPrice = canOrderCount * this@FragmentSell.orderPrice
-                    orderTotalPrice.text = "${formatter.format(totalPrice)}KRW"
+                    orderTotalPrice.text =
+                        if (totalPrice > 100.0)
+                            getString(
+                                R.string.transaction_krw_string,
+                                intFormatter.format(totalPrice)
+                            )
+                        else
+                            getString(
+                                R.string.transaction_krw_string,
+                                doubleFormatter2.format(totalPrice)
+                            )
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -257,7 +292,17 @@ class FragmentSell : Fragment() {
                         }
                     }
                     val totalPrice = this@FragmentSell.orderCount * this@FragmentSell.orderPrice
-                    orderTotalPrice.text = "${formatter.format(totalPrice)}KRW"
+                    orderTotalPrice.text =
+                        if (totalPrice > 100.0)
+                            getString(
+                                R.string.transaction_krw_string,
+                                intFormatter.format(totalPrice)
+                            )
+                        else
+                            getString(
+                                R.string.transaction_krw_string,
+                                doubleFormatter2.format(totalPrice)
+                            )
                 }
 
                 override fun afterTextChanged(s: Editable?) {}
@@ -336,13 +381,13 @@ class FragmentSell : Fragment() {
 
     fun resetOrderTextView() {
         this@FragmentSell.orderCount = 0.0
-        binding.orderCount.setText(formatter.format(orderCount))
+        binding.orderCount.setText(intFormatter.format(orderCount))
         binding.orderPrice.text =
             if (orderPrice > 100.0)
-                formatter.format(orderPrice)
+                intFormatter.format(orderPrice)
             else
-                formatter3.format(orderPrice)
-        binding.orderTotalPrice.text = "0KRW"
+                doubleFormatter2.format(orderPrice)
+        binding.orderTotalPrice.text = getString(R.string.transaction_krw_string, "0")
     }
 
     fun getNowTime(): String {

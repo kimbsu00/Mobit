@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mobit.mobit.R
 import com.mobit.mobit.data.CoinInfo
+import java.math.RoundingMode
 import java.text.DecimalFormat
 
 class FragmentCoinListAdapter(
@@ -22,6 +23,16 @@ class FragmentCoinListAdapter(
     var filteredItems: ArrayList<CoinInfo>
 ) :
     RecyclerView.Adapter<FragmentCoinListAdapter.ViewHolder>(), Filterable {
+
+    val intFormatter = DecimalFormat("###,###").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
+    val doubleFormatter2 = DecimalFormat("###,###.##").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
+    val doubleFormatter2Zero = DecimalFormat("###,##0.00").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
 
     var listener: OnItemClickListener? = null
 
@@ -70,10 +81,6 @@ class FragmentCoinListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val intFormatter = DecimalFormat("###,###")
-        val doubleFormatter2 = DecimalFormat("###,###.##")
-        val doubleFormatter2Zero = DecimalFormat("###,##0.00")
-
         holder.korCoinName.text = when (filteredItems[position].warning) {
             // 투자 유의 종목이 아닌 경우
             "NONE" -> {

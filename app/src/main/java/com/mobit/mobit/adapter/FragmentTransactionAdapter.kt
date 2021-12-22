@@ -9,10 +9,21 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mobit.mobit.R
 import com.mobit.mobit.data.OrderBook
+import java.math.RoundingMode
 import java.text.DecimalFormat
 
 class FragmentTransactionAdapter(var items: ArrayList<OrderBook>, var openPrice: Double) :
     RecyclerView.Adapter<FragmentTransactionAdapter.ViewHolder>() {
+
+    val intFormatter = DecimalFormat("###,###").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
+    val doubleFormatter3 = DecimalFormat("###,###.###").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
+    val doubleFormatter2 = DecimalFormat("###,##0.00").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
 
     var listener: OnItemClickListener? = null
 
@@ -53,15 +64,15 @@ class FragmentTransactionAdapter(var items: ArrayList<OrderBook>, var openPrice:
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val formatter = DecimalFormat("###,###")
-        val changeFormatter = DecimalFormat("###,###.###")
-
         val price = items[position].price
         val priceRate = (price - openPrice) / openPrice * 100
         holder.price.text =
-            if (price > 100.0) formatter.format(price) else changeFormatter.format(price)
-        holder.priceRate.text = "${changeFormatter.format(priceRate)}%"
-        holder.orderSize.text = changeFormatter.format(items[position].size)
+            if (price > 100.0) intFormatter.format(price) else doubleFormatter2.format(price)
+        holder.priceRate.text = holder.itemView.context.getString(
+            R.string.transaction_price_rate_string,
+            doubleFormatter2.format(priceRate)
+        )
+        holder.orderSize.text = doubleFormatter3.format(items[position].size)
 
         if (openPrice > price) {
             holder.price.setTextColor(Color.parseColor("#135fc1"))

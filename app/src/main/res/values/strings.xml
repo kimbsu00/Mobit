@@ -45,6 +45,7 @@
     <string name="asset_buy_price">매수금액</string>
     <string name="asset_portfolio_title">보유자산 포트폴리오</string>
     <string name="asset_percent">보유 비중\n(%)</string>
+    <string name="asset_yield_string">%1$s%%</string>
 
     <!--    about fragment_transaction-->
     <string name="transaction_title">도지코인(DOGE)</string>
@@ -60,7 +61,6 @@
     <string name="transaction_order_minimum_price2">5,000 KRW</string>
     <string name="transaction_order_fee1">수수료</string>
     <string name="transaction_order_fee2">0.05%</string>
-
     <string name="transaction_krw_string">%1$s KRW</string>
     <string name="transaction_coin_string">%1$s %2$s</string>
 

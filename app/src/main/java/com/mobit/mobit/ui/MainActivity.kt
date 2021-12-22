@@ -92,8 +92,6 @@ class MainActivity : AppCompatActivity() {
                             }
                             if (favoriteCoinInfo.isNotEmpty()) {
                                 myViewModel.setFavoriteCoinInfo(favoriteCoinInfo)
-                            } else {
-                                Log.i("MainActivity", "favoriteCoinInfo is empty")
                             }
 
                             if (!isDataLoaded) {
@@ -402,40 +400,43 @@ class MainActivity : AppCompatActivity() {
                 // 상장폐지된 화폐를 즐겨찾기 또는 자산으로 가지고 있는 경우, 문제가 발생할 수 있다.
                 // 따라서 상장폐지된 화폐를 즐겨찾기와 자산에서 삭제한다.
                 val delistingFavorites: ArrayList<CoinInfo> = ArrayList()
-                for (favorite in myViewModel.favoriteCoinInfo.value!!) {
-                    if (!codes.contains(favorite.code)) {
-                        delistingFavorites.add(favorite)
-                    }
-                }
                 val delistingCoinAsset: ArrayList<CoinAsset> = ArrayList()
-                for (coinAsset in myViewModel.asset.value!!.coins) {
-                    if (!codes.contains(coinAsset.code)) {
-                        delistingCoinAsset.add(coinAsset)
-                    }
-                }
-                Log.i(
-                    "MainActivity",
-                    "delistingFavorites size is ${delistingFavorites.size}"
-                )
-                Log.i(
-                    "MainActivity",
-                    "delistingCoinAsset size is ${delistingCoinAsset.size}"
-                )
-                // ViewModel에 저장되어 있는 변수 수정해주고
-                myViewModel.favoriteCoinInfo.value!!.removeAll(delistingFavorites)
-                myViewModel.asset.value!!.coins.removeAll(delistingCoinAsset)
-                // DB에 저장되어 있는 값도 수정하면 된다.
-                val removeDelistingThread: Thread = object : Thread() {
-                    override fun run() {
-                        for (favorite in delistingFavorites) {
-                            myViewModel.myDBHelper!!.deleteFavorite(favorite.code)
-                        }
-                        for (coinAsset in delistingCoinAsset) {
-                            myViewModel.myDBHelper!!.deleteCoinAsset(coinAsset)
+                if (codes.isNotEmpty()) {
+                    for (favorite in myViewModel.favoriteCoinInfo.value!!) {
+                        if (!codes.contains(favorite.code)) {
+                            delistingFavorites.add(favorite)
                         }
                     }
+                    for (coinAsset in myViewModel.asset.value!!.coins) {
+                        if (!codes.contains(coinAsset.code)) {
+                            delistingCoinAsset.add(coinAsset)
+                        }
+                    }
+                    Log.i(
+                        "MainActivity",
+                        "delistingFavorites size is ${delistingFavorites.size}"
+                    )
+                    Log.i(
+                        "MainActivity",
+                        "delistingCoinAsset size is ${delistingCoinAsset.size}"
+                    )
+                    // ViewModel에 저장되어 있는 변수 수정해주고
+                    myViewModel.favoriteCoinInfo.value!!.removeAll(delistingFavorites)
+                    myViewModel.asset.value!!.coins.removeAll(delistingCoinAsset)
+
+                    // DB에 저장되어 있는 값도 수정하면 된다.
+                    val removeDelistingThread: Thread = object : Thread() {
+                        override fun run() {
+                            for (favorite in delistingFavorites) {
+                                myViewModel.myDBHelper!!.deleteFavorite(favorite.code)
+                            }
+                            for (coinAsset in delistingCoinAsset) {
+                                myViewModel.myDBHelper!!.deleteCoinAsset(coinAsset)
+                            }
+                        }
+                    }
+                    removeDelistingThread.start()
                 }
-                removeDelistingThread.start()
 
                 val serviceBRIntent = Intent("com.mobit.APICALL")
                 serviceBRIntent.putExtra("mode", "INITIAL_SETTING")

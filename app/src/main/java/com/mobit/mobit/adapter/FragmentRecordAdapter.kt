@@ -22,14 +22,14 @@ class FragmentRecordAdapter(
 ) :
     RecyclerView.Adapter<FragmentRecordAdapter.ViewHolder>(), Filterable {
 
-    val intFormatter = DecimalFormat("###,###").also {
-        it.roundingMode = RoundingMode.DOWN
+    val intFormatter = DecimalFormat("###,###").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter2 = DecimalFormat("###,###.##").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter2 = DecimalFormat("###,###.##").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter4 = DecimalFormat("###,###.####").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter4 = DecimalFormat("###,###.####").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

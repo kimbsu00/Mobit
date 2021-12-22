@@ -15,14 +15,14 @@ import java.text.DecimalFormat
 class FragmentTransactionAdapter(var items: ArrayList<OrderBook>, var openPrice: Double) :
     RecyclerView.Adapter<FragmentTransactionAdapter.ViewHolder>() {
 
-    val intFormatter = DecimalFormat("###,###").also {
-        it.roundingMode = RoundingMode.DOWN
+    val intFormatter = DecimalFormat("###,###").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter3 = DecimalFormat("###,###.###").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter3 = DecimalFormat("###,###.###").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter2 = DecimalFormat("###,##0.00").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter2 = DecimalFormat("###,##0.00").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
 
     var listener: OnItemClickListener? = null

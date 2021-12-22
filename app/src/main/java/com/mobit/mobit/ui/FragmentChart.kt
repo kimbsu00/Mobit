@@ -1425,11 +1425,11 @@ class FragmentChart : Fragment() {
                         favoriteBtn.setImageResource(R.drawable.ic_round_star_24)
                     }
 
-                    val intFormatter = DecimalFormat("###,###").also {
-                        it.roundingMode = RoundingMode.DOWN
+                    val intFormatter = DecimalFormat("###,###").apply {
+                        this.roundingMode = RoundingMode.DOWN
                     }
-                    val doubleFormatter2 = DecimalFormat("###,###.##").also {
-                        it.roundingMode = RoundingMode.DOWN
+                    val doubleFormatter2 = DecimalFormat("###,###.##").apply {
+                        this.roundingMode = RoundingMode.DOWN
                     }
                     coinName.text = "${selectedCoin!!.name}(${selectedCoin!!.code.split('-')[1]})"
                     coinPrice.text =

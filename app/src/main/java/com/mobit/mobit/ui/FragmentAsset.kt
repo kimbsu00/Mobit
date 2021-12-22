@@ -56,14 +56,14 @@ class FragmentAsset : Fragment() {
     lateinit var adapter: FragmentAssetAdapter
     lateinit var legendAdapter: FragmentAssetLegendAdapter
 
-    val intFormatter = DecimalFormat("###,###").also {
-        it.roundingMode = RoundingMode.DOWN
+    val intFormatter = DecimalFormat("###,###").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter2 = DecimalFormat("###,###.##").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter2 = DecimalFormat("###,###.##").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter1 = DecimalFormat("###,###.#").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter1 = DecimalFormat("###,###.#").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
 
     var listener: OnFragmentInteraction? = null

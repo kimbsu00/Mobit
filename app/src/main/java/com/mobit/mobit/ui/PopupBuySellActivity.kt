@@ -8,13 +8,18 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Window
 import com.mobit.mobit.databinding.ActivityPopupBuySellBinding
+import java.math.RoundingMode
 import java.text.DecimalFormat
 
 class PopupBuySellActivity : Activity() {
 
     lateinit var binding: ActivityPopupBuySellBinding
-    val formatter = DecimalFormat("###,###")
-    val formatter2 = DecimalFormat("###,###.####")
+    val intFormatter = DecimalFormat("###,###").apply {
+        this.roundingMode = RoundingMode.DOWN
+    }
+    val doubleFormatter8 = DecimalFormat("###,###.########").apply {
+        this.roundingMode = RoundingMode.DOWN
+    }
 
     var type: Int? = null
     var code: String? = null
@@ -56,9 +61,9 @@ class PopupBuySellActivity : Activity() {
                 }
             }
             coin.text = "$name(${code!!.split('-')[1]}/KRW)"
-            orderPrice.text = formatter.format(unitPrice)
-            orderCount.text = formatter2.format(count)
-            orderTotalPrice.text = formatter.format(totalPrice)
+            orderPrice.text = intFormatter.format(unitPrice)
+            orderCount.text = doubleFormatter8.format(count)
+            orderTotalPrice.text = intFormatter.format(totalPrice)
 
             confirmBtn.setOnClickListener {
                 val intent: Intent = Intent()

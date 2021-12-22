@@ -24,14 +24,14 @@ class FragmentCoinListAdapter(
 ) :
     RecyclerView.Adapter<FragmentCoinListAdapter.ViewHolder>(), Filterable {
 
-    val intFormatter = DecimalFormat("###,###").also {
-        it.roundingMode = RoundingMode.DOWN
+    val intFormatter = DecimalFormat("###,###").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter2 = DecimalFormat("###,###.##").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter2 = DecimalFormat("###,###.##").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter2Zero = DecimalFormat("###,##0.00").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter2Zero = DecimalFormat("###,##0.00").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
 
     var listener: OnItemClickListener? = null

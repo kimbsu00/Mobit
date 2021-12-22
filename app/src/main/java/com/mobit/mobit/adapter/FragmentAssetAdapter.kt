@@ -17,14 +17,14 @@ FragmentAsset에서 보유 자산을 보여줄 때 사용하는 adapter 입니�
 class FragmentAssetAdapter(var items: ArrayList<CoinAsset>) :
     RecyclerView.Adapter<FragmentAssetAdapter.ViewHolder>() {
 
-    val intFormatter = DecimalFormat("###,###").also {
-        it.roundingMode = RoundingMode.DOWN
+    val intFormatter = DecimalFormat("###,###").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter2 = DecimalFormat("###,###.##").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter2 = DecimalFormat("###,###.##").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter4 = DecimalFormat("###,###.####").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter4 = DecimalFormat("###,###.####").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
 
     var listener: OnItemClickListener? = null

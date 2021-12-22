@@ -27,6 +27,7 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.floor
 
 /*
 코인 매도 기능이 구현될 Fragment 입니다.
@@ -42,14 +43,14 @@ class FragmentSell : Fragment() {
     val myViewModel: MyViewModel by activityViewModels()
 
     var selectedCoin: CoinAsset? = null
-    val intFormatter = DecimalFormat("###,###").also {
-        it.roundingMode = RoundingMode.DOWN
+    val intFormatter = DecimalFormat("###,###").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter4 = DecimalFormat("###,###.####").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter8 = DecimalFormat("###,###.########").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter2 = DecimalFormat("###,###.##").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter2 = DecimalFormat("###,###.##").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
     var orderCount: Double = 0.0
     var orderPrice: Double = 0.0
@@ -112,7 +113,7 @@ class FragmentSell : Fragment() {
 
                     binding.canOrderCoin.text = getString(
                         R.string.transaction_coin_string,
-                        doubleFormatter4.format(coinAsset!!.number),
+                        doubleFormatter8.format(coinAsset!!.number),
                         myViewModel.selectedCoin.value!!.split('-')[1]
                     )
                     resetOrderTextView()
@@ -165,7 +166,7 @@ class FragmentSell : Fragment() {
                     selectedCoin = coinAsset
                     binding.canOrderCoin.text = getString(
                         R.string.transaction_coin_string,
-                        doubleFormatter4.format(coinAsset.number),
+                        doubleFormatter8.format(coinAsset.number),
                         coinAsset.code.split('-')[1]
                     )
                     break
@@ -190,7 +191,7 @@ class FragmentSell : Fragment() {
                     selectedCoin = coinAsset
                     canOrderCoin.text = getString(
                         R.string.transaction_coin_string,
-                        doubleFormatter4.format(coinAsset.number),
+                        doubleFormatter8.format(coinAsset.number),
                         coinAsset.code.split('-')[1]
                     )
                     break
@@ -241,8 +242,10 @@ class FragmentSell : Fragment() {
                             }
                         }
                     }
-                    orderCount.setText(doubleFormatter4.format(canOrderCount))
-                    val totalPrice = canOrderCount * this@FragmentSell.orderPrice
+                    canOrderCount = floor(canOrderCount * 1e8) / 1e8
+                    orderCount.setText(doubleFormatter8.format(canOrderCount))
+                    this@FragmentSell.orderCount = canOrderCount
+                    val totalPrice = this@FragmentSell.orderCount * this@FragmentSell.orderPrice
                     orderTotalPrice.text =
                         if (totalPrice > 100.0)
                             getString(

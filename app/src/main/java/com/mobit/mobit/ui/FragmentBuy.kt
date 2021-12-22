@@ -26,6 +26,7 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.floor
 
 /*
 코인 매수 기능이 구현될 Fragment 입니다.
@@ -40,14 +41,14 @@ class FragmentBuy : Fragment() {
 
     val myViewModel: MyViewModel by activityViewModels()
 
-    val intFormatter = DecimalFormat("###,###").also {
-        it.roundingMode = RoundingMode.DOWN
+    val intFormatter = DecimalFormat("###,###").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter4 = DecimalFormat("###,###.####").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter8 = DecimalFormat("###,###.########").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
-    val doubleFormatter2 = DecimalFormat("###,###.##").also {
-        it.roundingMode = RoundingMode.DOWN
+    val doubleFormatter2 = DecimalFormat("###,###.##").apply {
+        this.roundingMode = RoundingMode.DOWN
     }
     var orderCount: Double = 0.0
     var orderPrice: Double = 0.0
@@ -219,7 +220,9 @@ class FragmentBuy : Fragment() {
                             Log.e("FragmentBuy Spinner", "position is $position")
                         }
                     }
-                    orderCount.setText(doubleFormatter4.format(canOrderCount))
+                    canOrderCount = floor(canOrderCount * 1e8) / 1e8
+                    orderCount.setText(doubleFormatter8.format(canOrderCount))
+                    this@FragmentBuy.orderCount = canOrderCount
                     val totalPrice = canOrderCount * this@FragmentBuy.orderPrice
                     orderTotalPrice.text =
                         if (totalPrice > 100.0)
@@ -252,6 +255,8 @@ class FragmentBuy : Fragment() {
                     } else {
                         try {
                             this@FragmentBuy.orderCount = s.toString().replace(",", "").toDouble()
+                            this@FragmentBuy.orderCount =
+                                floor(this@FragmentBuy.orderCount * 1e8) / 1e8
                         } catch (e: NumberFormatException) {
                             this@FragmentBuy.orderCount = 0.0
                             orderCount.setText("0")
@@ -294,6 +299,7 @@ class FragmentBuy : Fragment() {
                                 var number: Double = 0.0
                                 try {
                                     number = text.replace(",", "").toDouble()
+                                    number = floor(number * 1e8) / 1e8
                                 } catch (e: NumberFormatException) {
                                     number = 0.0
                                     orderCount.setText("0")

@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mobit.mobit.R
 import com.mobit.mobit.data.Transaction
+import java.math.RoundingMode
 import java.text.DecimalFormat
 
 // blue -> #1561bf
@@ -21,9 +22,15 @@ class FragmentRecordAdapter(
 ) :
     RecyclerView.Adapter<FragmentRecordAdapter.ViewHolder>(), Filterable {
 
-    val formatter = DecimalFormat("###,###")
-    val formatter2 = DecimalFormat("###,###.##")
-    val formatter3 = DecimalFormat("###,###.####")
+    val intFormatter = DecimalFormat("###,###").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
+    val doubleFormatter2 = DecimalFormat("###,###.##").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
+    val doubleFormatter4 = DecimalFormat("###,###.####").also {
+        it.roundingMode = RoundingMode.DOWN
+    }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameView: TextView
@@ -56,35 +63,56 @@ class FragmentRecordAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Log.i("FragmentRecordAdapter", filteredList[position].code)
         val code = filteredList[position].code.split("-")[1]
-//        val code = filteredList[position].code
-        holder.nameView.text = "${filteredList[position].name}($code)"
+        holder.itemView.context.apply {
+            holder.nameView.text =
+                getString(R.string.record_name_string, filteredList[position].name, code)
+            val tradePrice = filteredList[position].tradePrice
+            val fee = filteredList[position].fee
+            when (filteredList[position].type) {
+                // 매도
+                Transaction.ASK -> {
+                    holder.typeView.text = "매도"
+                    holder.typeView.setTextColor(Color.rgb(26, 96, 184))
+                    holder.totalPriceView.text = getString(
+                        R.string.record_price_string,
+                        intFormatter.format(tradePrice - fee)
+                    )
+                }
+                // 매수
+                Transaction.BID -> {
+                    holder.typeView.text = "매수"
+                    holder.typeView.setTextColor(Color.rgb(188, 79, 59))
+                    holder.totalPriceView.text = getString(
+                        R.string.record_price_string,
+                        intFormatter.format(tradePrice + fee)
+                    )
+                }
+            }
 
-        val tradePrice = filteredList[position].tradePrice
-        val fee = filteredList[position].fee
-        when (filteredList[position].type) {
-            // 매도
-            Transaction.ASK -> {
-                holder.typeView.text = "매도"
-                holder.typeView.setTextColor(Color.rgb(26, 96, 184))
-                holder.totalPriceView.text = "${formatter.format(tradePrice - fee)} KRW"
-            }
-            // 매수
-            Transaction.BID -> {
-                holder.typeView.text = "매수"
-                holder.typeView.setTextColor(Color.rgb(188, 79, 59))
-                holder.totalPriceView.text = "${formatter.format(tradePrice + fee)} KRW"
-            }
+            val times = filteredList[position].time.split("T")
+            holder.timeView.text =
+                getString(R.string.record_two_string, times[0], times[1].substring(0, 5))
+            holder.tradePriceView.text =
+                getString(R.string.record_price_string, intFormatter.format(tradePrice))
+            holder.tradeNumView.text =
+                getString(
+                    R.string.record_two_string,
+                    doubleFormatter4.format(filteredList[position].quantity),
+                    code
+                )
+            holder.unitPriceView.text =
+                if (filteredList[position].unitPrice > 100.0)
+                    getString(
+                        R.string.record_price_string,
+                        intFormatter.format(filteredList[position].unitPrice)
+                    )
+                else getString(
+                    R.string.record_price_string,
+                    doubleFormatter2.format(filteredList[position].unitPrice)
+                )
+            holder.feeView.text =
+                getString(R.string.record_price_string, doubleFormatter2.format(fee))
         }
-
-        val times = filteredList[position].time.split("T")
-        holder.timeView.text = "${times[0]} ${times[1].substring(0, 5)}"
-        holder.tradePriceView.text = "${formatter.format(tradePrice)} KRW"
-        holder.tradeNumView.text = "${formatter3.format(filteredList[position].quantity)} $code"
-        holder.unitPriceView.text =
-            if (filteredList[position].unitPrice > 100.0)
-                "${formatter.format(filteredList[position].unitPrice)} KRW"
-            else "${formatter2.format(filteredList[position].unitPrice)} KRW"
-        holder.feeView.text = "${formatter2.format(fee)} KRW"
     }
 
     override fun getItemCount(): Int {

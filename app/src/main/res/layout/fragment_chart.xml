@@ -21,7 +21,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
             android:padding="10dp"
-            android:text="@string/transaction_title"
             android:textColor="@color/upbit_light_gray"
             android:textSize="20sp" />
 
@@ -63,7 +62,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="5"
-            android:text="604"
             android:textColor="@color/coin_list_blue"
             android:textSize="20sp" />
 
@@ -88,7 +86,6 @@
             android:gravity="center"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="-15.33%"
             android:textColor="@color/coin_list_blue"
             android:textSize="16sp" />
 
@@ -106,7 +103,6 @@
             android:maxLines="1"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="▼2,333,000"
             android:textColor="@color/coin_list_blue" />
     </LinearLayout>
 

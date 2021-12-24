@@ -54,7 +54,6 @@
     <string name="asset_two_string">%1$s %2$s</string>
 
     <!--    about fragment_transaction-->
-    <string name="transaction_title">도지코인(DOGE)</string>
     <string name="transaction_buy">매수</string>
     <string name="transaction_sell">매도</string>
     <string name="transaction_info">정보</string>
@@ -163,7 +162,7 @@
     <string name="setting_title">설정</string>
     <string name="setting_guide">Mobit 이용가이드</string>
     <string name="setting_app_version_title">앱 버전</string>
-    <string name="setting_app_version_info">1.4.13</string>
+    <string name="setting_app_version_info">1.4.14</string>
     <string name="setting_reset">초기화</string>
 
     <!--    about activity_reset_confirm-->

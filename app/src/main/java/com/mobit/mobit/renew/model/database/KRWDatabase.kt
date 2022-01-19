@@ -1,4 +1,4 @@
-package com.mobit.mobit.renew.common.database
+package com.mobit.mobit.renew.model.database
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase

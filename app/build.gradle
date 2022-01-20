@@ -17,6 +17,8 @@ android {
         versionName "1.4.14"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "UPBIT_API_HOST_URL", UPBIT_API_HOST_URL)
     }
 
     buildTypes {

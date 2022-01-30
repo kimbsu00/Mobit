@@ -1,8 +1,7 @@
 package com.mobit.mobit.renew.common.util
 
 import android.util.Log
-import com.mobit.mobit.renew.model.datamodel.CoinData
-import com.mobit.mobit.renew.model.datamodel.PriceData
+import com.mobit.mobit.renew.model.datamodel.*
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -203,6 +202,117 @@ object JSONParserUtil {
                                 lTimeStamp
                             )
                         )
+                }
+            }
+        }
+
+        return ret
+    }
+
+    /*
+     * 2022-01-30
+     * 호가 정보 조회 API의 결과 데이터를 파싱해서
+     * (key, value) = (코인 코드, OrderBookData) 인 HashMap을 반환하는 함수
+     */
+    fun getOrderBookData(jsonRoot: JSONArray): HashMap<String, OrderBookData> {
+        val ret = HashMap<String, OrderBookData>()
+
+        for (idx in 0..jsonRoot.length() - 1) {
+            if (!jsonRoot.isNull(idx)) {
+                val obj = jsonRoot.getJSONObject(idx)
+
+                if (obj != null) {
+                    var strCode = ""
+                    var lTimeStamp = 0L
+                    var dTotalAskSize = 0.0
+                    var dTotalBidSize = 0.0
+
+                    if (!obj.isNull("market"))
+                        strCode = getString(obj, "market")
+                    if (!obj.isNull("timestamp"))
+                        lTimeStamp = obj.getLong("timestamp")
+                    if (!obj.isNull("total_ask_size"))
+                        dTotalAskSize = obj.getDouble("total_ask_size")
+                    if (!obj.isNull("total_bid_size"))
+                        dTotalBidSize = obj.getDouble("total_bid_size")
+
+                    if (!obj.isNull("orderbook_units")) {
+                        val units = getJsonArray(obj, "orderbook_units")
+
+                        // 매도 호가 리스트 -> idx와 주문금액이 서로 비례
+                        val askOrderList = ArrayList<OrderData>()
+                        // 매수 호가 리스트 -> idx와 주문금액이 서로 반비례
+                        val bidOrderList = ArrayList<OrderData>()
+                        if (units != null) {
+                            for (idx2 in 0..units.length() - 1) {
+                                if (!units.isNull(idx2)) {
+                                    val unit = units.getJSONObject(idx2)
+
+                                    var dAskPrice = 0.0
+                                    var dBidPrice = 0.0
+                                    var dAskSize = 0.0
+                                    var dBidSize = 0.0
+
+                                    if (!unit.isNull("ask_price"))
+                                        dAskPrice = unit.getDouble("ask_price")
+                                    if (!unit.isNull("bid_price"))
+                                        dBidPrice = unit.getDouble("bid_price")
+                                    if (!unit.isNull("ask_size"))
+                                        dAskSize = unit.getDouble("ask_size")
+                                    if (!unit.isNull("bid_size"))
+                                        dBidSize = unit.getDouble("bid_size")
+
+                                    askOrderList.add(
+                                        OrderData(
+                                            dAskPrice,
+                                            dAskSize,
+                                            OrderData.ORDER_TYPE_ASK
+                                        )
+                                    )
+                                    bidOrderList.add(
+                                        OrderData(
+                                            dBidPrice,
+                                            dBidSize,
+                                            OrderData.ORDER_TYPE_BID
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                        askOrderList.reverse()
+                        val orderList = ArrayList<OrderData>().also {
+                            it.addAll(askOrderList)
+                            it.addAll(bidOrderList)
+                        }
+
+                        if (strCode.isNotEmpty())
+                            ret.put(
+                                strCode,
+                                OrderBookData(
+                                    strCode,
+                                    lTimeStamp,
+                                    dTotalAskSize,
+                                    dTotalBidSize,
+                                    orderList
+                                )
+                            )
+                    }
+                }
+            }
+        }
+
+        return ret
+    }
+
+    fun getMinCandleData(jsonRoot: JSONArray): ArrayList<CandleData> {
+        val ret = ArrayList<CandleData>()
+
+        for (idx in 0..jsonRoot.length() - 1) {
+            if (!jsonRoot.isNull(idx)) {
+                val obj = jsonRoot.getJSONObject(idx)
+
+                if (obj != null) {
+
                 }
             }
         }

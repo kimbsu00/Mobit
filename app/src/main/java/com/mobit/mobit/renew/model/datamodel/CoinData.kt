@@ -5,10 +5,14 @@ data class CoinData(
     val strKorName: String,         // 코인 한글명
     val strEngName: String,         // 코인 영문명
     val warning: Boolean            // 유의 종목 여부
-): Comparable<CoinData> {
+) : Comparable<CoinData> {
 
     override fun compareTo(other: CoinData): Int {
-        TODO("Not yet implemented")
+        return when {
+            this.strCode > other.strCode -> 1
+            this.strCode < other.strCode -> -1
+            else -> 0
+        }
     }
 
     override fun toString(): String {

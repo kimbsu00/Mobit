@@ -71,19 +71,24 @@ object JSONParserUtil {
         }
     }
 
+    /*
+     * "{MARKET}-{CODE}" 형식의 마켓 정보 문자열을
+     * "{CODE}" 형식으로 파싱해서 리턴하는 함수
+     */
     fun getCode(strMarket: String): String {
         try {
-            val tmp = strMarket.split('-')
+            val tmp = strMarket.trim().split('-')
             return if (tmp[0] == "KRW") tmp[1] else ""
         } catch (e: Exception) {
-            Log.i("${TAG}_getCoinData", "market=$strMarket")
+            Log.i("${TAG}_getCode", "market=$strMarket")
             return ""
         }
     }
 
     /*
      * 2022-01-24
-     * 마켓 코드 조회 API의 결과 데이터를 파싱해서 ArrayList<CoinData> 형태로 반환하는 함수
+     * 마켓 코드 조회 API의 결과 데이터를 파싱해서
+     * ArrayList<CoinData> 형태로 반환하는 함수
      */
     fun getCoinData(jsonRoot: JSONArray): ArrayList<CoinData> {
         val ret = ArrayList<CoinData>()
@@ -228,7 +233,7 @@ object JSONParserUtil {
                     var dTotalBidSize = 0.0
 
                     if (!obj.isNull("market"))
-                        strCode = getString(obj, "market")
+                        strCode = getCode(getString(obj, "market"))
                     if (!obj.isNull("timestamp"))
                         lTimeStamp = obj.getLong("timestamp")
                     if (!obj.isNull("total_ask_size"))
@@ -304,7 +309,12 @@ object JSONParserUtil {
         return ret
     }
 
-    fun getMinCandleData(jsonRoot: JSONArray): ArrayList<CandleData> {
+    /*
+     * 2022-01-31
+     * 시세 캔들 조회 API의 결과 데이터를 파싱해서
+     * ArrayList<CandleData> 형태로 반환하는 함수
+     */
+    fun getCandleData(jsonRoot: JSONArray): ArrayList<CandleData> {
         val ret = ArrayList<CandleData>()
 
         for (idx in 0..jsonRoot.length() - 1) {
@@ -312,7 +322,53 @@ object JSONParserUtil {
                 val obj = jsonRoot.getJSONObject(idx)
 
                 if (obj != null) {
+                    var strCode = ""
+                    var strUtcTime = ""
+                    var strKstTime = ""
+                    var dOpenPrice = 0.0
+                    var dHighPrice = 0.0
+                    var dLowPrice = 0.0
+                    var dTradePrice = 0.0
+                    var lTimeStamp = 0L
+                    var dAccTradePrice = 0.0
+                    var dAccTradeVolume = 0.0
 
+                    if (!obj.isNull("market"))
+                        strCode = getCode(getString(obj, "market"))
+                    if (!obj.isNull("candle_date_time_utc"))
+                        strUtcTime = getString(obj, "candle_date_time_utc")
+                    if (!obj.isNull("candle_date_time_kst"))
+                        strKstTime = getString(obj, "candle_date_time_kst")
+                    if (!obj.isNull("opening_price"))
+                        dOpenPrice = obj.getDouble("opening_price")
+                    if (!obj.isNull("high_price"))
+                        dHighPrice = obj.getDouble("high_price")
+                    if (!obj.isNull("low_price"))
+                        dLowPrice = obj.getDouble("low_price")
+                    if (!obj.isNull("trade_price"))
+                        dTradePrice = obj.getDouble("trade_price")
+                    if (!obj.isNull("timestamp"))
+                        lTimeStamp = obj.getLong("timestamp")
+                    if (!obj.isNull("candle_acc_trade_price"))
+                        dAccTradePrice = obj.getDouble("candle_acc_trade_price")
+                    if (!obj.isNull("candle_acc_trade_volume"))
+                        dAccTradeVolume = obj.getDouble("candle_acc_trade_volume")
+
+                    if (strCode.isNotEmpty())
+                        ret.add(
+                            CandleData(
+                                strCode,
+                                strUtcTime,
+                                strKstTime,
+                                dOpenPrice,
+                                dHighPrice,
+                                dLowPrice,
+                                dTradePrice,
+                                lTimeStamp,
+                                dAccTradePrice,
+                                dAccTradeVolume
+                            )
+                        )
                 }
             }
         }

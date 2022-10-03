@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mobit.mobit">
+    package="com.mobit.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -13,27 +13,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Mobit">
         <service
-            android:name=".service.UpbitAPIService"
+            android:name="com.mobit.android.service.UpbitAPIService"
             android:enabled="true"
             android:exported="true" />
 
-
         <activity
-            android:name=".ui.PopupMainIndicatorSettingActivity"
+            android:name="com.mobit.android.ui.PopupMainIndicatorSettingActivity"
             android:theme="@android:style/Theme.Dialog" />
         <activity
-            android:name=".ui.PopupChartResetConfirmActivity"
+            android:name="com.mobit.android.ui.PopupChartResetConfirmActivity"
             android:theme="@android:style/Theme.Dialog" />
-        <activity android:name=".ui.MainIndicatorSettingActivity" />
+        <activity android:name="com.mobit.android.ui.MainIndicatorSettingActivity" />
         <activity
-            android:name=".ui.PopupResetConfirmActivity"
+            android:name="com.mobit.android.ui.PopupResetConfirmActivity"
             android:theme="@android:style/Theme.Dialog" />
-        <activity android:name=".ui.FirstSettingActivity" />
+        <activity android:name="com.mobit.android.ui.FirstSettingActivity" />
         <activity
-            android:name=".ui.PopupBuySellActivity"
+            android:name="com.mobit.android.ui.PopupBuySellActivity"
             android:theme="@android:style/Theme.Dialog" />
         <activity
-            android:name=".ui.MainActivity"
+            android:name="com.mobit.android.ui.MainActivity"
+            android:exported="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -6,15 +6,15 @@ plugins {
 android.buildTypes.release.ndk.debugSymbolLevel = 'full'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "com.mobit.mobit"
+        applicationId "com.mobit.android"
         minSdkVersion 26
-        targetSdkVersion 30
-        versionCode 22
-        versionName "1.4.14"
+        targetSdkVersion 31
+        versionCode 23
+        versionName "1.4.15"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

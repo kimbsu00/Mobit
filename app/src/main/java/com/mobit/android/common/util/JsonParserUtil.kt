@@ -1,6 +1,7 @@
 package com.mobit.android.common.util
 
 import com.mobit.android.data.MobitCoinInfoData
+import com.mobit.android.data.MobitMarketData
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -95,8 +96,8 @@ class JsonParserUtil {
     }
     // endregion Base Function
 
-    fun getCoinInfoDataList(jsonArray: JSONArray): ArrayList<MobitCoinInfoData> {
-        val ret = ArrayList<MobitCoinInfoData>()
+    fun getMobitMarketData(jsonArray: JSONArray): MobitMarketData {
+        val ret = MobitMarketData()
 
         if (jsonArray.length() == 0)
             return ret
@@ -111,9 +112,7 @@ class JsonParserUtil {
                     val nameEng = getString(obj, "english_name")
                     val marketWarning = (getString(obj, "market_warning") == "CAUTION")
 
-                    if (market.contains("KRW")) {
-                        ret.add(MobitCoinInfoData(market, nameKor, nameEng, marketWarning))
-                    }
+                    ret.addCoin(MobitCoinInfoData(market, nameKor, nameEng, marketWarning))
                 }
             }
         }

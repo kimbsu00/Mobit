@@ -1,15 +1,13 @@
 package com.mobit.android.respository
 
 import android.app.Application
-import android.net.Uri
 import com.mobit.android.common.util.JsonParserUtil
-import com.mobit.android.data.MobitCoinInfoData
+import com.mobit.android.data.MobitMarketData
 import com.mobit.android.data.network.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONException
-import org.json.JSONObject
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -20,13 +18,9 @@ import javax.net.ssl.*
 
 class MobitRepository(val application: Application) {
 
-    val jsonParserUtil: JsonParserUtil
+    val jsonParserUtil: JsonParserUtil = JsonParserUtil()
 
-    init {
-        jsonParserUtil = JsonParserUtil()
-    }
-
-    suspend fun makeCoinListRequest(): NetworkResult<ArrayList<MobitCoinInfoData>> {
+    suspend fun makeCoinListRequest(): NetworkResult<MobitMarketData> {
         return withContext(Dispatchers.IO) {
             val strUrl = "${UPBIT_API_HOST_URL}market/all"
             val hsParams = HashMap<String, String>().apply {
@@ -41,8 +35,8 @@ class MobitRepository(val application: Application) {
                     JSONArray()
                 }
 
-                val data = jsonParserUtil.getCoinInfoDataList(jsonRoot)
-                if (data.isNotEmpty()) {
+                val data = jsonParserUtil.getMobitMarketData(jsonRoot)
+                if (data.isValid) {
                     NetworkResult.Success(data)
                 } else {
                     NetworkResult.Error(Exception("Response Data is Empty"))

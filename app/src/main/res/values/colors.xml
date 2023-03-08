@@ -27,4 +27,8 @@
     <color name="chart_light_gray">#061222</color>
     <color name="chart_blue">#1262c5</color>
     <color name="chart_red">#c84a31</color>
+
+    <color name="c_ffffff">#ffffff</color>
+    <color name="c_9e9e9e">#9e9e9e</color>
+
 </resources>

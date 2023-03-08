@@ -5,12 +5,13 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.mobit.android.data.MobitMarketData
 import com.mobit.android.data.network.NetworkResult
+import com.mobit.android.feature.base.viewmodel.BaseViewModel
 import com.mobit.android.respository.MobitRepository
 import kotlinx.coroutines.launch
 
 class MobitViewModel(
     private val mobitRepository: MobitRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _mobitMarketData: MutableLiveData<MobitMarketData> = MutableLiveData()
     val mobitMarketData: LiveData<MobitMarketData> get() = _mobitMarketData
@@ -24,6 +25,9 @@ class MobitViewModel(
                     Log.i("${TAG}_requestCoinDataList", result.data.toString())
                     val mData = result.data
                     _mobitMarketData.value = mData
+                }
+                is NetworkResult.Fail -> {
+
                 }
                 is NetworkResult.Error -> {
                     Log.e("${TAG}_requestCoinDataList", result.exception.toString())

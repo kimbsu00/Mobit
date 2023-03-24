@@ -57,7 +57,7 @@ open class BaseNetworkRepository(
             Log.d("${TAG}_sendRequest", "hsParams=$hsParams")
             if (urlState == "PUT") {
                 throw UnsupportedOperationException("PUT Connection is not supported!")
-            } else {
+            } else if (urlState == "POST") {
                 val strParams = getParams(hsParams)
                 writer.write(strParams)
             }
@@ -118,6 +118,8 @@ open class BaseNetworkRepository(
     }
 
     companion object {
+        const val UPBIT_API_HOST_URL: String = "https://api.upbit.com/v1/"
+
         const val POST: String = "POST"
         const val GET: String = "GET"
         const val PUT: String = "PUT"

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "57281871520",
+    "project_id": "mobit-382a2",
+    "storage_bucket": "mobit-382a2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:57281871520:android:16ca0e28ddb9b0606993c5",
+        "android_client_info": {
+          "package_name": "com.mobit.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "57281871520-n1b03cpa9pej94kpbpf8401j4bdi86nj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mobit.android",
+            "certificate_hash": "8f302ce30ab5c1110fe0a6b0268a298060426ed6"
+          }
+        },
+        {
+          "client_id": "57281871520-hi9io05g907gkd805r6c16ra25jig4i1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVVIDN5qJXYldw_of5mnHpID8o6vpds-0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "57281871520-hi9io05g907gkd805r6c16ra25jig4i1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

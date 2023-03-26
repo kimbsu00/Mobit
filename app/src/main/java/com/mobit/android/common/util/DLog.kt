@@ -10,50 +10,50 @@ import com.mobit.android.BuildConfig
  */
 object DLog {
 
-    fun d(pTag: String, pMessage: String) {
-        if (BuildConfig.DEBUG && pMessage.isNotEmpty()) {
+    fun d(pTag: String, pMessage: String?) {
+        if (BuildConfig.DEBUG && pMessage != null && pMessage.isNotEmpty()) {
             Log.d(pTag, pMessage)
         }
     }
 
-    fun d(pTag: String, pMessage: String, pException: Exception) {
-        if (BuildConfig.DEBUG && pMessage.isNotEmpty()) {
+    fun d(pTag: String, pMessage: String?, pException: Exception) {
+        if (BuildConfig.DEBUG && pMessage != null && pMessage.isNotEmpty()) {
             Log.d(pTag, pMessage, pException)
         }
     }
 
-    fun w(pTag: String, pMessage: String) {
-        if (BuildConfig.DEBUG && pMessage.isNotEmpty()) {
+    fun w(pTag: String, pMessage: String?) {
+        if (BuildConfig.DEBUG && pMessage != null && pMessage.isNotEmpty()) {
             Log.w(pTag, pMessage)
         }
     }
 
-    fun w(pTag: String, pMessage: String, pException: Exception) {
-        if (BuildConfig.DEBUG && pMessage.isNotEmpty()) {
+    fun w(pTag: String, pMessage: String?, pException: Exception) {
+        if (BuildConfig.DEBUG && pMessage != null && pMessage.isNotEmpty()) {
             Log.w(pTag, pMessage, pException)
         }
     }
 
-    fun e(pTag: String, pMessage: String) {
-        if (BuildConfig.DEBUG && pMessage.isNotEmpty()) {
+    fun e(pTag: String, pMessage: String?) {
+        if (BuildConfig.DEBUG && pMessage != null && pMessage.isNotEmpty()) {
             Log.e(pTag, pMessage)
         }
     }
 
-    fun e(pTag: String, pMessage: String, pException: Exception) {
-        if (BuildConfig.DEBUG && pMessage.isNotEmpty()) {
+    fun e(pTag: String, pMessage: String?, pException: Exception) {
+        if (BuildConfig.DEBUG && pMessage != null && pMessage.isNotEmpty()) {
             Log.e(pTag, pMessage, pException)
         }
     }
 
-    fun i(pTag: String, pMessage: String) {
-        if (BuildConfig.DEBUG && pMessage.isNotEmpty()) {
+    fun i(pTag: String, pMessage: String?) {
+        if (BuildConfig.DEBUG && pMessage != null && pMessage.isNotEmpty()) {
             Log.i(pTag, pMessage)
         }
     }
 
-    fun i(pTag: String, pMessage: String, pException: Exception) {
-        if (BuildConfig.DEBUG && pMessage.isNotEmpty()) {
+    fun i(pTag: String, pMessage: String?, pException: Exception) {
+        if (BuildConfig.DEBUG && pMessage != null && pMessage.isNotEmpty()) {
             Log.i(pTag, pMessage, pException)
         }
     }

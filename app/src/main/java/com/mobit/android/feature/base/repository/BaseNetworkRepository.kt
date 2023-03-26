@@ -1,7 +1,7 @@
 package com.mobit.android.feature.base.repository
 
 import android.app.Application
-import android.util.Log
+import com.mobit.android.common.util.DLog
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -43,34 +43,36 @@ open class BaseNetworkRepository(
                 readTimeout = TIME_OUT
                 connectTimeout = TIME_OUT
                 requestMethod = urlState
+                setRequestProperty("Accept", "application/json")
+            }
 
-                if (urlState == "PUT")
+            when (urlState) {
+                PUT -> {
                     connection.setRequestProperty("Content-Type", "application/json")
+                    connection.doOutput = true
+                    throw UnsupportedOperationException("PUT Connection is not supported!")
+                }
+                POST -> {
+                    val os = connection.outputStream
+                    val writer = BufferedWriter(OutputStreamWriter(os, "UTF-8"))
 
-                connection.doOutput = true
+                    connection.doOutput = true
+                    val strParams = getParams(hsParams)
+                    writer.write(strParams)
+
+                    writer.flush()
+                    writer.close()
+
+                    os.flush()
+                    os.close()
+                }
             }
-
-            val os = connection.outputStream
-            val writer = BufferedWriter(OutputStreamWriter(os, "UTF-8"))
-
-            Log.d("${TAG}_sendRequest", "url=$url")
-            Log.d("${TAG}_sendRequest", "hsParams=$hsParams")
-            if (urlState == "PUT") {
-                throw UnsupportedOperationException("PUT Connection is not supported!")
-            } else if (urlState == "POST") {
-                val strParams = getParams(hsParams)
-                writer.write(strParams)
-            }
-            writer.flush()
-            writer.close()
-
-            os.flush()
-            os.close()
 
             val bis = BufferedInputStream(connection.inputStream)
             message = getMessage(bis)
 
         } catch (e: Exception) {
+            DLog.e(TAG, "msg=${e.message}", e)
             message = ""
         }
 
@@ -78,11 +80,12 @@ open class BaseNetworkRepository(
     }
 
     private fun getMessage(inputStream: InputStream?): String {
+        DLog.d("${TAG}_getMessage", "inputStream=$inputStream")
         val builder = java.lang.StringBuilder()
         var reader: BufferedReader? = null
         try {
             reader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
-            var line: String
+            var line: String?
             while (reader.readLine().also { line = it } != null) {
                 builder.append(line + "")
             }

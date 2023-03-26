@@ -30,7 +30,7 @@ class MobitProgressDialog(
         AnimationUtils.loadAnimation(context, R.anim.mobit_progress_scale_down).apply {
             setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animatino: Animation?) {
-                    binding.ivMobitProgress.rotation = 0f
+
                 }
 
                 override fun onAnimationEnd(animatino: Animation?) {
@@ -46,7 +46,7 @@ class MobitProgressDialog(
         AnimationUtils.loadAnimation(context, R.anim.mobit_progress_scale_up).apply {
             setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animatino: Animation?) {
-                    binding.ivMobitProgress.rotation = 90f
+
                 }
 
                 override fun onAnimationEnd(animatino: Animation?) {

@@ -9,10 +9,4 @@
         android:pivotY="50%"
         android:toXScale="1.0"
         android:toYScale="1.0" />
-
-    <rotate
-        android:fromDegrees="90"
-        android:pivotX="50%"
-        android:pivotY="50%"
-        android:toDegrees="180" />
 </set>

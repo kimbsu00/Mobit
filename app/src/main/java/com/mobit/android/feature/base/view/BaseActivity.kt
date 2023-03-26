@@ -7,11 +7,13 @@ import com.mobit.android.common.customview.MobitProgressDialog
 
 open class BaseActivity : AppCompatActivity() {
 
-    private val mobitProgressDialog: MobitProgressDialog by lazy {
-        MobitProgressDialog(applicationContext)
-    }
+    private lateinit var mobitProgressDialog: MobitProgressDialog
 
     protected fun showProgress(pMsg: String = "") {
+        if (!this::mobitProgressDialog.isInitialized) {
+            mobitProgressDialog = MobitProgressDialog(this, "")
+        }
+
         mobitProgressDialog.setMessage(pMsg)
         mobitProgressDialog.show()
     }

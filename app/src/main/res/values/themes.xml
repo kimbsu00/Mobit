@@ -44,4 +44,11 @@
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowFullscreen">false</item>
     </style>
+
+    <style name="MobitDialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:background">@color/transparent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
 </resources>

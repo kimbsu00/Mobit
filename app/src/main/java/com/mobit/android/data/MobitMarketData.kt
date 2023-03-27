@@ -2,7 +2,7 @@ package com.mobit.android.data
 
 data class MobitMarketData(
     val mobitCoinMap: HashMap<String, ArrayList<MobitCoinInfoData>> = hashMapOf()
-) {
+) : java.io.Serializable {
 
     val isValid get() = mobitCoinMap.size > 0
 

@@ -28,7 +28,13 @@
     <color name="chart_blue">#1262c5</color>
     <color name="chart_red">#c84a31</color>
 
+    <color name="transparent">#00000000</color>
+
     <color name="c_ffffff">#ffffff</color>
     <color name="c_9e9e9e">#9e9e9e</color>
+    <color name="c_202020">#202020</color>
+    <color name="c_1a6cbd">#1a6cbd</color>
+    <color name="c_7e7e7e">#7e7e7e</color>
+    <color name="c_dadada">#dadada</color>
 
 </resources>

@@ -11,7 +11,7 @@ data class MobitCoinInfoData(
     val nameKor: String,
     val nameEng: String,
     val marketWarning: Boolean = false
-) {
+) : java.io.Serializable {
 
     override fun toString(): String {
         return "MobitCoinInfoData{" +

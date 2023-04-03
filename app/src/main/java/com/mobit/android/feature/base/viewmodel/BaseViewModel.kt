@@ -5,10 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.mobit.android.feature.intro.repository.IntroRepository
+import com.mobit.android.repository.IntroRepository
 import com.mobit.android.feature.intro.viewmodel.IntroViewModel
-import com.mobit.android.respository.MobitRepository
-import com.mobit.android.viewmodel.MobitViewModel
+import com.mobit.android.repository.MobitRepository
+import com.mobit.android.feature.main.viewmodel.MainViewModel
 import java.lang.IllegalArgumentException
 
 open class BaseViewModel : ViewModel() {
@@ -54,9 +54,9 @@ open class BaseViewModel : ViewModel() {
             if (modelClass.isAssignableFrom(IntroViewModel::class.java)) {
                 return IntroViewModel(IntroRepository(application)) as T
             }
-            // Mobit ViewModel
-            else if (modelClass.isAssignableFrom(MobitViewModel::class.java)) {
-                return MobitViewModel(MobitRepository(application)) as T
+            // Main ViewModel
+            else if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+                return MainViewModel(MobitRepository(application)) as T
             }
             // 식별되지 않은 ViewModel
             else {

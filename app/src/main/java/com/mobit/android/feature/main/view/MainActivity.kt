@@ -1,9 +1,8 @@
-package com.mobit.android.ui
+package com.mobit.android.feature.main.view
 
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -11,16 +10,15 @@ import com.mobit.android.R
 import com.mobit.android.data.MobitMarketData
 import com.mobit.android.databinding.ActivityMainBinding
 import com.mobit.android.feature.base.view.BaseActivity
-import com.mobit.android.network.NetworkManager
-import com.mobit.android.viewmodel.MobitViewModel
+import com.mobit.android.feature.main.viewmodel.MainViewModel
 
 class MainActivity : BaseActivity() {
 
-    private val model: MobitViewModel by lazy {
+    private val model: MainViewModel by lazy {
         ViewModelProvider(
             this,
-            MobitViewModel.Factory(application)
-        )[MobitViewModel::class.java]
+            MainViewModel.Factory(application)
+        )[MainViewModel::class.java]
     }
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)

@@ -31,7 +31,7 @@
             android:name="com.mobit.android.ui.PopupBuySellActivity"
             android:theme="@android:style/Theme.Dialog" />
         <activity
-            android:name="com.mobit.android.ui.MainActivity"
+            android:name="com.mobit.android.feature.main.view.MainActivity"
             android:exported="false" />
         <activity
             android:name=".feature.intro.view.IntroActivity"

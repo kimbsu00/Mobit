@@ -9,13 +9,12 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.mobit.android.R
 import com.mobit.android.common.customview.MobitMessageDialog
-import com.mobit.android.common.util.DLog
 import com.mobit.android.common.util.NetworkUtil
 import com.mobit.android.databinding.ActivityIntroBinding
 import com.mobit.android.feature.base.view.BaseActivity
 import com.mobit.android.feature.base.viewmodel.BaseViewModel
 import com.mobit.android.feature.intro.viewmodel.IntroViewModel
-import com.mobit.android.ui.MainActivity
+import com.mobit.android.feature.main.view.MainActivity
 
 class IntroActivity : BaseActivity() {
 

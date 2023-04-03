@@ -14,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import com.mobit.android.R
 import com.mobit.android.viewmodel.MyViewModel
 import com.mobit.android.databinding.FragmentSettingBinding
+import com.mobit.android.feature.main.view.MainActivity
 
 /*
 설정 기능이 구현될 Fragment 입니다.

@@ -1,20 +1,26 @@
-package com.mobit.android.respository
+package com.mobit.android.repository
 
 import android.app.Application
 import com.mobit.android.common.util.JsonParserUtil
 import com.mobit.android.data.MobitMarketData
 import com.mobit.android.data.network.NetworkResult
-import com.mobit.android.feature.base.repository.BaseNetworkRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONException
 
-class MobitRepository(val application: Application) : BaseNetworkRepository(application, TAG) {
+class IntroRepository(
+    private val application: Application
+) : BaseNetworkRepository(application, TAG) {
 
     private val jsonParserUtil: JsonParserUtil = JsonParserUtil()
 
-    suspend fun makeCoinListRequest(): NetworkResult<MobitMarketData> {
+    /**
+     * 마켓 코드 조회 API를 호출하는 함수
+     *
+     * @return 마켓 코드 별, 거래 가능한 코인 리스트
+     */
+    suspend fun makeMarketCodeRequest(): NetworkResult<MobitMarketData> {
         return withContext(Dispatchers.IO) {
             val strUrl = "${UPBIT_API_HOST_URL}market/all"
             val hsParams = HashMap<String, String>().apply {
@@ -44,9 +50,7 @@ class MobitRepository(val application: Application) : BaseNetworkRepository(appl
     }
 
     companion object {
-        private const val TAG: String = "MobitRepository"
-
-        private const val UPBIT_API_HOST_URL: String = "https://api.upbit.com/v1/"
+        private const val TAG: String = "IntroRepository"
     }
 
 }

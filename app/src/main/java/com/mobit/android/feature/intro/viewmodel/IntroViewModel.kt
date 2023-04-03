@@ -7,7 +7,7 @@ import com.mobit.android.common.util.DLog
 import com.mobit.android.data.MobitMarketData
 import com.mobit.android.data.network.NetworkResult
 import com.mobit.android.feature.base.viewmodel.BaseViewModel
-import com.mobit.android.feature.intro.repository.IntroRepository
+import com.mobit.android.repository.IntroRepository
 import kotlinx.coroutines.launch
 
 class IntroViewModel(

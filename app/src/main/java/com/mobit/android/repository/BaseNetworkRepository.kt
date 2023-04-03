@@ -1,4 +1,4 @@
-package com.mobit.android.feature.base.repository
+package com.mobit.android.repository
 
 import android.app.Application
 import com.mobit.android.common.util.DLog

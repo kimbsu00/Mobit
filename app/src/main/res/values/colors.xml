@@ -8,6 +8,22 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="primary">#081121</color>
+    <color name="secondary">#18202f</color>
+    <color name="coin_blue">#2d60be</color>
+    <color name="coin_red">#b8533b</color>
+    <color name="coin_gray">#848b95</color>
+
+    <color name="coinList_korName">#d3d4d6</color>
+    <color name="coinList_engName">#848b95</color>
+    <color name="coinList_tradePrice_blue">@color/coin_blue</color>
+    <color name="coinList_tradePrice_red">@color/coin_red</color>
+    <color name="coinList_tradePrice_gray">@color/coin_gray</color>
+    <color name="coinList_changeRate_blue">@color/coin_blue</color>
+    <color name="coinList_changeRate_red">@color/coin_red</color>
+    <color name="coinList_changeRate_gray">@color/coin_gray</color>
+    <color name="coinList_accTradePrice">#d3d4d6</color>
+
     <color name="splash_background">#093687</color>
     <color name="main_background">#061222</color>
     <color name="main_bottom_nav">#08275d</color>

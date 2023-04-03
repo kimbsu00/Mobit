@@ -19,7 +19,9 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     protected fun dismissProgress() {
-        mobitProgressDialog.dismiss()
+        if (this::mobitProgressDialog.isInitialized) {
+            mobitProgressDialog.dismiss()
+        }
     }
 
     protected fun showToastMsg(pMsg: String) {

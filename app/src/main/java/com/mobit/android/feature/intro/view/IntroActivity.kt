@@ -62,7 +62,7 @@ class IntroActivity : BaseActivity() {
 
         model.mobitMarketData.observe(this, Observer { mobitMarketData ->
             val mainIntent = Intent(this, MainActivity::class.java).apply {
-                putExtra("mobitMarketData", mobitMarketData)
+                putExtra("mobit_market_data", mobitMarketData)
             }
             startActivity(mainIntent)
             finish()

@@ -1,5 +1,6 @@
 package com.mobit.android.ui
 
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -7,21 +8,23 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.mobit.android.R
+import com.mobit.android.data.MobitMarketData
 import com.mobit.android.databinding.ActivityMainBinding
+import com.mobit.android.feature.base.view.BaseActivity
 import com.mobit.android.network.NetworkManager
 import com.mobit.android.viewmodel.MobitViewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
-    private val mobitViewModel: MobitViewModel by lazy {
-        ViewModelProvider(this, MobitViewModel.Factory(application))[MobitViewModel::class.java]
+    private val model: MobitViewModel by lazy {
+        ViewModelProvider(
+            this,
+            MobitViewModel.Factory(application)
+        )[MobitViewModel::class.java]
     }
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
-
-    private val FINISH_INTERVAL_TIME: Long = 2000
-    private var backPressedTime: Long = 0
 
     // region Activity Lifecycle
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,30 +32,47 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        // 네트워크가 연결되어 있는 경우
-        if (NetworkManager.checkNetworkState(this)) {
-            setObserver()
-            init()
+        val mobitMarketData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getSerializableExtra("mobit_market_data", MobitMarketData::class.java)
+        } else {
+            intent.getSerializableExtra("mobit_market_data") as MobitMarketData
         }
-        // 네트워크가 연결되어 있지 않은 경우
-        else {
-            // TODO: 네트워크 연결이 필요하다는 팝업 띄우고 종료
+
+        if (mobitMarketData != null) {
+            setObserver()
+            init(mobitMarketData)
+        } else {
+            showErrorMsg()
         }
     }
     // endregion Activity Lifecycle
 
     private fun setObserver() {
-        mobitViewModel.mobitMarketData.observe(this, Observer { mobitMarketData ->
+        model.progressFlag.observe(this, Observer { progressFlag ->
+            if (progressFlag) {
+                showProgress("")
+            } else {
+                dismissProgress()
+            }
+        })
 
+        model.apiFailMsg.observe(this, Observer { failMsg ->
+            if (failMsg.isNotEmpty()) {
+                model.setProgressFlag(false)
+                showToastMsg(failMsg)
+            }
+        })
+
+        model.exceptionData.observe(this, Observer { exception ->
+            model.setProgressFlag(false)
+            showErrorMsg()
         })
     }
 
-    private fun init() {
+    private fun init(pMobitMarketData: MobitMarketData) {
         binding.apply {
 
         }
-
-        mobitViewModel.requestCoinDataList()
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -66,13 +86,20 @@ class MainActivity : AppCompatActivity() {
         val tempTime: Long = System.currentTimeMillis()
         val intervalTime = tempTime - backPressedTime
 
-        if (0 <= intervalTime && intervalTime <= FINISH_INTERVAL_TIME) {
+        if (intervalTime in 0..FINISH_INTERVAL_TIME) {
             super.onBackPressed()
         } else {
             backPressedTime = tempTime
             val msg: String = "뒤로 가기를 한 번 더 누르면 종료됩니다."
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    companion object {
+        private const val TAG: String = "MainActivity"
+
+        private const val FINISH_INTERVAL_TIME: Long = 2000
+        private var backPressedTime: Long = 0
     }
 
 }

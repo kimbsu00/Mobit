@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_home"
+        android:icon="@drawable/menu_home_selector"
+        android:title="@string/tab_home" />
+
+    <item
+        android:id="@+id/menu_investment"
+        android:icon="@drawable/menu_investment_selector"
+        android:title="@string/tab_investment" />
+
+    <item
+        android:id="@+id/menu_cash"
+        android:icon="@drawable/menu_cash_selector"
+        android:title="@string/tab_cash" />
+
+    <item
+        android:id="@+id/menu_profile"
+        android:icon="@drawable/menu_profile_selector"
+        android:title="@string/tab_profile" />
+
+</menu>

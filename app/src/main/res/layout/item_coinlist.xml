@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/primary"
+    android:padding="15dp">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_coinList_nameRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.4" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_coinList_priceRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_coinList_diffRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <com.mobit.android.common.customview.MobitChangeRateStickView
+        android:id="@+id/cv_coinList_changeRateStick"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/tv_coinList_korName"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_coinList_korName"
+        style="@style/notoSansKrMedium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:text="비트코인"
+        android:textColor="@color/coinList_korName"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toTopOf="@id/tv_coinList_engName"
+        app:layout_constraintLeft_toRightOf="@id/cv_coinList_changeRateStick"
+        app:layout_constraintRight_toLeftOf="@id/gl_coinList_nameRight"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_coinList_engName"
+        style="@style/notoSansKrRegular"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="BTC/KRW"
+        android:textColor="@color/coinList_engName"
+        android:textSize="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/tv_coinList_korName"
+        app:layout_constraintRight_toRightOf="@id/tv_coinList_korName"
+        app:layout_constraintTop_toBottomOf="@id/tv_coinList_korName" />
+
+    <TextView
+        android:id="@+id/tv_coinList_tradePrice"
+        style="@style/notoSansKrMedium"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="right|top"
+        android:text="36,912,000"
+        android:textColor="@color/coinList_tradePrice_blue"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/gl_coinList_nameRight"
+        app:layout_constraintRight_toLeftOf="@id/gl_coinList_priceRight"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_coinList_changeRate"
+        style="@style/notoSansKrMedium"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="right|top"
+        android:text="-1.04%"
+        android:textColor="@color/coinList_changeRate_blue"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/gl_coinList_priceRight"
+        app:layout_constraintRight_toLeftOf="@id/gl_coinList_diffRight"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_coinList_accTradePrice"
+        style="@style/notoSansKrMedium"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="right|top"
+        android:text="146,069백만"
+        android:textColor="@color/coinList_accTradePrice"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/gl_coinList_diffRight"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

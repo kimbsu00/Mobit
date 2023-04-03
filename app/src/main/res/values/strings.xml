@@ -6,6 +6,11 @@
 
     <string name="toast_msg_error_001">예기치 못한 오류가 발생했습니다. 잠시 후에 다시 시도해 주세요.</string>
 
+    <string name="tab_home">거래소</string>
+    <string name="tab_investment">투자내역</string>
+    <string name="tab_cash">입출금</string>
+    <string name="tab_profile">내정보</string>
+
     <!--    about MainActivity-->
     <string name="menu_coinlist">코인목록</string>
     <string name="menu_chart">차트</string>

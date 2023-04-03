@@ -32,11 +32,11 @@
             android:theme="@android:style/Theme.Dialog" />
         <activity
             android:name="com.mobit.android.ui.MainActivity"
-            android:exported="false"
-            android:theme="@style/SplashTheme" />
+            android:exported="false" />
         <activity
             android:name=".feature.intro.view.IntroActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

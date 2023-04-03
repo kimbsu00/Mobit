@@ -51,4 +51,22 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="notoSansKrRegular">
+        <item name="android:fontFamily">@font/noto_sans_kr_regular</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:letterSpacing">-0.05</item>
+    </style>
+
+    <style name="notoSansKrMedium">
+        <item name="android:fontFamily">@font/noto_sans_kr_medium</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:letterSpacing">-0.05</item>
+    </style>
+
+    <style name="notoSansKrBold">
+        <item name="android:fontFamily">@font/noto_sans_kr_bold</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:letterSpacing">-0.05</item>
+    </style>
+
 </resources>

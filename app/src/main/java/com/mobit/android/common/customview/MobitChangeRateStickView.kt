@@ -31,7 +31,7 @@ class MobitChangeRateStickView : View {
     /**
      * 부호가 있는 가격 변화율
      */
-    private var _signedChangeRate: Float = 7.8f
+    private var _signedChangeRate: Float = 0f
         set(value) {
             if (field != value) {
                 field = value
@@ -150,7 +150,7 @@ class MobitChangeRateStickView : View {
                 lowPriceBottom,
                 redPaint
             )
-        } else {
+        } else if (tmpChangeRate < 0) {
             val blueHeight = halfHeight * (-tmpChangeRate) / 100
             pCanvas.drawRect(left, bottom, right, bottom + blueHeight, bluePaint)
             pCanvas.drawRect(
@@ -159,6 +159,14 @@ class MobitChangeRateStickView : View {
                 halfWidth + unitWidth,
                 lowPriceBottom,
                 bluePaint
+            )
+        } else {
+            pCanvas.drawRect(
+                halfWidth - unitWidth,
+                highPriceTop,
+                halfWidth + unitWidth,
+                lowPriceBottom,
+                grayPaint
             )
         }
     }
